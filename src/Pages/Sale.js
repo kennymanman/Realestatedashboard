@@ -1,12 +1,143 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import Nav from '../components/Nav'
 import testone from "../Images/testone.jpg"
 import { Link } from 'react-router-dom'
+import { db } from '../config/firebaseConfig';
+import {
+  query,
+  collection,
+  onSnapshot,
+  updateDoc,
+  doc,
+  addDoc,
+  deleteDoc,
+} from 'firebase/firestore';
+
+import { useNavigate } from 'react-router-dom';
+import { imageDB } from '../config/firebaseConfig';
+import { getDownloadURL, listAll, ref, uploadBytes } from "firebase/storage";
 
 
 
 
-export default function Sale() {
+
+
+
+
+
+export default function Sale(props) {
+
+  const navigate = useNavigate();
+  
+  const [sale, setSale] = useState([]);
+  const [saleId, setSaleId] = useState('');
+  const [saleName, setSaleName] = useState('');
+  const [saleLocation, setSaleLocation] = useState('');
+  const [salePrice, setSalePrice] = useState('');
+  const [saleType, setSaleType] = useState('');
+
+
+  const [firstImageUrl, setFirstImageUrl]= useState('');
+  const [imageOneUrl, setImageOneUrl]= useState('');
+
+ 
+
+  console.log(props,sale)
+
+
+
+   // Read todo from firebase
+   useEffect(() => {
+    const q = query(collection(db, 'sale'));
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      let saleArr = [];
+      querySnapshot.forEach((doc) => {
+        saleArr.push({ ...doc.data(), id: doc.id });
+      });
+      setSale(saleArr)
+      
+    });
+    return () => unsubscribe();
+  }, []);
+
+
+
+
+
+  const deleteSale = async (id) => {
+    await deleteDoc(doc(db, 'sale', id));
+  };
+
+
+
+
+  useEffect(()=>{
+    listAll(ref( imageDB,"forsale")).then(imgs=>{
+        console.log(imgs)
+        imgs.items.forEach(val=>{
+            getDownloadURL(val).then(url=>{
+                setFirstImageUrl(data=>[...data,url])
+                setImageOneUrl(data=>[...data,url])
+            })
+        })
+    })
+},[])
+
+ 
+
+
+
+
+
+  const Sale = ({ sale, toggleComplete, deleteSale, index }) => {
+    return (
+      <div className='h-4/6'>
+      <img className='object-fit h-full w-full' src={sale.imageUrls[0]} alt=""  />
+      <h1 className='tracking-tighter text-white text-xl mt-3'>{sale.id}</h1>
+      <h1 className='tracking-tighter text-white text-xl mt-3'>{sale.name}</h1>
+      <hr className='border-white my-1'/>
+      <h1 className='tracking-tighter text-white text-xl '>${sale.price}</h1>
+      <hr className='border-white my-1'/>
+      <h1 className='tracking-tighter text-white text-xl '>{sale.location}</h1>
+      <hr className='border-white my-1'/>
+      <h1 className='tracking-tighter text-white text-xl '>Type: {sale.type}</h1>
+
+      <div className='text-end'>
+        
+    
+
+  <button onClick={()=> {navigate("/SalesListingInfo", {state:{sale}})}}  className='bg-green-500 rounded-full px-3  tracking-tighter'>
+ More info
+  </button>
+
+
+  
+
+
+
+      </div>
+      </div>
+
+
+
+
+
+
+
+
+
+    );
+  };
+
+
+
+
+
+
+
+
+
+
   return (
     <div className='bg-black h-fit  '>
       
@@ -22,8 +153,18 @@ export default function Sale() {
 </div>
 
 
+<div className='flex '>
 
-<h1 className='text-3xl text-white text-center tracking-tighter'>Listings: 4</h1>
+<h2 className='text-3xl text-white text-center tracking-tighter'>Listings:
+
+{sale.length < 1 ? <>0</> : (
+      <>{`${sale.length} `}</>
+    )}
+</h2>
+
+</div>
+
+
 </div>
 
      <hr className='border-white my-1'/>
@@ -39,6 +180,35 @@ export default function Sale() {
 
 
 
+<div className='grid grid-cols-4 gap-4 p-3'>
+
+{sale.map((sale, index) => (
+            <Sale
+              key={index}
+              sale={sale}
+               
+              deleteSale={deleteSale}
+            />
+          ))}
+
+
+
+
+
+<div className='h-4/6 bg-white opacity-100 p-3 grid'>
+   
+   <Link to="/NewSalesListing">
+       <button className='tracking-tighter text-base  bg-green-500 px-4 rounded-full py-1 border-black border-2 place-self-center'>Create New</button>
+       </Link>
+       </div>
+
+
+
+</div>
+
+
+
+
 
 
 
@@ -46,24 +216,6 @@ export default function Sale() {
       <div className='grid grid-cols-4 gap-4 p-3'>
     
 
-    <div className='h-4/6'>
-      <img className='object-fit h-full w-full' src={testone} alt=""  />
-      <h1 className='tracking-tighter text-white text-xl mt-3'>Shoreline View Apartment</h1>
-      <hr className='border-white my-1'/>
-      <h1 className='tracking-tighter text-white text-xl '>$53,000</h1>
-      <hr className='border-white my-1'/>
-      <h1 className='tracking-tighter text-white text-xl '>Madrid, Spain.</h1>
-      <hr className='border-white my-1'/>
-      <h1 className='tracking-tighter text-white text-xl '>Type: Apartment</h1>
-
-      <div className='text-end'>
-        <Link to="/SalesListingInfo" >
-        <button className='bg-green-500 rounded-full px-3  tracking-tighter'>
-         More info
-        </button>
-        </Link>
-      </div>
-    </div>
 
 
 
@@ -72,19 +224,7 @@ export default function Sale() {
 
 
 
-    <div className='h-4/6 bg-slate-400 opacity-100 p-3 '>
-    {/* <button className='bg-green-500 rounded-full tracking-tighter px-5 py-5'>
-     
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-10 h-8 stroke-1">
-  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-</svg>
 
-
-    </button> */}
-<Link to="/NewSalesListing">
-    <button className='tracking-tighter text-xl  bg-green-500 px-4 rounded-full py-1 border-black border-2'>Create New</button>
-    </Link>
-    </div>
 
  
 
@@ -92,6 +232,17 @@ export default function Sale() {
 
       </div>
       
+
+
+
+
+
+
+     
+
+
+
+
 
 
 

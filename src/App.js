@@ -12,6 +12,16 @@ import Shortlet from './Pages/Shortlet';
 import SalesListingInfo from './components/SalesListingInfo';
 import NewSalesListing from './Pages/NewSalesListing';
 import CreateStaff from './components/CreateStaff';
+import MediaDetails from './components/MediaDetails';
+import BlogDetails from "./Pages/BlogDetails"
+
+import { AuthContextProvider } from "./context/AuthContext"
+import ProtectedRoute from "./components/ProtectedRoute"
+import Login from './Authcomponents/Login';
+import Signup from "./Authcomponents/Signup"
+import Profile from './Pages/Profile';
+import Help from './Pages/Help';
+import ForgotPassword from './Authcomponents/ForgotPassword';
 
 
 
@@ -21,10 +31,28 @@ import CreateStaff from './components/CreateStaff';
 
 function App() {
   return (
+
+    <AuthContextProvider>
     <Router>
     <Routes>
 
-    <Route path="/" element={<Dashboard />} />
+    {/* <Route path="/" element={<Dashboard />} /> */}
+
+    <Route path="/" element={<Login/>}/>
+    <Route path='/Signup' element={<Signup />} />
+    <Route path='/ForgotPassword' element={<ForgotPassword />} />
+      
+      <Route path="/Dashboard" element={
+      <ProtectedRoute>
+      <Dashboard/>
+      </ProtectedRoute>
+      }/>
+
+
+
+
+
+
     <Route path="/Blog" element={<Blog/>} />
     <Route path="/Listing" element={<Listing/>} />
     <Route path="/Media" element={<Media />} />
@@ -36,10 +64,15 @@ function App() {
     <Route path="/SalesListingInfo" element={<SalesListingInfo />} />
     <Route path="/NewSalesListing" element={<NewSalesListing />} />
     <Route path="/CreateStaff" element={<CreateStaff />} />
+    <Route path="/MediaDetails" element={<MediaDetails />} />
+    <Route path="/BlogDetails" element={<BlogDetails />} />
+    <Route path="/signUp" element={<signUp/>} />
+    <Route path="/Profile" element={<Profile/>} />
+    <Route path="/Help" element={<Help/>} />
 
   </Routes>
   </Router>
-
+</AuthContextProvider>
 
   
   );

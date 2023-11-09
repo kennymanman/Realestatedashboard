@@ -1,16 +1,139 @@
-import React from 'react'
+import React, {useState} from 'react'
+import { useLocation } from "react-router-dom";
 import Nav from './Nav'
 import contactimagefive from "../Images/contactimagefive.jpg"
 import testtwo from "../Images/testtwo.jpg"
-import dashvideo from "../Video/dashvideo.mp4"
+// import dashvideo from "../Video/dashvideo.mp4"
 import floorplan from "../Images/floorplan.jpg"
 import { Link } from 'react-router-dom'
 
+import { db } from '../config/firebaseConfig';
+import {
+  query,
+  collection,
+  onSnapshot,
+  updateDoc,
+  doc,
+  addDoc,
+  deleteDoc,
+  Timestamp,
+  getDocs
+} from 'firebase/firestore';
+
+import { useNavigate } from 'react-router-dom';
+
+import { Viewer } from '@photo-sphere-viewer/core';
+
+import virtual from "../Images/virtual.jpg"
+
+import { getDownloadURL, listAll, ref, uploadBytes } from "firebase/storage";
+import { v4 as uuidv4 } from 'uuid';
+import { imageDB } from '../config/firebaseConfig'
 
 
 
 
-export default function SalesListingInfo() {
+
+
+
+
+
+
+
+
+
+
+
+export default function SalesListingInfo(props) {
+
+const location = useLocation()
+const navigate = useNavigate();
+
+console.log("location.state is:", location.state)
+const sale = location.state.sale
+// sale.id = location.state.sale.id;
+
+
+const [saleName, setSaleName] = useState(sale.name);
+const [saleLocation, setSaleLocation] = useState(sale.location);
+const [firstImage, setFirstImage] = useState(sale.imageUrls[0]);
+const [imageOne, setImageOne] = useState(sale.imageUrls[1]);
+
+
+// //Edit Sale
+// const editSale = async ({id}) => {
+//   const saleDoc = doc(db, "sale",id, location.state.sale.id, location.state.sale.name , location.state.sale.imageUrls[0], location.state.sale.imageUrls[1] );
+//   // const newDate = {date: new Date().toLocaleString() }
+//   await updateDoc(saleDoc, {})
+  
+// };
+
+
+// const editSale = () => {
+//   const saleDoc = doc(db, "sale", sale.id);
+//   const newData = {
+//     name: saleName,
+//     location: saleLocation,
+//     imageUrls: [firstImage, imageOne],
+//     //  date: new Date().toLocaleString()  // << if you want to add this
+//   };
+
+//   return updateDoc(saleDoc, newData)  
+// };
+
+
+const editSale = async (event) => {
+  
+  event.preventDefault();
+
+  let imageUrls = [];
+  
+    if (firstImage !== null) {
+      const firstImageRef = ref(imageDB, `forsale/${uuidv4()}`);
+      const value = await uploadBytes(firstImageRef, firstImage);
+      console.log("uploadBytes returned:", value);
+      const firstImageUrl = await getDownloadURL(value.ref);
+      if (firstImageUrl) {
+        imageUrls.push(firstImageUrl);
+      }
+    }
+    if (imageOne !== null) {
+      const imageOneRef = ref(imageDB, `forsale/${uuidv4()}`);
+      const value = await uploadBytes(imageOneRef, imageOne)
+      console.log("uploadBytes returned:", value);
+      const imageOneUrl = await getDownloadURL(value.ref);
+      if (imageOneUrl) {
+        imageUrls.push(imageOneUrl);
+      }
+    }
+
+
+
+  const saleDoc = doc(db, "sale", sale.id);
+  const newData = {
+    name: saleName,
+    location: saleLocation,
+    imageUrls: imageUrls,
+  
+    //  date: new Date().toLocaleString()  // << if you want to add this
+  };
+  console.log("updating sale doc to:", newData)
+  return updateDoc(saleDoc, newData)  
+  
+};
+
+
+console.log("sale is", location.state.sale)
+
+
+
+  // Delete Sale
+  const deleteSale = async (id) => {
+    await deleteDoc(doc(db, 'sale', id));
+  };
+
+
+
   return (
 
   <div className='bg-black h-fit'>
@@ -31,15 +154,68 @@ export default function SalesListingInfo() {
 <div className=' mt-60 col-span-2'>
 
 
+
+<form  onSubmit={editSale}>
+
 <div className='flex justify-between my-7 '>
     <h1 className='text-xl tracking-tighter text-white '>Property Name:</h1>
-    <h1 className='text-xl tracking-tighter text-white max-w-sm '>Shoreside Vale.</h1>
+    <h1 className='text-xl tracking-tighter text-white max-w-sm '>{sale.name}</h1>
+    <input
+    className='text-xl tracking-tighter text-white max-w-sm bg-transparent'
+    placeholder={saleName}
+    value={saleName}
+   onChange={(e) => setSaleName(e.target.value)}
+    />
 </div>
+
+
 
 
 <div className='flex justify-between my-7 '>
     <h1 className='text-xl tracking-tighter text-white '>Property Location:</h1>
-    <h1 className='text-xl tracking-tighter text-white max-w-md  '>Lagos, Nigeria</h1>
+    <h1 className='text-xl tracking-tighter text-white max-w-sm '>{sale.location}</h1>
+    <input
+    className='text-xl tracking-tighter text-white max-w-sm bg-transparent'
+    placeholder={saleLocation}
+    value={saleLocation}
+   onChange={(e) => setSaleLocation(e.target.value)}
+    />
+</div>
+
+
+
+<img className='object-cover h-full w-full' src={sale.imageUrls[0]} alt=""   /> 
+
+<input
+className='bg-transparent border-b-2 border-slate-400 text-white w-96 text-xl tracking-tighter mt-3'
+
+onChange={(e) => setFirstImage(e.target.value)}
+type="file"
+/>
+
+
+
+<img className='object-cover h-full w-full' src={sale.imageUrls[1]} alt=""   /> 
+
+<input
+className='bg-transparent border-b-2 border-slate-400 text-white w-96 text-xl tracking-tighter mt-3'
+
+onChange={(e) => setImageOne(e.target.value)}
+type="file"
+/>
+
+
+<button className='bg-green-200 px-4'>Update</button>
+</form>
+
+
+
+
+
+
+<div className='flex justify-between my-7 '>
+    <h1 className='text-xl tracking-tighter text-white '>Property Location:</h1>
+    <h1 className='text-xl tracking-tighter text-white max-w-md  '>{location.state.sale.location}</h1>
 </div>
 
 
@@ -54,6 +230,12 @@ export default function SalesListingInfo() {
 <div className='flex justify-between my-7 '>
     <h1 className='text-xl tracking-tighter text-white '>Type:</h1>
     <h1 className='text-xl tracking-tighter text-white max-w-md  '>Apartment</h1>
+</div>
+
+
+<div className='flex justify-between my-7 '>
+    <h1 className='text-xl tracking-tighter text-white '>Size:</h1>
+    <h1 className='text-xl tracking-tighter text-white max-w-md  '>1200SQM</h1>
 </div>
 
 
@@ -104,12 +286,19 @@ export default function SalesListingInfo() {
 
 
 <div className='flex justify-between my-7 '>
-    <h1 className='text-xl tracking-tighter text-white '>Note from you:</h1>
+    <h1 className='text-xl tracking-tighter text-white '>Realtor's Note:</h1>
     <h1 className='text-lg tracking-tighter text-white max-w-sm  '>Lorem Ipsum is simply dummy text of the printing and typesetting industry Lorem Ipsum is simply dummy text of the printing and typesetting industry.
     Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book..</h1>
 </div>
 
 
+
+
+<div className='flex justify-between'>
+  <button  onClick={() => {navigate("/NewSalesListing" , {state:{sale}})}} className='bg-green-500 rounded-full px-5  tracking-tighter'>Edit </button>
+
+  <button   onClick={() => {navigate("/Sale", deleteSale(location.state.sale.id))}} className='bg-red-500 rounded-full px-5  tracking-tighter'>Delete </button>
+</div>
 
  </div>       
         
@@ -128,7 +317,14 @@ export default function SalesListingInfo() {
 
 <h1 className='text-xl tracking-tighter text-white my-3 '>First Impression</h1>
 <div className=''>
-  <img className='object-cover h-full w-full' src={contactimagefive} alt=""   />
+  <img className='object-cover h-full w-full' src={location.state.sale.imageUrls[0]} alt=""   /> 
+
+  <input
+  className='object-cover h-full w-full'
+    src={location.state.sale.imageUrls[0]}
+     alt="" 
+  type="file"
+  />
 </div>
 
 
@@ -214,7 +410,7 @@ export default function SalesListingInfo() {
 
 <h1 className='text-xl tracking-tighter text-white my-2 text-center '>Video of Property</h1>
 <div className='h-2/4 p-2'>
-<video autoPlay loop className='object-fit h-full w-full'  src={dashvideo} type="mp4"  />
+<video autoPlay loop className='object-fit h-full w-full'  src={"https://player.vimeo.com/external/510522235.sd.mp4?s=dcd6cb044aa36f8acb85d68789e34c735a4f10ec&profile_id=164&oauth2_token_id=57447761"} type="mp4"  />
 </div>
 
 
@@ -226,6 +422,73 @@ export default function SalesListingInfo() {
 <div className='h-1/3 p-2'>
 <img className='object-cover h-full w-full' src={floorplan} alt=""  />
 </div>
+
+
+{/* <Pannellum
+        width="100%"
+        height="500px"
+        image={virtual}
+        pitch={10}
+        yaw={180}
+        hfov={110}
+        autoLoad
+        onLoad={() => {
+            console.log("panorama loaded");
+        }}
+    >
+      <Pannellum.Hotspot
+        type="info"
+        pitch={11}
+        yaw={-167}
+        text="Info Hotspot Text 3"
+        URL="https://github.com/farminf/pannellum-react"
+      />
+
+      <Pannellum.Hotspot
+        type="info"
+        pitch={31}
+        yaw={-107}
+        text="Info Hotspot Text 4"
+        URL="https://github.com/farminf/pannellum-react"
+      />
+    </Pannellum> */}
+
+
+
+{/* <Pannellum
+        width="100%"
+        height="500px"
+        image={virtual}
+        pitch={10}
+        yaw={180}
+        hfov={110}
+        autoLoad
+        showZoomCtrl={false}
+        onLoad={() => {
+          console.log("panorama loaded");
+        }}
+      >
+        <Pannellum.Hotspot
+          type="custom"
+          pitch={31}
+          yaw={150}
+          handleClick={(evt, name) => console.log(name)}
+          name="hs1"
+        />
+      </Pannellum> */}
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css"/>
+
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
+
+<div className='w-full h-screen'>
+
+
+</div>
+
+
 
 
 
