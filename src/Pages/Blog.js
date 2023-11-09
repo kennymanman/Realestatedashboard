@@ -87,7 +87,7 @@ Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, wh
 
 <hr/>
 
-<h1 className='tracking-tighter text-white text-3xl mt-4'>10 things you must look out for in house hunting</h1>
+<h1 className='tracking-tighter text-white text-3xl mt-4'>10 things you must look out for in house hunting..</h1>
 
 <p className='tracking-tighter text-white mt-7 text-sm'>Quick Summary</p>
 
