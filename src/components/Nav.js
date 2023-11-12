@@ -2,7 +2,7 @@ import React from 'react'
 import { UserAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
-import Augustflow from "../logo/Augustflow4.png"
+import Augustflow4 from "../logo/Augustflow4.png"
 
 
 
@@ -42,7 +42,7 @@ export default function Nav() {
 <div className='flex justify-between'>
 
   <Link to="/Dashboard">
-<img className='w-44 ' src={Augustflow} alt="AugustFlow by August Deep Tech" />
+<img className='w-44 ' src={Augustflow4} alt="AugustFlow by August Deep Tech" />
 </Link>
 
 
@@ -54,8 +54,10 @@ export default function Nav() {
 
 
 <div className='flex gap-7'>
-<h1 className='tracking-tighter text-2xl text-white'>Logged As: {user.displayName}</h1>
-
+  <div className='flex gap-2'>
+<h1 className='tracking-tighter text-lg text-zinc-400 mt-1'>Logged as</h1>
+<h1 className='tracking-tighter text-2xl text-white'>{user.displayName}</h1>
+</div>
 
 <Link to="/Help">
 <button>

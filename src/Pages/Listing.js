@@ -15,7 +15,7 @@ export default function Listing() {
 
 
   return (
-    <div className=' h-fit bg-black'>
+    <div className='  bg-black min-h-screen max-h-fit'>
 
 <Nav/>
 

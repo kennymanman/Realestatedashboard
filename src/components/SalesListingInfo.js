@@ -453,6 +453,10 @@ type="file"
 </div>
 
 
+
+
+
+
 {/* <Pannellum
         width="100%"
         height="500px"
