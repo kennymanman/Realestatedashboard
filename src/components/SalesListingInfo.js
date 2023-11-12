@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import { useLocation } from "react-router-dom";
 import Nav from './Nav'
 import contactimagefive from "../Images/contactimagefive.jpg"
@@ -60,6 +60,22 @@ const [firstImage, setFirstImage] = useState(sale.imageUrls[0]);
 const [imageOne, setImageOne] = useState(sale.imageUrls[1]);
 
 
+
+const RefreshEvery5Seconds = (props) => {
+  const [count, setCount] = useState(0);
+
+  useEffect( () => {
+      const intervalHandle = setInterval( () => {
+          setCount( currVal => currVal + 1 );
+        }, 5000 );
+
+      return () => clearInterval(intervalHandle)
+    }, [] );
+
+  return <div><p className='text-white'>count: {count}</p></div>;
+}   
+
+
 // //Edit Sale
 // const editSale = async ({id}) => {
 //   const saleDoc = doc(db, "sale",id, location.state.sale.id, location.state.sale.name , location.state.sale.imageUrls[0], location.state.sale.imageUrls[1] );
@@ -83,12 +99,13 @@ const [imageOne, setImageOne] = useState(sale.imageUrls[1]);
 
 
 const editSale = async (event) => {
-  
-  event.preventDefault();
+event.preventDefault();
+<RefreshEvery5Seconds/>
 
   let imageUrls = [];
   
     if (firstImage !== null) {
+   
       const firstImageRef = ref(imageDB, `forsale/${uuidv4()}`);
       const value = await uploadBytes(firstImageRef, firstImage);
       console.log("uploadBytes returned:", value);
@@ -97,6 +114,7 @@ const editSale = async (event) => {
         imageUrls.push(firstImageUrl);
       }
     }
+    
     if (imageOne !== null) {
       const imageOneRef = ref(imageDB, `forsale/${uuidv4()}`);
       const value = await uploadBytes(imageOneRef, imageOne)
@@ -136,9 +154,17 @@ console.log("sale is", location.state.sale)
 
   return (
 
+    
+
   <div className='bg-black h-fit'>
+
+
         
   <Nav />
+
+
+  <RefreshEvery5Seconds/>
+
 
 <Link to="/Sale">
   <button>
@@ -156,6 +182,9 @@ console.log("sale is", location.state.sale)
 
 
 <form  onSubmit={editSale}>
+
+<RefreshEvery5Seconds/>
+
 
 <div className='flex justify-between my-7 '>
     <h1 className='text-xl tracking-tighter text-white '>Property Name:</h1>
@@ -184,12 +213,12 @@ console.log("sale is", location.state.sale)
 
 
 
-<img className='object-cover h-full w-full' src={sale.imageUrls[0]} alt=""   /> 
+<img className='object-cover h-full w-full' src={sale.imageUrls[0]}  alt=""   /> 
 
 <input
 className='bg-transparent border-b-2 border-slate-400 text-white w-96 text-xl tracking-tighter mt-3'
 
-onChange={(e) => setFirstImage(e.target.value)}
+onChange={(e)=>setFirstImage(e.target.files[0])}
 type="file"
 />
 

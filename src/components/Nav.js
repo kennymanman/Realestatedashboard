@@ -46,7 +46,7 @@ export default function Nav() {
 </Link>
 
 
-<h1 className='tracking-tighter text-3xl text-white  '>+Real Estate.</h1>
+<h1 className='tracking-tighter text-3xl text-white  '>+Real Estate</h1>
 </div>
 
 

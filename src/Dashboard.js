@@ -58,7 +58,7 @@ useEffect(()=>{
 {/* <img className='absolute object-cover h-full w-full rounded-xl' src={augustflowdashboard} alt=""  />
 <h1 className='relative text-5xl tracking-tighter text-white px-2  place-self-center'>Dashboard.</h1> */}
 
-<h1 className='text-4xl tracking-tighter text-white  py-4'>{time.toLocaleTimeString()}</h1>
+<h1 className='text-5xl tracking-tighter text-green-500  py-4'>{time.toLocaleTimeString()}</h1>
 </div>
 
 <Link to="/Profile">
@@ -84,7 +84,7 @@ useEffect(()=>{
 <div className='self-end' >
 <Link  to="/ScheduledInspection">
     <button className='bg-black px-8 py-1 rounded-full  place-self-end'>
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-7 stroke-white">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-6 stroke-white">
   <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
 </svg>
 </button>
@@ -121,15 +121,15 @@ useEffect(()=>{
 
 <div className='col-span-1 grid grid-rows-3 gap-2  '>
 
-<div className='bg-orange-500 row-span-1 rounded-lg p-2 '>
+<div className='bg-orange-600 row-span-1 rounded-lg p-2 '>
 <h1 className='tracking-tighter text-3xl text-start text-black'>Property Listing</h1>
 {/* <hr className='my-2'/> */}
 <p className='text-md tracking-tighter max-w-xl text-zinc-600 my-3'>Create & manage property listing for your agency and your website. Real-time sync and listing manangement. </p>
 
 <div className='self-end' >
 <Link  to="/Listing">
-    <button className='bg-black px-8 py-1 rounded-full  place-self-end'>
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-7 stroke-white">
+    <button className='bg-black px-7 py-1  rounded-full  place-self-end'>
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-6 stroke-white">
   <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
 </svg>
 
@@ -145,22 +145,24 @@ useEffect(()=>{
 
 <div className='col-span-2 bg-green-600 rounded-lg p-2'>
 
+<div className='grid gap-20'>
 <h1 className='tracking-tighter text-3xl text-start text-black'>Media & News</h1>
+
 <Link  to="/Media">
-    <button className='bg-black px-8 py-1 rounded-full  place-self-end'>
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-7 stroke-white">
+    <button className='bg-black px-8 py-1 rounded-full  '>
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-6 stroke-white">
   <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
 </svg>
 </button>
 </Link>
-
+</div>
 </div>
 
 
 <div className='col-span-3 bg-white rounded-lg p-2'>
 <Link  to="/StaffMembers">
     <button className='bg-black px-8 py-1 rounded-full  place-self-end'>
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-7 stroke-white">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-6 stroke-white">
   <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
 </svg>
 </button>
@@ -174,7 +176,7 @@ useEffect(()=>{
 <div className='col-span-2 bg-yellow-400 rounded-lg p-2'>
 <Link  to="/Blog">
     <button className='bg-black px-8 py-1 rounded-full  place-self-end'>
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-7 stroke-white">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-6 stroke-white">
   <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
 </svg>
 </button>
