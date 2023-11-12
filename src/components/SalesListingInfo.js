@@ -31,6 +31,9 @@ import { v4 as uuidv4 } from 'uuid';
 import { imageDB } from '../config/firebaseConfig'
 
 
+import { Pannellum } from "pannellum-react";
+
+
 
 
 
@@ -512,16 +515,44 @@ type="file"
 
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css"/>
+{/* <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css"/>
 
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
 
 <div className='w-full h-screen'>
 
 
-</div>
+</div> */}
 
 
+
+<div className="h-screen flex">
+                <Pannellum
+                    width="100%"
+                    height="100%"
+                    image={virtual}
+                    yaw={300}
+                    hfov={110}
+                    autoLoad
+                    autoRotate={-5}
+                    compass={true}
+                    showZoomCtrl={false}
+                    mouseZoom={false}
+                    onLoad={() => {
+                        console.log("panorama loaded");
+                    }}
+                >
+                    {/* <Pannellum.Hotspot
+                        type="custom"
+                        pitch={-10}
+                        yaw={-120}
+                        handleClick={(evt, name) =>
+                            setCurrentScene(currentScene)
+                        }
+                    /> */}
+                </Pannellum>
+
+            </div>
 
 
 
