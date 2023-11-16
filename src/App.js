@@ -9,7 +9,7 @@ import StaffMembers from "./Pages/StaffMembers"
 import Rent from "./Pages/Rent"
 import Sale from "./Pages/Sale"
 import Shortlet from './Pages/Shortlet';
-import SalesListingInfo from './components/SalesListingInfo';
+import SalesListingInfo from './Pages/SalesListingInfo';
 import NewSalesListing from './Pages/NewSalesListing';
 import CreateStaff from './components/CreateStaff';
 import MediaDetails from './components/MediaDetails';
@@ -29,10 +29,15 @@ import ForgotPassword from './Authcomponents/ForgotPassword';
 
 
 
+
 function App() {
   return (
 
+    
+
     <AuthContextProvider>
+
+
     <Router>
     <Routes>
 
@@ -70,8 +75,12 @@ function App() {
     <Route path="/Profile" element={<Profile/>} />
     <Route path="/Help" element={<Help/>} />
 
+    
+
   </Routes>
   </Router>
+
+
 </AuthContextProvider>
 
   

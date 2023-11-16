@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 import { useLocation } from "react-router-dom";
-import Nav from './Nav'
+import Nav from '../components/Nav'
 import contactimagefive from "../Images/contactimagefive.jpg"
 import testtwo from "../Images/testtwo.jpg"
 // import dashvideo from "../Video/dashvideo.mp4"
@@ -31,16 +31,11 @@ import { v4 as uuidv4 } from 'uuid';
 import { imageDB } from '../config/firebaseConfig'
 
 
-import { Pannellum } from "pannellum-react";
+import { Pannellum, PannellumVideo } from "pannellum-react";
 
+// import virtualvideo from "../Video/virtualvideo.mp4"
 
-
-
-
-
-
-
-
+import RefreshEvery5Seconds from '../components/RefreshEvery5Seconds';
 
 
 
@@ -64,19 +59,19 @@ const [imageOne, setImageOne] = useState(sale.imageUrls[1]);
 
 
 
-const RefreshEvery5Seconds = (props) => {
-  const [count, setCount] = useState(0);
+// const RefreshEvery5Seconds = (props) => {
+//   const [count, setCount] = useState(0);
 
-  useEffect( () => {
-      const intervalHandle = setInterval( () => {
-          setCount( currVal => currVal + 1 );
-        }, 5000 );
+//   useEffect( () => {
+//       const intervalHandle = setInterval( () => {
+//           setCount( currVal => currVal + 1 );
+//         }, 5000 );
 
-      return () => clearInterval(intervalHandle)
-    }, [] );
+//       return () => clearInterval(intervalHandle)
+//     }, [] );
 
-  return <div><p className='text-white'>count: {count}</p></div>;
-}   
+//   return <div><p className='text-white'>count: {count}</p></div>;
+// }   
 
 
 // //Edit Sale
@@ -103,9 +98,9 @@ const RefreshEvery5Seconds = (props) => {
 
 const editSale = async (event) => {
 event.preventDefault();
-<RefreshEvery5Seconds/>
 
-  let imageUrls = [];
+
+let imageUrls = [];
   
     if (firstImage !== null) {
    
@@ -154,6 +149,8 @@ console.log("sale is", location.state.sale)
   };
 
 
+ 
+
 
   return (
 
@@ -161,12 +158,12 @@ console.log("sale is", location.state.sale)
 
   <div className='bg-black h-fit'>
 
-
+<RefreshEvery5Seconds/>
         
   <Nav />
 
 
-  <RefreshEvery5Seconds/>
+  
 
 
 <Link to="/Sale">
@@ -186,12 +183,12 @@ console.log("sale is", location.state.sale)
 
 <form  onSubmit={editSale}>
 
-<RefreshEvery5Seconds/>
+
 
 
 <div className='flex justify-between my-7 '>
-    <h1 className='text-xl tracking-tighter text-white '>Property Name:</h1>
-    <h1 className='text-xl tracking-tighter text-white max-w-sm '>{sale.name}</h1>
+    <h1 className='text-xl tracking-tighter text-zinc-400 '>Property Name:</h1>
+    <h1 className='text-2xl tracking-tighter text-white max-w-sm '>{sale.name}</h1>
     <input
     className='text-xl tracking-tighter text-white max-w-sm bg-transparent'
     placeholder={saleName}
@@ -204,8 +201,8 @@ console.log("sale is", location.state.sale)
 
 
 <div className='flex justify-between my-7 '>
-    <h1 className='text-xl tracking-tighter text-white '>Property Location:</h1>
-    <h1 className='text-xl tracking-tighter text-white max-w-sm '>{sale.location}</h1>
+    <h1 className='text-xl tracking-tighter text-zinc-400 '>Property Location:</h1>
+    <h1 className='text-2xl tracking-tighter text-white max-w-sm '>{sale.location}</h1>
     <input
     className='text-xl tracking-tighter text-white max-w-sm bg-transparent'
     placeholder={saleLocation}
@@ -555,6 +552,43 @@ type="file"
             </div>
 
 
+
+
+
+
+
+{/* 
+<div className="h-screen flex">
+
+            <PannellumVideo
+      video={virtualvideo}
+      loop
+      width="100%"
+      height="600px"
+      pitch={10}
+      yaw={180}
+      hfov={140}
+      minHfov={50}
+      maxHfov={180}
+    >
+      <Pannellum.Hotspot
+        type="custom"
+        pitch={31}
+        yaw={150}
+        handleClick={(evt , name) => this.hanldeClick(name)}
+        name="hs1"
+      />
+
+      <Pannellum.Hotspot
+        type="info"
+        pitch={31}
+        yaw={-57}
+        text="Info"
+        URL="https://github.com/farminf"
+      />
+    </PannellumVideo>
+
+</div> */}
 
 
         </div>

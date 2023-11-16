@@ -35,7 +35,7 @@ export default function Nav() {
 <div>
 
 
-<div className='flex  justify-between pt-4 px-2 py-2'>
+<div className='flex  justify-between  px-2 py-3'>
 
 {/* <h1 className='tracking-tighter text-3xl text-white  '>AugustFlow + Real Estate</h1> */}
 
@@ -55,8 +55,8 @@ export default function Nav() {
 
 <div className='flex gap-7'>
   <div className='flex gap-2'>
-<h1 className='tracking-tighter text-lg text-zinc-400 mt-1'>Logged as</h1>
-<h1 className='tracking-tighter text-2xl text-white'>{user.displayName}</h1>
+<h1 className='tracking-tighter text-lg text-zinc-400 mt-2'>Logged as</h1>
+<h1 className='tracking-tighter text-2xl text-white mt-1'>{user.displayName}</h1>
 </div>
 
 <Link to="/Help">

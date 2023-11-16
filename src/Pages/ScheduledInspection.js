@@ -1,8 +1,15 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import Nav from "../components/Nav"
 import { useCalendlyEventListener, InlineWidget } from "react-calendly";
 import { Link } from 'react-router-dom';
 import { PopupButton } from "react-calendly";
+
+
+
+
+import Cal, { getCalApi } from "@calcom/embed-react";
+
+// import Calendar from "@ericz1803/react-google-calendar";
 
 
 
@@ -16,6 +23,29 @@ export default function ScheduledInspection() {
   });
 
 
+//Cal.com code
+
+	useEffect(()=>{
+	  (async function () {
+		const cal = await getCalApi();
+		cal("ui", {"styles":{"branding":{"brandColor":"#000000"}},"hideEventTypeDetails":false,"layout":"month_view"});
+	  })();
+	}, [])
+
+
+
+
+  const Schedule =()=> {
+
+    <Cal
+	  calLink="wokeupbored/schedule-inspection"
+	  style={{width:"100%",height:"100%",overflow:"scroll"}}
+	  config={{layout: 'month_view'}}
+	/>;
+
+  }
+
+
 
   return (
 
@@ -26,7 +56,7 @@ export default function ScheduledInspection() {
 
 
       <Link to="/Dashboard">
-  <button>
+      <button>
   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 stroke-white m-2">
   <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 15.75L3 12m0 0l3.75-3.75M3 12h18" />
 </svg>
@@ -35,22 +65,44 @@ export default function ScheduledInspection() {
 
 
 
+
+<button className='px-7 py-1 bg-blue-500 rounded-full'
+	  data-cal-link="wokeupbored/schedule-inspection"
+	  data-cal-config='{"layout":"month_view"}'
+	  >Inspect</button>;
+
+
+
+
+
+
+
+
+<div className='m-4'>
+
+      <iframe className='w-full h-screen ' src="https://calendar.google.com/calendar/embed?height=600&wkst=1&bgcolor=%23ffffff&ctz=Africa%2FLagos&title=Scheduled%20Inspections&src=NjI1ZWE0YTFjZWM0NzQ4MzBhMTFiOTllZTljNTI1ZDEyODkxNGEyYTk2ODg3ZjdiODExYmQyMmU2MDc1OWQ5NUBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=ZW4ubmcjaG9saWRheUBncm91cC52LmNhbGVuZGFyLmdvb2dsZS5jb20&color=%23F4511E&color=%230B8043" ></iframe>
+
+</div>
+
+
+
+ 
+
+
+
       
    
 
 
-
+{/* 
       <PopupButton
       className='bg-green-500 py-10 px-20'
         url="https://calendly.com/primarkhills/property-inspection" 
-        /*
-         * react-calendly uses React's Portal feature (https://reactjs.org/docs/portals.html) to render the popup modal. As a result, you'll need to
-         * specify the rootElement property to ensure that the modal is inserted into the correct domNode.
-         */
+       
         rootElement={document.getElementById("root")}
         text="Click here to schedule!"
       />
-      
+       */}
       </div>
   )
 }
