@@ -1,5 +1,5 @@
-import React, {useState, useEffect} from 'react'
-import { useLocation } from "react-router-dom";
+import React, {useState} from 'react'
+import { useLocation, useParams } from "react-router-dom";
 import Nav from '../components/Nav'
 import contactimagefive from "../Images/contactimagefive.jpg"
 import testtwo from "../Images/testtwo.jpg"
@@ -9,31 +9,23 @@ import { Link } from 'react-router-dom'
 
 import { db } from '../config/firebaseConfig';
 import {
-  query,
-  collection,
-  onSnapshot,
   updateDoc,
   doc,
-  addDoc,
   deleteDoc,
-  Timestamp,
-  getDocs
 } from 'firebase/firestore';
 
 import { useNavigate } from 'react-router-dom';
 
-import { Viewer } from '@photo-sphere-viewer/core';
-
 import virtual from "../Images/virtual.jpg"
 
-import { getDownloadURL, listAll, ref, uploadBytes } from "firebase/storage";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { v4 as uuidv4 } from 'uuid';
 import { imageDB } from '../config/firebaseConfig'
 
 
-import { Pannellum, PannellumVideo } from "pannellum-react";
+import { Pannellum } from "pannellum-react";
 
-// import virtualvideo from "../Video/virtualvideo.mp4"
+
 
 import RefreshEvery5Seconds from '../components/RefreshEvery5Seconds';
 
@@ -43,6 +35,9 @@ import RefreshEvery5Seconds from '../components/RefreshEvery5Seconds';
 
 
 export default function SalesListingInfo(props) {
+
+  let { salesId } = useParams();
+
 
 const location = useLocation()
 const navigate = useNavigate();

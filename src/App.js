@@ -66,7 +66,7 @@ function App() {
     <Route path="/Shortlet" element={<Shortlet />} />
     <Route path="/Rent" element={<Rent />} />
     <Route path="/Sale" element={<Sale />} />
-    <Route path="/SalesListingInfo" element={<SalesListingInfo />} />
+    {/* <Route path="/SalesListingInfo" element={<SalesListingInfo />} /> */}
     <Route path="/NewSalesListing" element={<NewSalesListing />} />
     <Route path="/CreateStaff" element={<CreateStaff />} />
     <Route path="/MediaDetails" element={<MediaDetails />} />
@@ -74,8 +74,9 @@ function App() {
     <Route path="/signUp" element={<signUp/>} />
     <Route path="/Profile" element={<Profile/>} />
     <Route path="/Help" element={<Help/>} />
-
-    
+     
+     {/* Sales Listing Information routing */}
+    <Route path="/SalesListingInfo/:salesId" element={<SalesListingInfo />} />
 
   </Routes>
   </Router>

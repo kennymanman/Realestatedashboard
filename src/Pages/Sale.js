@@ -1,21 +1,18 @@
 import React, {useState, useEffect} from 'react'
 import Nav from '../components/Nav'
-import testone from "../Images/testone.jpg"
 import { Link } from 'react-router-dom'
 import { db } from '../config/firebaseConfig';
 import {
   query,
   collection,
   onSnapshot,
-  updateDoc,
   doc,
-  addDoc,
   deleteDoc,
 } from 'firebase/firestore';
 
 import { useNavigate } from 'react-router-dom';
 import { imageDB } from '../config/firebaseConfig';
-import { getDownloadURL, listAll, ref, uploadBytes } from "firebase/storage";
+import { getDownloadURL, listAll, ref } from "firebase/storage";
 
 import BeatLoader from "react-spinners/BeatLoader";
 
@@ -34,11 +31,11 @@ export default function Sale(props) {
   const [isPending, setIsPending] = useState(true)
   
   const [sale, setSale] = useState([]);
-  const [saleId, setSaleId] = useState('');
-  const [saleName, setSaleName] = useState('');
-  const [saleLocation, setSaleLocation] = useState('');
-  const [salePrice, setSalePrice] = useState('');
-  const [saleType, setSaleType] = useState('');
+  // const [saleId, setSaleId] = useState('');
+  // const [saleName, setSaleName] = useState('');
+  // const [saleLocation, setSaleLocation] = useState('');
+  // const [salePrice, setSalePrice] = useState('');
+  // const [saleType, setSaleType] = useState('');
 
 
   const [firstImageUrl, setFirstImageUrl]= useState('');
@@ -131,9 +128,14 @@ export default function Sale(props) {
       <h1 className='tracking-tighter text-white text-xl '>Type: {sale.type}</h1>
 
 <div className='text-end'>
-<button onClick={()=> {navigate("/SalesListingInfo", {state:{sale}})}}  className='bg-green-500 rounded-full px-3  tracking-tighter'>
+{/* <button onClick={()=> {navigate("/SalesListingInfo", {state:{sale}})}}  className='bg-green-500 rounded-full px-3  tracking-tighter'>
  More info
+</button> */}
+
+<button onClick={()=> {navigate("SalesListingInfo/5i0buXSUr6JlDY01UmcR")}} className='bg-green-500 rounded-full px-3  tracking-tighter'> 
+More info
 </button>
+
 </div>
 
 
