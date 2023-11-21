@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import './App.css';
 import Dashboard from './Dashboard';
 import Blog from "./Pages/Blog"
@@ -22,7 +22,8 @@ import Signup from "./Authcomponents/Signup"
 import Profile from './Pages/Profile';
 import Help from './Pages/Help';
 import ForgotPassword from './Authcomponents/ForgotPassword';
-
+import Insights from './Pages/Insights';
+import PageNotFound from './components/PageNotFound';
 
 
 
@@ -74,9 +75,13 @@ function App() {
     <Route path="/signUp" element={<signUp/>} />
     <Route path="/Profile" element={<Profile/>} />
     <Route path="/Help" element={<Help/>} />
+    <Route path="/Insights" element={<Insights/>} />
+    <Route path="*" element={<PageNotFound/>} />
      
      {/* Sales Listing Information routing */}
     <Route path="/SalesListingInfo/:salesId" element={<SalesListingInfo />} />
+
+
 
   </Routes>
   </Router>

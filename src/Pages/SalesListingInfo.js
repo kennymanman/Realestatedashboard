@@ -187,7 +187,7 @@ console.log("sale is", location.state.sale)
     <input
     className='text-xl tracking-tighter text-white max-w-sm bg-transparent'
     placeholder={saleName}
-    value={saleName}
+    value={sale.name}
    onChange={(e) => setSaleName(e.target.value)}
     />
 </div>
