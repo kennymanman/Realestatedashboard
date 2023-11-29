@@ -38,6 +38,9 @@ export default function SalesListingInfo(props) {
 
   let { salesId } = useParams();
 
+  console.log(salesId)
+
+
 
 const location = useLocation()
 const navigate = useNavigate();

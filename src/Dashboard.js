@@ -54,11 +54,11 @@ useEffect(()=>{
 <div>
 <h1 className='text-6xl tracking-tighter text-white  py-4'>Nigeria</h1>
 {/* Day Format */}
-<p className='text-lg tracking-tighter max-w-xl text-zinc-400  '>Today {c.format('DD MMMM, YYYY')}   </p>
+<p className='text-xl tracking-tighter max-w-xl text-zinc-400  '>Today {c.format('DD MMMM, YYYY')}   </p>
 {/* <img className='absolute object-cover h-full w-full rounded-xl' src={augustflowdashboard} alt=""  />
 <h1 className='relative text-5xl tracking-tighter text-white px-2  place-self-center'>Dashboard.</h1> */}
 
-<h1 className='text-5xl tracking-tighter text-green-500  py-4'>{time.toLocaleTimeString()}</h1>
+<h1 className='text-6xl tracking-tighter text-green-500  py-4'>{time.toLocaleTimeString()}</h1>
 </div>
 
 <Link to="/Profile">
@@ -76,13 +76,16 @@ useEffect(()=>{
 
 
 
-<div className='col-span-1 bg-zinc-700 rounded-lg p-2 flex items-stretch'>
+<div className='col-span-1 bg-zinc-700 rounded-lg   grid  relative  '>
+
+  
+<video muted autoPlay loop  className='absolute rounded-lg h-full w-full object-cover' src={"https://player.vimeo.com/external/662281550.sd.mp4?s=dda9250f2f8de70783f0c12b2cff4fd2bfffc52a&profile_id=164&oauth_token_id=57447761"} type="mp4" />
     {/* <h1 className='tracking-tighter text-xl text-center self-start'>Scheduled Inspections</h1> */}
 
-    <h1 className='tracking-tighter text-3xl text-start text-white'>Scheduled Inspections</h1>
+    <h1 className='tracking-tighter text-7xl  text-black relative p-2 place-self-center mt-16 '>AI</h1>
 
-<div className='self-end' >
-<Link  to="/ScheduledInspection">
+<div className='place-self-center  relative p-2' >
+<Link  to="/AI">
     <button className='bg-black px-8 py-1 rounded-full  place-self-end'>
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-6 stroke-white">
   <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
@@ -90,6 +93,7 @@ useEffect(()=>{
 </button>
 </Link>
 </div>
+
 
 </div>
 
@@ -131,7 +135,27 @@ useEffect(()=>{
 
 <div className='col-span-1 grid grid-rows-3 gap-2  '>
 
-<div className='bg-orange-600 row-span-1 rounded-lg p-2 '>
+<div className='grid grid-cols-2 row-span-1 gap-2'>
+
+<div className='bg-blue-600  rounded-lg p-2 '>
+<h1 className='tracking-tighter text-3xl text-start text-white'>Scheduled Inspections</h1>
+{/* <hr className='my-2'/> */}
+{/* <p className='text-md tracking-tighter max-w-xl text-zinc-600 my-3'>Create & manage property listing for your agency and your website. Real-time sync and listing manangement. </p> */}
+
+<div className='self-end' >
+<Link  to="/ScheduledInspection">
+    <button className='bg-black px-7 py-1  rounded-full  place-self-end'>
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-6 stroke-white">
+  <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
+</svg>
+
+</button>
+</Link>
+</div>
+
+</div>
+
+<div className='bg-orange-600  rounded-lg p-2 '>
 <h1 className='tracking-tighter text-3xl text-start text-black'>Property Listing</h1>
 {/* <hr className='my-2'/> */}
 <p className='text-md tracking-tighter max-w-xl text-zinc-600 my-3'>Create & manage property listing for your agency and your website. Real-time sync and listing manangement. </p>
@@ -148,6 +172,9 @@ useEffect(()=>{
 </div>
 
 </div>
+
+</div>
+
 
 
 
@@ -217,8 +244,23 @@ useEffect(()=>{
     <hr className='bg-white my-4'/>
 
 
-<div className='grid grid-cols-5 m-2 p-2  bg-gradient-to-r from-yellow-500 from-10% via-sky-500 via-30% to-emerald-500 to-90% h-64'>
+<div className='grid rounded-lg  mx-2 p-2  bg-gradient-to-r from-yellow-300 from-10% via-sky-500 via-30% to-emerald-500 to-90% h-72'>
 
+
+<div className=' flex justify-center mt-10   '>
+<p className='text-black tracking-tighter px-2 col-span-1  text-6xl font-semibold leading-8'>AugustFlow</p>
+
+<p className='text-black tracking-tighter  col-span-1  text-xl font-semibold '>Ⓡ</p>
+</div>
+
+
+<p className='tracking-tighter text-center mx-10 text-zinc-600'>Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+Lorem Ipsum has been the industry standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</p>
+
+
+
+{/* 
 <div className='col-span-2'>
 
   <div className='flex'>
@@ -235,15 +277,15 @@ useEffect(()=>{
     Lorem Ipsum has been the industry standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
 .</p>
 
-</div>
+</div> */}
 
 
 
 
   
 
-<div className='flex gap-3 col-span-3 flex-row-reverse '>
-    {/* <p className='text-black tracking-tighter px-2 col-span-1 text-end text-2xl'>12:22 AM</p> */}
+{/* <div className='flex gap-3 col-span-3 flex-row-reverse '>
+ 
 
 
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
@@ -256,7 +298,7 @@ useEffect(()=>{
   <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
 </svg>
 
-</div>
+</div> */}
 
 
  </div> 

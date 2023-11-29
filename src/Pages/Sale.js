@@ -118,7 +118,7 @@ export default function Sale(props) {
   
 <div className='h-4/6'>
       <img className='object-fit h-full w-full' src={sale.imageUrls[0]} alt=""  />
-      {/* <h1 className='tracking-tighter text-white text-xl mt-3'>{sale.id}</h1> */}
+       <h1 className='tracking-tighter text-white text-xl mt-3'>{sale.id}</h1> 
       <h1 className='tracking-tighter text-white text-2xl mt-3'>{sale.name}</h1>
       <hr className='border-white my-1'/>
       <h1 className='tracking-tighter text-white text-xl '>${sale.price}</h1>
@@ -132,7 +132,7 @@ export default function Sale(props) {
  More info
 </button> */}
 
-<button onClick={()=> {navigate("SalesListingInfo/5i0buXSUr6JlDY01UmcR")}} className='bg-green-500 rounded-full px-3  tracking-tighter'> 
+<button onClick={()=> {navigate("/SalesListingInfo/5i0buXSUr6JlDY01UmcR")}} className='bg-green-500 rounded-full px-3  tracking-tighter'> 
 More info
 </button>
 
