@@ -23,7 +23,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { imageDB } from '../config/firebaseConfig'
 
 
-import { Pannellum } from "pannellum-react";
+// import { Pannellum } from "pannellum-react";
 
 
 
