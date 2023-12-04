@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import { useLocation, useParams } from "react-router-dom";
 import Nav from '../components/Nav'
 import contactimagefive from "../Images/contactimagefive.jpg"
@@ -12,6 +12,7 @@ import {
   updateDoc,
   doc,
   deleteDoc,
+  getDoc
 } from 'firebase/firestore';
 
 import { useNavigate } from 'react-router-dom';
@@ -24,6 +25,8 @@ import { imageDB } from '../config/firebaseConfig'
 
 
 // import { Pannellum } from "pannellum-react";
+
+import BeatLoader from "react-spinners/BeatLoader";
 
 
 
@@ -40,7 +43,7 @@ export default function SalesListingInfo(props) {
 
   console.log(salesId)
 
-
+  
 
 const location = useLocation()
 const navigate = useNavigate();
@@ -95,6 +98,9 @@ const [imageOne, setImageOne] = useState(sale.imageUrls[1]);
 
 
 const editSale = async (event) => {
+
+  
+
 event.preventDefault();
 
 
@@ -125,6 +131,7 @@ let imageUrls = [];
 
   const saleDoc = doc(db, "sale", sale.id);
   const newData = {
+    
     name: saleName,
     location: saleLocation,
     imageUrls: imageUrls,
@@ -147,6 +154,37 @@ console.log("sale is", location.state.sale)
   };
 
 
+
+
+
+  function useFetchDocument(id) {
+    const [document, setDocument] = useState(null);
+    useEffect(() => {
+      if (!document) {
+        const docRef = doc(db, 'sale', id);
+        getDoc(docRef)
+          .then((docSnapshot) => {
+            if (docSnapshot.exists()) {
+              setDocument(docSnapshot.data());
+            } else {
+              console.log('Document not found');
+            }
+          })
+          .catch((error) => {
+            console.error('Error fetching document:', error);
+          });
+      }
+    }, [document, id]);
+    return document;
+  }
+
+
+
+
+
+
+
+
  
 
 
@@ -156,7 +194,7 @@ console.log("sale is", location.state.sale)
 
   <div className='bg-black h-fit'>
 
-<RefreshEvery5Seconds/>
+
         
   <Nav />
 
@@ -181,7 +219,7 @@ console.log("sale is", location.state.sale)
 
 <form  onSubmit={editSale}>
 
-
+<useFetchDocument/>
 
 
 <div className='flex justify-between my-7 '>
@@ -208,6 +246,8 @@ console.log("sale is", location.state.sale)
    onChange={(e) => setSaleLocation(e.target.value)}
     />
 </div>
+
+
 
 
 

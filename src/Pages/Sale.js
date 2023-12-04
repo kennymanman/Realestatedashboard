@@ -110,9 +110,9 @@ export default function Sale(props) {
 <>
 
 {/* Create New Button */}
-<Link to="/NewSalesListing">
+{/* <Link to="/NewSalesListing">
 <button className='tracking-tighter text-lg  bg-green-500 px-10 rounded-full py-2 border-black border-2 place-self-center'>Create New</button>
-</Link>
+</Link> */}
 
 
   
@@ -132,7 +132,7 @@ export default function Sale(props) {
  More info
 </button> */}
 
-<button onClick={()=> {navigate("/SalesListingInfo/5i0buXSUr6JlDY01UmcR")}} className='bg-green-500 rounded-full px-3  tracking-tighter'> 
+<button onClick={()=> {navigate("/SalesListingInfo/5i0buXSUr6JlDY01UmcR" , {state: {sale}} )}} className='bg-green-500 rounded-full px-3  tracking-tighter'> 
 More info
 </button>
 
@@ -218,7 +218,10 @@ More info
 
 <div className='grid grid-cols-4 gap-4 p-3'>
 
-
+{/* Create New Button */}
+<Link to="/NewSalesListing">
+<button className='tracking-tighter text-lg  bg-green-500 px-10 rounded-full py-2 border-black border-2 place-self-center'>Create New</button>
+</Link>
 
 {sale.map((sale, index) => (
 
