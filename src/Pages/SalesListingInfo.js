@@ -32,82 +32,103 @@ import BeatLoader from "react-spinners/BeatLoader";
 
 import RefreshEvery5Seconds from '../components/RefreshEvery5Seconds';
 
+function FetchDocument(props) {
+  const { id } = props;
+  const [document, setDocument] = useState(null);
+  useEffect(() => {
+    if (!document && id) {
+      console.log(`<FetchDocument> useEffect() - fetching doc: `, id);
+      console.log(`<FetchDocument> useEffect() - fetching db: `, db);
+      const docRef = doc(db, 'sales', id);
+      console.log(`<FetchDocument> useEffect() - fetching PATH: `, docRef.path);
+      getDoc(docRef)
+        .then((docSnapshot) => {
+          if (docSnapshot.exists()) {
+            setDocument(docSnapshot.data());
+          } else {
+            console.log('Document not found');
+          }
+        })
+        .catch((error) => {
+          console.error('Error fetching document:', error);
+        });
+    }
+  }, [document, id]);
 
-
-
-
+  return <div>doc is {JSON.stringify(document)}</div>
+}
 
 export default function SalesListingInfo(props) {
 
   let { salesId } = useParams();
 
-  console.log(salesId)
+  console.log('<SalesListingInfo> salesId param: ', salesId)
+
 
   
-
 const location = useLocation()
-const navigate = useNavigate();
+  const navigate = useNavigate();
 
-console.log("location.state is:", location.state)
-const sale = location.state.sale
-// sale.id = location.state.sale.id;
-
-
-const [saleName, setSaleName] = useState(sale.name);
-const [saleLocation, setSaleLocation] = useState(sale.location);
-const [firstImage, setFirstImage] = useState(sale.imageUrls[0]);
-const [imageOne, setImageOne] = useState(sale.imageUrls[1]);
+  console.log("location.state is:", location.state)
+  const sale = location.state.sale
+  // sale.id = location.state.sale.id;
 
 
-
-// const RefreshEvery5Seconds = (props) => {
-//   const [count, setCount] = useState(0);
-
-//   useEffect( () => {
-//       const intervalHandle = setInterval( () => {
-//           setCount( currVal => currVal + 1 );
-//         }, 5000 );
-
-//       return () => clearInterval(intervalHandle)
-//     }, [] );
-
-//   return <div><p className='text-white'>count: {count}</p></div>;
-// }   
+  const [saleName, setSaleName] = useState(sale.name);
+  const [saleLocation, setSaleLocation] = useState(sale.location);
+  const [firstImage, setFirstImage] = useState(sale.imageUrls[0]);
+  const [imageOne, setImageOne] = useState(sale.imageUrls[1]);
 
 
-// //Edit Sale
-// const editSale = async ({id}) => {
-//   const saleDoc = doc(db, "sale",id, location.state.sale.id, location.state.sale.name , location.state.sale.imageUrls[0], location.state.sale.imageUrls[1] );
-//   // const newDate = {date: new Date().toLocaleString() }
-//   await updateDoc(saleDoc, {})
+
+  // const RefreshEvery5Seconds = (props) => {
+  //   const [count, setCount] = useState(0);
+
+  //   useEffect( () => {
+  //       const intervalHandle = setInterval( () => {
+  //           setCount( currVal => currVal + 1 );
+  //         }, 5000 );
+
+  //       return () => clearInterval(intervalHandle)
+  //     }, [] );
+
+  //   return <div><p className='text-white'>count: {count}</p></div>;
+  // }
+
+
+  // //Edit Sale
+  // const editSale = async ({id}) => {
+  //   const saleDoc = doc(db, "sale",id, location.state.sale.id, location.state.sale.name , location.state.sale.imageUrls[0], location.state.sale.imageUrls[1] );
+  //   // const newDate = {date: new Date().toLocaleString() }
+  //   await updateDoc(saleDoc, {})
+
+  // };
+
+
+  // const editSale = () => {
+  //   const saleDoc = doc(db, "sale", sale.id);
+  //   const newData = {
+  //     name: saleName,
+  //     location: saleLocation,
+  //     imageUrls: [firstImage, imageOne],
+  //     //  date: new Date().toLocaleString()  // << if you want to add this
+  //   };
+
+  //   return updateDoc(saleDoc, newData)
+  // };
+
+
+  const editSale = async (event) => {
+
   
-// };
+
+    event.preventDefault();
 
 
-// const editSale = () => {
-//   const saleDoc = doc(db, "sale", sale.id);
-//   const newData = {
-//     name: saleName,
-//     location: saleLocation,
-//     imageUrls: [firstImage, imageOne],
-//     //  date: new Date().toLocaleString()  // << if you want to add this
-//   };
+    let imageUrls = [];
 
-//   return updateDoc(saleDoc, newData)  
-// };
-
-
-const editSale = async (event) => {
-
-  
-
-event.preventDefault();
-
-
-let imageUrls = [];
-  
     if (firstImage !== null) {
-   
+
       const firstImageRef = ref(imageDB, `forsale/${uuidv4()}`);
       const value = await uploadBytes(firstImageRef, firstImage);
       console.log("uploadBytes returned:", value);
@@ -116,7 +137,7 @@ let imageUrls = [];
         imageUrls.push(firstImageUrl);
       }
     }
-    
+
     if (imageOne !== null) {
       const imageOneRef = ref(imageDB, `forsale/${uuidv4()}`);
       const value = await uploadBytes(imageOneRef, imageOne)
@@ -127,23 +148,23 @@ let imageUrls = [];
       }
     }
 
-
+    
 
   const saleDoc = doc(db, "sale", sale.id);
-  const newData = {
-    
-    name: saleName,
-    location: saleLocation,
-    imageUrls: imageUrls,
+    const newData = {
+
+      name: saleName,
+      location: saleLocation,
+      imageUrls: imageUrls,
+
+      //  date: new Date().toLocaleString()  // << if you want to add this
+    };
+    console.log("updating sale doc to:", newData)
+    return updateDoc(saleDoc, newData)  
   
-    //  date: new Date().toLocaleString()  // << if you want to add this
   };
-  console.log("updating sale doc to:", newData)
-  return updateDoc(saleDoc, newData)  
+
   
-};
-
-
 console.log("sale is", location.state.sale)
 
 
@@ -153,73 +174,38 @@ console.log("sale is", location.state.sale)
     await deleteDoc(doc(db, 'sale', id));
   };
 
-
-
-
-
-  function useFetchDocument(id) {
-    const [document, setDocument] = useState(null);
-    useEffect(() => {
-      if (!document) {
-        const docRef = doc(db, 'sale', id);
-        getDoc(docRef)
-          .then((docSnapshot) => {
-            if (docSnapshot.exists()) {
-              setDocument(docSnapshot.data());
-            } else {
-              console.log('Document not found');
-            }
-          })
-          .catch((error) => {
-            console.error('Error fetching document:', error);
-          });
-      }
-    }, [document, id]);
-    return document;
-  }
-
-
-
-
-
-
-
-
- 
-
-
   return (
 
     
 
-  <div className='bg-black h-fit'>
+    <div className='bg-black h-fit'>
 
 
         
-  <Nav />
+      <Nav />
 
-
+      
   
 
 
 <Link to="/Sale">
-  <button>
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 stroke-white m-2">
-  <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 15.75L3 12m0 0l3.75-3.75M3 12h18" />
-</svg>
-</button>
-</Link>
+        <button>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 stroke-white m-2">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 15.75L3 12m0 0l3.75-3.75M3 12h18" />
+          </svg>
+        </button>
+      </Link>
 
 
-<div className='grid grid-cols-5 gap-7 p-2'>
+      <div className='grid grid-cols-5 gap-7 p-2'>
 
-<div className=' mt-60 col-span-2'>
-
+        <div className=' mt-60 col-span-2'>
+          
 
 
 <form  onSubmit={editSale}>
 
-<useFetchDocument/>
+<FetchDocument id={salesId} />
 
 
 <div className='flex justify-between my-7 '>
