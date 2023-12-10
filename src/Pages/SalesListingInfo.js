@@ -16,21 +16,29 @@ import {
 } from 'firebase/firestore';
 
 import { useNavigate } from 'react-router-dom';
-
 import virtual from "../Images/virtual.jpg"
-
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { getDownloadURL, ref, uploadBytes, getStorage } from "firebase/storage";
 import { v4 as uuidv4 } from 'uuid';
 import { imageDB } from '../config/firebaseConfig'
-
-
 // import { Pannellum } from "pannellum-react";
-
-import BeatLoader from "react-spinners/BeatLoader";
-
-
-
 import RefreshEvery5Seconds from '../components/RefreshEvery5Seconds';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 function FetchDocument(props) {
   const { id } = props;
@@ -58,7 +66,37 @@ function FetchDocument(props) {
   return <div>doc is {JSON.stringify(document)}</div>
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
 export default function SalesListingInfo(props) {
+
+
+
+
+
+  const storage = getStorage();
+
+
+
+
+
+
+
+
+
+
+
+
 
   let { salesId } = useParams();
 
@@ -168,11 +206,59 @@ const location = useLocation()
 console.log("sale is", location.state.sale)
 
 
-
   // Delete Sale
   const deleteSale = async (id) => {
     await deleteDoc(doc(db, 'sale', id));
   };
+
+
+
+  
+    
+    
+  
+    // const downloadImage = async () => {
+    //   const storageRef = ref(imageDB, `forsale/${uuidv4()}`);
+    //   const downloadUrl = await storageRef.getDownloadURL();
+    //   setFirstImage(downloadUrl);
+    // };
+
+
+
+
+    const [imageUrl, setImageUrl] = useState(null);
+  const [downloadUrl, setDownloadUrl] = useState(null);
+  const firstImageRef = ref(imageDB, `forsale/${uuidv4()}`);
+  
+
+  useEffect(() => {
+    // Retrieve the download URL for the image
+    const fetchImageUrl = async () => {
+      try {
+        const url = await getDownloadURL(firstImageRef);
+        setImageUrl(url);
+        setDownloadUrl(url); // Set download URL for button
+      } catch (error) {
+        console.error("Error fetching image URL:", error);
+      }
+    };
+
+    fetchImageUrl();
+  }, []);
+
+  const handleDownload = () => {
+    if (downloadUrl) {
+      const link = document.createElement("a");
+      link.href = downloadUrl;
+      link.download = "downloaded-image.jpg"; // Set desired filename
+      link.click();
+    }
+  };
+
+  
+
+
+  
 
   return (
 
@@ -245,6 +331,20 @@ className='bg-transparent border-b-2 border-slate-400 text-white w-96 text-xl tr
 onChange={(e)=>setFirstImage(e.target.files[0])}
 type="file"
 />
+
+
+<div>
+      {imageUrl && <img src={imageUrl} alt="Downloadable Image" />}
+      <button className='bg-white px-4' onClick={handleDownload} disabled={!downloadUrl}>
+        Download Image
+      </button>
+    </div>
+       
+      
+    
+
+
+
 
 
 
