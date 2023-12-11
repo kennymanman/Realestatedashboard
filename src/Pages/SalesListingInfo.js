@@ -1,26 +1,30 @@
-import React, {useState, useEffect} from 'react'
-import { useLocation, useParams } from "react-router-dom";
-import Nav from '../components/Nav'
-import contactimagefive from "../Images/contactimagefive.jpg"
-import testtwo from "../Images/testtwo.jpg"
+import React, { useState, useEffect } from 'react';
+import { useLocation, useParams } from 'react-router-dom';
+import Nav from '../components/Nav';
+import contactimagefive from '../Images/contactimagefive.jpg';
+import testtwo from '../Images/testtwo.jpg';
 // import dashvideo from "../Video/dashvideo.mp4"
-import floorplan from "../Images/floorplan.jpg"
-import { Link } from 'react-router-dom'
+import floorplan from '../Images/floorplan.jpg';
+import { Link } from 'react-router-dom';
 
 import { db } from '../config/firebaseConfig';
-import {
-  updateDoc,
-  doc,
-  deleteDoc,
-  getDoc
-} from 'firebase/firestore';
+import { updateDoc, doc, deleteDoc, getDoc } from 'firebase/firestore';
 
 import { useNavigate } from 'react-router-dom';
-import virtual from "../Images/virtual.jpg"
-import { getDownloadURL, ref, uploadBytes, getStorage } from "firebase/storage";
+
+import virtual from '../Images/virtual.jpg';
+
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { v4 as uuidv4 } from 'uuid';
 import { imageDB } from '../config/firebaseConfig'
+
+
 // import { Pannellum } from "pannellum-react";
+
+import BeatLoader from "react-spinners/BeatLoader";
+
+
+
 import RefreshEvery5Seconds from '../components/RefreshEvery5Seconds';
 
 
@@ -63,7 +67,7 @@ function FetchDocument(props) {
     }
   }, [document, id]);
 
-  return <div>doc is {JSON.stringify(document)}</div>
+  return <div>doc is {JSON.stringify(document)}</div>;
 }
 
 
@@ -79,45 +83,21 @@ function FetchDocument(props) {
 
 
 export default function SalesListingInfo(props) {
-
-
-
-
-
-  const storage = getStorage();
-
-
-
-
-
-
-
-
-
-
-
-
-
   let { salesId } = useParams();
 
-  console.log('<SalesListingInfo> salesId param: ', salesId)
+  console.log('<SalesListingInfo> salesId param: ', salesId);
 
-
-  
-const location = useLocation()
+  const location = useLocation();
   const navigate = useNavigate();
 
-  console.log("location.state is:", location.state)
-  const sale = location.state.sale
+  console.log('location.state is:', location.state);
+  const sale = location.state.sale;
   // sale.id = location.state.sale.id;
-
 
   const [saleName, setSaleName] = useState(sale.name);
   const [saleLocation, setSaleLocation] = useState(sale.location);
   const [firstImage, setFirstImage] = useState(sale.imageUrls[0]);
   const [imageOne, setImageOne] = useState(sale.imageUrls[1]);
-
-
 
   // const RefreshEvery5Seconds = (props) => {
   //   const [count, setCount] = useState(0);
@@ -133,7 +113,6 @@ const location = useLocation()
   //   return <div><p className='text-white'>count: {count}</p></div>;
   // }
 
-
   // //Edit Sale
   // const editSale = async ({id}) => {
   //   const saleDoc = doc(db, "sale",id, location.state.sale.id, location.state.sale.name , location.state.sale.imageUrls[0], location.state.sale.imageUrls[1] );
@@ -141,7 +120,6 @@ const location = useLocation()
   //   await updateDoc(saleDoc, {})
 
   // };
-
 
   // const editSale = () => {
   //   const saleDoc = doc(db, "sale", sale.id);
@@ -155,21 +133,15 @@ const location = useLocation()
   //   return updateDoc(saleDoc, newData)
   // };
 
-
   const editSale = async (event) => {
-
-  
-
     event.preventDefault();
-
 
     let imageUrls = [];
 
     if (firstImage !== null) {
-
       const firstImageRef = ref(imageDB, `forsale/${uuidv4()}`);
       const value = await uploadBytes(firstImageRef, firstImage);
-      console.log("uploadBytes returned:", value);
+      console.log('uploadBytes returned:', value);
       const firstImageUrl = await getDownloadURL(value.ref);
       if (firstImageUrl) {
         imageUrls.push(firstImageUrl);
@@ -178,159 +150,105 @@ const location = useLocation()
 
     if (imageOne !== null) {
       const imageOneRef = ref(imageDB, `forsale/${uuidv4()}`);
-      const value = await uploadBytes(imageOneRef, imageOne)
-      console.log("uploadBytes returned:", value);
+      const value = await uploadBytes(imageOneRef, imageOne);
+      console.log('uploadBytes returned:', value);
       const imageOneUrl = await getDownloadURL(value.ref);
       if (imageOneUrl) {
         imageUrls.push(imageOneUrl);
       }
     }
 
-    
-
-  const saleDoc = doc(db, "sale", sale.id);
+    const saleDoc = doc(db, 'sale', sale.id);
     const newData = {
-
       name: saleName,
       location: saleLocation,
       imageUrls: imageUrls,
 
       //  date: new Date().toLocaleString()  // << if you want to add this
     };
-    console.log("updating sale doc to:", newData)
-    return updateDoc(saleDoc, newData)  
-  
+    console.log('updating sale doc to:', newData);
+    return updateDoc(saleDoc, newData);
   };
 
-  
-console.log("sale is", location.state.sale)
-
+  console.log('sale is', location.state.sale);
 
   // Delete Sale
   const deleteSale = async (id) => {
     await deleteDoc(doc(db, 'sale', id));
   };
 
-
-
-  
-    
-    
-  
-    // const downloadImage = async () => {
-    //   const storageRef = ref(imageDB, `forsale/${uuidv4()}`);
-    //   const downloadUrl = await storageRef.getDownloadURL();
-    //   setFirstImage(downloadUrl);
-    // };
-
-
-
-
-    const [imageUrl, setImageUrl] = useState(null);
-  const [downloadUrl, setDownloadUrl] = useState(null);
-  const firstImageRef = ref(imageDB, `forsale/${uuidv4()}`);
-  
-
-  useEffect(() => {
-    // Retrieve the download URL for the image
-    const fetchImageUrl = async () => {
-      try {
-        const url = await getDownloadURL(firstImageRef);
-        setImageUrl(url);
-        setDownloadUrl(url); // Set download URL for button
-      } catch (error) {
-        console.error("Error fetching image URL:", error);
-      }
-    };
-
-    fetchImageUrl();
-  }, []);
-
-  const handleDownload = () => {
-    if (downloadUrl) {
-      const link = document.createElement("a");
-      link.href = downloadUrl;
-      link.download = "downloaded-image.jpg"; // Set desired filename
-      link.click();
-    }
-  };
-
-  
-
-
-  
-
   return (
-
-    
-
     <div className='bg-black h-fit'>
 
 
         
       <Nav />
 
-      
-  
-
-
-<Link to="/Sale">
+      <Link to='/Sale'>
         <button>
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 stroke-white m-2">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 15.75L3 12m0 0l3.75-3.75M3 12h18" />
+          <svg
+            xmlns='http://www.w3.org/2000/svg'
+            fill='none'
+            viewBox='0 0 24 24'
+            strokeWidth={1.5}
+            stroke='currentColor'
+            className='w-8 h-8 stroke-white m-2'
+          >
+            <path
+              strokeLinecap='round'
+              strokeLinejoin='round'
+              d='M6.75 15.75L3 12m0 0l3.75-3.75M3 12h18'
+            />
           </svg>
         </button>
       </Link>
 
-
       <div className='grid grid-cols-5 gap-7 p-2'>
-
         <div className=' mt-60 col-span-2'>
-          
+          <form onSubmit={editSale}>
+            <FetchDocument id={salesId} />
 
+            <div className='flex justify-between my-7 '>
+              <h1 className='text-xl tracking-tighter text-zinc-400 '>
+                Property Name:
+              </h1>
+              <h1 className='text-2xl tracking-tighter text-white max-w-sm '>
+                {sale.name}
+              </h1>
+              <input
+                className='text-xl tracking-tighter text-white max-w-sm bg-transparent'
+                placeholder={saleName}
+                value={sale.name}
+                onChange={(e) => setSaleName(e.target.value)}
+              />
+            </div>
 
-<form  onSubmit={editSale}>
+            <div className='flex justify-between my-7 '>
+              <h1 className='text-xl tracking-tighter text-zinc-400 '>
+                Property Location:
+              </h1>
+              <h1 className='text-2xl tracking-tighter text-white max-w-sm '>
+                {sale.location}
+              </h1>
+              <input
+                className='text-xl tracking-tighter text-white max-w-sm bg-transparent'
+                placeholder={saleLocation}
+                value={saleLocation}
+                onChange={(e) => setSaleLocation(e.target.value)}
+              />
+            </div>
 
-<FetchDocument id={salesId} />
+            <img
+              className='object-cover h-full w-full'
+              src={sale.imageUrls[0]}
+              alt=''
+            />
 
-
-<div className='flex justify-between my-7 '>
-    <h1 className='text-xl tracking-tighter text-zinc-400 '>Property Name:</h1>
-    <h1 className='text-2xl tracking-tighter text-white max-w-sm '>{sale.name}</h1>
-    <input
-    className='text-xl tracking-tighter text-white max-w-sm bg-transparent'
-    placeholder={saleName}
-    value={sale.name}
-   onChange={(e) => setSaleName(e.target.value)}
-    />
-</div>
-
-
-
-
-<div className='flex justify-between my-7 '>
-    <h1 className='text-xl tracking-tighter text-zinc-400 '>Property Location:</h1>
-    <h1 className='text-2xl tracking-tighter text-white max-w-sm '>{sale.location}</h1>
-    <input
-    className='text-xl tracking-tighter text-white max-w-sm bg-transparent'
-    placeholder={saleLocation}
-    value={saleLocation}
-   onChange={(e) => setSaleLocation(e.target.value)}
-    />
-</div>
-
-
-
-
-
-<img className='object-cover h-full w-full' src={sale.imageUrls[0]}  alt=""   /> 
-
-<input
-className='bg-transparent border-b-2 border-slate-400 text-white w-96 text-xl tracking-tighter mt-3'
-
-onChange={(e)=>setFirstImage(e.target.files[0])}
-type="file"
-/>
+            <input
+              className='bg-transparent border-b-2 border-slate-400 text-white w-96 text-xl tracking-tighter mt-3'
+              onChange={(e) => setFirstImage(e.target.files[0])}
+              type='file'
+            />
 
 
 <div>
@@ -346,242 +264,241 @@ type="file"
 
 
 
-
-
-<img className='object-cover h-full w-full' src={sale.imageUrls[1]} alt=""   /> 
-
-<input
-className='bg-transparent border-b-2 border-slate-400 text-white w-96 text-xl tracking-tighter mt-3'
-
-onChange={(e) => setImageOne(e.target.value)}
-type="file"
-/>
-
-
-<button className='bg-green-200 px-4'>Update</button>
-</form>
-
-
-
-
-
-
-<div className='flex justify-between my-7 '>
-    <h1 className='text-xl tracking-tighter text-white '>Property Location:</h1>
-    <h1 className='text-xl tracking-tighter text-white max-w-md  '>{location.state.sale.location}</h1>
-</div>
-
-
-
-<div className='flex justify-between my-7 '>
-    <h1 className='text-xl tracking-tighter text-white '>Price:</h1>
-    <h1 className='text-xl tracking-tighter text-white max-w-md  '>40,000</h1>
-</div>
-
-
-
-<div className='flex justify-between my-7 '>
-    <h1 className='text-xl tracking-tighter text-white '>Type:</h1>
-    <h1 className='text-xl tracking-tighter text-white max-w-md  '>Apartment</h1>
-</div>
-
-
-<div className='flex justify-between my-7 '>
-    <h1 className='text-xl tracking-tighter text-white '>Size:</h1>
-    <h1 className='text-xl tracking-tighter text-white max-w-md  '>1200SQM</h1>
-</div>
-
-
-
-
-<div className='flex justify-between my-7 '>
-    <h1 className='text-xl tracking-tighter text-white '>Parking:</h1>
-    <h1 className='text-xl tracking-tighter text-white max-w-md  '>Available</h1>
-</div>
-
-
-
-<div className='flex justify-between my-7 '>
-    <h1 className='text-xl tracking-tighter text-white '>Availability:</h1>
-    <h1 className='text-xl tracking-tighter text-white max-w-md  '>Available</h1>
-</div>
-
-
-
-
-
-<div className='flex justify-between my-7 '>
-    <h1 className='text-xl tracking-tighter text-white '>Floor:</h1>
-    <h1 className='text-xl tracking-tighter text-white max-w-md  '>Available</h1>
-</div>
-
-
-
-<div className='flex justify-between my-7 '>
-    <h1 className='text-xl tracking-tighter text-white '>Bedrooms:</h1>
-    <h1 className='text-xl tracking-tighter text-white max-w-md  '>4</h1>
-</div>
-
-
-<div className='flex justify-between my-7 '>
-    <h1 className='text-xl tracking-tighter text-white '>Bathrooms:</h1>
-    <h1 className='text-xl tracking-tighter text-white max-w-md  '>4</h1>
-</div>
-
-
-
-<div className='flex justify-between my-7 '>
-    <h1 className='text-xl tracking-tighter text-white '>Serviced:</h1>
-    <h1 className='text-xl tracking-tighter text-white max-w-md  '>No</h1>
-</div>
-
-
-
-
-<div className='flex justify-between my-7 '>
-    <h1 className='text-xl tracking-tighter text-white '>Realtor's Note:</h1>
-    <h1 className='text-lg tracking-tighter text-white max-w-sm  '>Lorem Ipsum is simply dummy text of the printing and typesetting industry Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-    Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book..</h1>
-</div>
-
-
-
-
-<div className='flex justify-between'>
-  <button  onClick={() => {navigate("/NewSalesListing" , {state:{sale}})}} className='bg-green-500 rounded-full px-5  tracking-tighter'>Edit </button>
-
-  <button   onClick={() => {navigate("/Sale", deleteSale(location.state.sale.id))}} className='bg-red-500 rounded-full px-5  tracking-tighter'>Delete </button>
-</div>
-
- </div>       
-        
-
-
-
-
-
-
-
-
-
-
-
-<div className='col-span-3'>
-
-<h1 className='text-xl tracking-tighter text-white my-3 '>First Impression</h1>
-<div className=''>
-  <img className='object-cover h-full w-full' src={location.state.sale.imageUrls[0]} alt=""   /> 
-
-  <input
-  className='object-cover h-full w-full'
-    src={location.state.sale.imageUrls[0]}
-     alt="" 
-  type="file"
-  />
-</div>
-
-
-</div>
-
-
-</div>
-
-
-<hr className='bg-white my-3'/>
-
-
-
-
-<div className='grid grid-cols-3 p-2 gap-3'>
-
-<div className='col-span-1'>
-<h1 className='text-xl tracking-tighter text-white my-2 '>Image 1</h1>
-<div className='h-5/6'>
-<img className='object-cover h-full w-full' src={contactimagefive} alt=""  />
-</div>
-</div>
-
-
-<div className='col-span-1'>
-<h1 className='text-xl tracking-tighter text-white my-2 '>Image 2</h1>
-<div className='h-5/6'>
-<img className='object-cover h-full w-full' src={testtwo} alt=""  />
-</div>
-</div>
-
-
-
-<div className='col-span-1'>
-<h1 className='text-xl tracking-tighter text-white my-2 '>Image 3</h1>
-<div className='h-5/6'>
-<img className='object-cover h-full w-full' src={contactimagefive} alt=""  />
-</div>
-</div>
-
-</div>
-
-
-
-
-
-
-
-
-
-
-
-<div className='grid grid-cols-3 p-2 gap-3'>
-
-<div className='col-span-1'>
-<h1 className='text-xl tracking-tighter text-white my-2 '>Image 4</h1>
-<div className='h-5/6'>
-<img className='object-cover h-full w-full' src={contactimagefive} alt=""  />
-</div>
-</div>
-
-
-<div className='col-span-1'>
-<h1 className='text-xl tracking-tighter text-white my-2 '>Image 5</h1>
-<div className='h-5/6'>
-<img className='object-cover h-full w-full' src={testtwo} alt=""  />
-</div>
-</div>
-
-
-
-<div className='col-span-1'>
-<h1 className='text-xl tracking-tighter text-white my-2 '>Image 6</h1>
-<div className='h-5/6'>
-<img className='object-cover h-full w-full' src={contactimagefive} alt=""  />
-</div>
-</div>
-
-</div>
-
-
-<hr className='bg-white my-3'/>
-
-<h1 className='text-xl tracking-tighter text-white my-2 text-center '>Video of Property</h1>
-<div className='h-2/4 p-2'>
-<video autoPlay loop className='object-fit h-full w-full'  src={"https://player.vimeo.com/external/510522235.sd.mp4?s=dcd6cb044aa36f8acb85d68789e34c735a4f10ec&profile_id=164&oauth2_token_id=57447761"} type="mp4"  />
-</div>
-
-
-
-
-
-<h1 className='text-xl tracking-tighter text-white my-2 text-center '>Floor Plan</h1>
-
-<div className='h-1/3 p-2'>
-<img className='object-cover h-full w-full' src={floorplan} alt=""  />
-</div>
-
-
-
-
-
-
-{/* <Pannellum
+            <img
+              className='object-cover h-full w-full'
+              src={sale.imageUrls[1]}
+              alt=''
+            />
+
+            <input
+              className='bg-transparent border-b-2 border-slate-400 text-white w-96 text-xl tracking-tighter mt-3'
+              onChange={(e) => setImageOne(e.target.value)}
+              type='file'
+            />
+
+            <button className='bg-green-200 px-4'>Update</button>
+          </form>
+
+          <div className='flex justify-between my-7 '>
+            <h1 className='text-xl tracking-tighter text-white '>
+              Property Location:
+            </h1>
+            <h1 className='text-xl tracking-tighter text-white max-w-md  '>
+              {location.state.sale.location}
+            </h1>
+          </div>
+
+          <div className='flex justify-between my-7 '>
+            <h1 className='text-xl tracking-tighter text-white '>Price:</h1>
+            <h1 className='text-xl tracking-tighter text-white max-w-md  '>
+              40,000
+            </h1>
+          </div>
+
+          <div className='flex justify-between my-7 '>
+            <h1 className='text-xl tracking-tighter text-white '>Type:</h1>
+            <h1 className='text-xl tracking-tighter text-white max-w-md  '>
+              Apartment
+            </h1>
+          </div>
+
+          <div className='flex justify-between my-7 '>
+            <h1 className='text-xl tracking-tighter text-white '>Size:</h1>
+            <h1 className='text-xl tracking-tighter text-white max-w-md  '>
+              1200SQM
+            </h1>
+          </div>
+
+          <div className='flex justify-between my-7 '>
+            <h1 className='text-xl tracking-tighter text-white '>Parking:</h1>
+            <h1 className='text-xl tracking-tighter text-white max-w-md  '>
+              Available
+            </h1>
+          </div>
+
+          <div className='flex justify-between my-7 '>
+            <h1 className='text-xl tracking-tighter text-white '>
+              Availability:
+            </h1>
+            <h1 className='text-xl tracking-tighter text-white max-w-md  '>
+              Available
+            </h1>
+          </div>
+
+          <div className='flex justify-between my-7 '>
+            <h1 className='text-xl tracking-tighter text-white '>Floor:</h1>
+            <h1 className='text-xl tracking-tighter text-white max-w-md  '>
+              Available
+            </h1>
+          </div>
+
+          <div className='flex justify-between my-7 '>
+            <h1 className='text-xl tracking-tighter text-white '>Bedrooms:</h1>
+            <h1 className='text-xl tracking-tighter text-white max-w-md  '>
+              4
+            </h1>
+          </div>
+
+          <div className='flex justify-between my-7 '>
+            <h1 className='text-xl tracking-tighter text-white '>Bathrooms:</h1>
+            <h1 className='text-xl tracking-tighter text-white max-w-md  '>
+              4
+            </h1>
+          </div>
+
+          <div className='flex justify-between my-7 '>
+            <h1 className='text-xl tracking-tighter text-white '>Serviced:</h1>
+            <h1 className='text-xl tracking-tighter text-white max-w-md  '>
+              No
+            </h1>
+          </div>
+
+          <div className='flex justify-between my-7 '>
+            <h1 className='text-xl tracking-tighter text-white '>
+              Realtor&apos;s Note:
+            </h1>
+            <h1 className='text-lg tracking-tighter text-white max-w-sm  '>
+              Lorem Ipsum is simply dummy text of the printing and typesetting
+              industry Lorem Ipsum is simply dummy text of the printing and
+              typesetting industry. Lorem Ipsum has been the industry&apos;s
+              standard dummy text ever since the 1500s, when an unknown printer
+              took a galley of type and scrambled it to make a type specimen
+              book..
+            </h1>
+          </div>
+
+          <div className='flex justify-between'>
+            <button
+              onClick={() => {
+                navigate('/NewSalesListing', { state: { sale } });
+              }}
+              className='bg-green-500 rounded-full px-5  tracking-tighter'
+            >
+              Edit{' '}
+            </button>
+
+            <button
+              onClick={() => {
+                navigate('/Sale', deleteSale(location.state.sale.id));
+              }}
+              className='bg-red-500 rounded-full px-5  tracking-tighter'
+            >
+              Delete{' '}
+            </button>
+          </div>
+        </div>
+
+        <div className='col-span-3'>
+          <h1 className='text-xl tracking-tighter text-white my-3 '>
+            First Impression
+          </h1>
+          <div className=''>
+            <img
+              className='object-cover h-full w-full'
+              src={location.state.sale.imageUrls[0]}
+              alt=''
+            />
+
+            <input
+              className='object-cover h-full w-full'
+              src={location.state.sale.imageUrls[0]}
+              alt=''
+              type='file'
+            />
+          </div>
+        </div>
+      </div>
+
+      <hr className='bg-white my-3' />
+
+      <div className='grid grid-cols-3 p-2 gap-3'>
+        <div className='col-span-1'>
+          <h1 className='text-xl tracking-tighter text-white my-2 '>Image 1</h1>
+          <div className='h-5/6'>
+            <img
+              className='object-cover h-full w-full'
+              src={contactimagefive}
+              alt=''
+            />
+          </div>
+        </div>
+
+        <div className='col-span-1'>
+          <h1 className='text-xl tracking-tighter text-white my-2 '>Image 2</h1>
+          <div className='h-5/6'>
+            <img className='object-cover h-full w-full' src={testtwo} alt='' />
+          </div>
+        </div>
+
+        <div className='col-span-1'>
+          <h1 className='text-xl tracking-tighter text-white my-2 '>Image 3</h1>
+          <div className='h-5/6'>
+            <img
+              className='object-cover h-full w-full'
+              src={contactimagefive}
+              alt=''
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className='grid grid-cols-3 p-2 gap-3'>
+        <div className='col-span-1'>
+          <h1 className='text-xl tracking-tighter text-white my-2 '>Image 4</h1>
+          <div className='h-5/6'>
+            <img
+              className='object-cover h-full w-full'
+              src={contactimagefive}
+              alt=''
+            />
+          </div>
+        </div>
+
+        <div className='col-span-1'>
+          <h1 className='text-xl tracking-tighter text-white my-2 '>Image 5</h1>
+          <div className='h-5/6'>
+            <img className='object-cover h-full w-full' src={testtwo} alt='' />
+          </div>
+        </div>
+
+        <div className='col-span-1'>
+          <h1 className='text-xl tracking-tighter text-white my-2 '>Image 6</h1>
+          <div className='h-5/6'>
+            <img
+              className='object-cover h-full w-full'
+              src={contactimagefive}
+              alt=''
+            />
+          </div>
+        </div>
+      </div>
+
+      <hr className='bg-white my-3' />
+
+      <h1 className='text-xl tracking-tighter text-white my-2 text-center '>
+        Video of Property
+      </h1>
+      <div className='h-2/4 p-2'>
+        <video
+          autoPlay
+          loop
+          className='object-fit h-full w-full'
+          src={
+            'https://player.vimeo.com/external/510522235.sd.mp4?s=dcd6cb044aa36f8acb85d68789e34c735a4f10ec&profile_id=164&oauth2_token_id=57447761'
+          }
+          type='mp4'
+        />
+      </div>
+
+      <h1 className='text-xl tracking-tighter text-white my-2 text-center '>
+        Floor Plan
+      </h1>
+
+      <div className='h-1/3 p-2'>
+        <img className='object-cover h-full w-full' src={floorplan} alt='' />
+      </div>
+
+      {/* <Pannellum
         width="100%"
         height="500px"
         image={virtual}
@@ -610,9 +527,7 @@ type="file"
       />
     </Pannellum> */}
 
-
-
-{/* <Pannellum
+      {/* <Pannellum
         width="100%"
         height="500px"
         image={virtual}
@@ -634,9 +549,7 @@ type="file"
         />
       </Pannellum> */}
 
-
-
-{/* <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css"/>
+      {/* <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css"/>
 
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
 
@@ -645,9 +558,7 @@ type="file"
 
 </div> */}
 
-
-
-{/* <div className="h-screen flex">
+      {/* <div className="h-screen flex">
                 <Pannellum
                     width="100%"
                     height="100%"
@@ -668,13 +579,7 @@ type="file"
 
             </div> */}
 
-
-
-
-
-
-
-{/* 
+      {/* 
 <div className="h-screen flex">
 
             <PannellumVideo
@@ -706,8 +611,6 @@ type="file"
     </PannellumVideo>
 
 </div> */}
-
-
-        </div>
-  )
+    </div>
+  );
 }

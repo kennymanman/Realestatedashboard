@@ -1,19 +1,19 @@
-import { BrowserRouter as Router, Route, Routes} from 'react-router-dom';
-import './App.css';
-import Dashboard from './Dashboard';
-import Blog from "./Pages/Blog"
-import Listing from './Pages/Listing';
-import Media from "./Pages/Media"
-import ScheduledInspection from "./Pages/ScheduledInspection"
-import StaffMembers from "./Pages/StaffMembers"
-import Rent from "./Pages/Rent"
-import Sale from "./Pages/Sale"
-import Shortlet from './Pages/Shortlet';
-import SalesListingInfo from './Pages/SalesListingInfo';
-import NewSalesListing from './Pages/NewSalesListing';
-import CreateStaff from './components/CreateStaff';
-import MediaDetails from './components/MediaDetails';
-import BlogDetails from "./Pages/BlogDetails"
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import "./App.css";
+import Dashboard from "./Dashboard";
+import Blog from "./Pages/Blog";
+import Listing from "./Pages/Listing";
+import Media from "./Pages/Media";
+import ScheduledInspection from "./Pages/ScheduledInspection";
+import StaffMembers from "./Pages/StaffMembers";
+import Rent from "./Pages/Rent";
+import Sale from "./Pages/Sale";
+import Shortlet from "./Pages/Shortlet";
+import SalesListingInfo from "./Pages/SalesListingInfo";
+import NewSalesListing from "./Pages/NewSalesListing";
+import CreateStaff from "./components/CreateStaff";
+import MediaDetails from "./components/MediaDetails";
+import BlogDetails from "./Pages/BlogDetails";
 
 import { AuthContextProvider } from "./context/AuthContext"
 import ProtectedRoute from "./components/ProtectedRoute"
@@ -25,7 +25,6 @@ import ForgotPassword from './Authcomponents/ForgotPassword';
 import Insights from './Pages/Insights';
 import PageNotFound from './components/PageNotFound';
 import AI from "./Pages/AI"
-import Pashboard from './Pages/Pashboard';
 
 
 
@@ -34,26 +33,23 @@ import Pashboard from './Pages/Pashboard';
 
 function App() {
   return (
-
-    
-
     <AuthContextProvider>
+      <Router>
+        <Routes>
+          {/* <Route path="/" element={<Dashboard />} /> */}
 
+          <Route path="/" element={<Login />} />
+          <Route path="/Signup" element={<Signup />} />
+          <Route path="/ForgotPassword" element={<ForgotPassword />} />
 
-    <Router>
-    <Routes>
-
-    {/* <Route path="/" element={<Dashboard />} /> */}
-
-    <Route path="/" element={<Login/>}/>
-    <Route path='/Signup' element={<Signup />} />
-    <Route path='/ForgotPassword' element={<ForgotPassword />} />
-      
-      <Route path="/Dashboard" element={
-      <ProtectedRoute>
-      <Dashboard/>
-      </ProtectedRoute>
-      }/>
+          <Route
+            path="/Dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
 
 
 
@@ -79,7 +75,6 @@ function App() {
     <Route path="/Insights" element={<Insights/>} />
     <Route path="/AI" element={<AI/>} />
     <Route path="*" element={<PageNotFound/>} />
-    <Route path="/Pashboard" element={<Pashboard/>} />
      
      {/* Sales Listing Information routing */}
     <Route path="/SalesListingInfo/:salesId" element={<SalesListingInfo />} />
@@ -95,7 +90,5 @@ function App() {
   
   );
 }
-
-
 
 export default App;
