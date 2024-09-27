@@ -85,6 +85,7 @@ export default function NewSalesListing(props) {
       const firstImageRef = ref(imageDB, `forsale/${uuidv4()}`);
       const value = await uploadBytes(firstImageRef, firstImage);
       console.log('uploadBytes returned:', value);
+      
       const firstImageUrl = await getDownloadURL(value.ref);
       if (firstImageUrl) {
         imageUrls.push(firstImageUrl);

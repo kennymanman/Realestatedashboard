@@ -16,6 +16,8 @@ import { getDownloadURL, listAll, ref } from "firebase/storage";
 
 import BeatLoader from "react-spinners/BeatLoader";
 
+
+
 export default function Sale(props) {
   const navigate = useNavigate();
 
@@ -76,16 +78,17 @@ export default function Sale(props) {
     });
   }, []);
 
+
+
+
+
   const Sale = ({ sale, toggleComplete, deleteSale, index }) => {
     setIsPending(false);
     return (
       <>
-        {/* Create New Button */}
-        {/* <Link to="/NewSalesListing">
-<button className='tracking-tighter text-lg  bg-green-500 px-10 rounded-full py-2 border-black border-2 place-self-center'>Create New</button>
-</Link> */}
+       
 
-        <div className="h-4/6">
+        {/* <div className="h-4/6">
           <img
             className="object-fit h-full w-full"
             src={sale.imageUrls[0]}
@@ -111,9 +114,7 @@ export default function Sale(props) {
           </h1>
 
           <div className="text-end">
-            {/* <button onClick={()=> {navigate("/SalesListingInfo", {state:{sale}})}}  className='bg-green-500 rounded-full px-3  tracking-tighter'>
- More info
-</button> */}
+       
 
             <button
               onClick={() => {
@@ -126,16 +127,54 @@ export default function Sale(props) {
               More info
             </button>
           </div>
-        </div>
+        </div>  */}
+
+
+<div className="h-5/6">
+<div className="h-96 relative grid">
+
+  <img
+            className="object-fit h-full w-full rounded-lg absolute brightness-75 hover:brightness-90"
+            src={sale.imageUrls[0]}
+            alt=""
+          /> 
+
+<div className="p-3 text-end">
+  <button   onClick={() => {
+                navigate("/SalesListingInfo/5i0buXSUr6JlDY01UmcR", {
+                  state: { sale },
+                });
+              }} 
+              className="relative bg-white tracking-tighter px-4 rounded-full hover:bg-orange-500">Details</button>
+</div>
+
+
+
+
+<div className="p-3 grid content-end ">
+<p className="text-slate-300 relative tracking-tighter text-lg"> {sale.location} . {sale.type}</p>
+<div className="flex justify-between ">
+  <p className="text-white relative tracking-tighter text-xl"> {sale.name}</p>
+
+  <p className="text-white relative tracking-tighter text-xl"> ₦ {sale.price}</p>
+</div>
+
+</div>
+
+
+</div>
+</div>
       </>
     );
   };
+
+
 
   return (
     <div className="bg-black min-h-screen max-h-fit  ">
       <Nav />
 
-      <div className="flex justify-between my-5 mx-2">
+      {/* <div className="flex justify-between my-5 mx-2">
         <div className="flex gap-10">
           <h1 className="text-4xl text-white text-center tracking-tighter">
             For Sale.
@@ -150,9 +189,9 @@ export default function Sale(props) {
             {sale.length < 1 ? <>0</> : <>{`${sale.length} `}</>}
           </h2>
         </div>
-      </div>
+      </div> */}
 
-      <hr className="border-white my-1" />
+      
 
       <Link to="/Listing">
         <button>
@@ -186,13 +225,20 @@ export default function Sale(props) {
         </div>
       )}
 
-      <div className="grid grid-cols-4 gap-4 p-3">
+      <div className="grid grid-cols-3 gap-4 mx-7 ">
         {/* Create New Button */}
-        <Link to="/NewSalesListing">
+        {/* <Link to="/NewSalesListing">
           <button className="tracking-tighter text-lg  bg-green-500 px-10 rounded-full py-2 border-black border-2 place-self-center">
             Create New
           </button>
+        </Link> */}
+
+<div>
+        <p className="text-slate-300 tracking-tighter text-lg">Created number of listings for sale: {sale.length < 1 ? <>0</> : <>{`${sale.length} `}</>} </p>
+        <Link to="/NewSalesListing">
+        <button className="bg-white px-5 tracking-tighter rounded-full mt-6 hover:bg-green-600">Create a new listing</button>
         </Link>
+</div>
 
         {sale.map((sale, index) => (
           <Sale key={index} sale={sale} deleteSale={deleteSale} />

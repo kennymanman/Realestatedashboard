@@ -14,7 +14,7 @@ import { useNavigate } from 'react-router-dom';
 
 import virtual from '../Images/virtual.jpg';
 
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import { getDownloadURL, ref, uploadBytes, getStorage } from 'firebase/storage';
 import { v4 as uuidv4 } from 'uuid';
 import { imageDB } from '../config/firebaseConfig'
 
@@ -22,13 +22,7 @@ import { imageDB } from '../config/firebaseConfig'
 // import { Pannellum } from "pannellum-react";
 
 import BeatLoader from "react-spinners/BeatLoader";
-
-
-
 import RefreshEvery5Seconds from '../components/RefreshEvery5Seconds';
-
-
-
 
 
 
@@ -69,7 +63,6 @@ function FetchDocument(props) {
 
   return <div>doc is {JSON.stringify(document)}</div>;
 }
-
 
 
 
@@ -133,6 +126,8 @@ export default function SalesListingInfo(props) {
   //   return updateDoc(saleDoc, newData)
   // };
 
+
+  
   const editSale = async (event) => {
     event.preventDefault();
 
@@ -251,12 +246,12 @@ export default function SalesListingInfo(props) {
             />
 
 
-<div>
+{/* <div>
       {imageUrl && <img src={imageUrl} alt="Downloadable Image" />}
       <button className='bg-white px-4' onClick={handleDownload} disabled={!downloadUrl}>
         Download Image
       </button>
-    </div>
+    </div> */}
        
       
     

@@ -25,6 +25,7 @@ import ForgotPassword from './Authcomponents/ForgotPassword';
 import Insights from './Pages/Insights';
 import PageNotFound from './components/PageNotFound';
 import AI from "./Pages/AI"
+import GPT from "./AI-screens/GPT";
 
 
 
@@ -74,6 +75,7 @@ function App() {
     <Route path="/Help" element={<Help/>} />
     <Route path="/Insights" element={<Insights/>} />
     <Route path="/AI" element={<AI/>} />
+    <Route path="/GPT" element={<GPT/>} />
     <Route path="*" element={<PageNotFound/>} />
      
      {/* Sales Listing Information routing */}
