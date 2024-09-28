@@ -26,6 +26,7 @@ import Insights from './Pages/Insights';
 import PageNotFound from './components/PageNotFound';
 import AI from "./Pages/AI"
 import GPT from "./AI-screens/GPT";
+import Calculator from "./Pages/Calculator";
 
 
 
@@ -77,6 +78,7 @@ function App() {
     <Route path="/AI" element={<AI/>} />
     <Route path="/GPT" element={<GPT/>} />
     <Route path="*" element={<PageNotFound/>} />
+    <Route path="/propertyvaluecalculator" element={<Calculator/>} />
      
      {/* Sales Listing Information routing */}
     <Route path="/SalesListingInfo/:salesId" element={<SalesListingInfo />} />

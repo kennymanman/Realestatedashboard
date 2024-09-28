@@ -196,7 +196,7 @@ export default function Dashboard() {
                   Media & News
                 </h1>
 
-                <Link to='/Media'>
+                <Link to='/propertyvaluecalculator'>
                   <button className='bg-black px-8 py-1 rounded-full  '>
                     <svg
                       xmlns='http://www.w3.org/2000/svg'
