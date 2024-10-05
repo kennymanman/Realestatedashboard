@@ -53,9 +53,21 @@ import { cn } from "../lib/utils";
 // Import icons
 import { CalendarIcon } from "@radix-ui/react-icons";
 
+
 // import Cal, { getCalApi } from "@calcom/embed-react";
 
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import { v4 as uuidv4 } from 'uuid';
+import { imageDB } from '../config/firebaseConfig'
+
+
 import Scheduler from '../components/Scheduler';
+
+
+import BeatLoader from "react-spinners/BeatLoader";
+
+
+
 
 
 
@@ -176,6 +188,40 @@ const SalesListingInfo = () => {
       // setShowForm(false);
     } catch (error) {
       console.error("Error scheduling inspection: ", error);
+
+
+
+
+
+
+
+
+
+
+
+
+
+function FetchDocument(props) {
+  const { id } = props;
+  const [document, setDocument] = useState(null);
+  useEffect(() => {
+    if (!document && id) {
+      console.log(`<FetchDocument> useEffect() - fetching doc: `, id);
+      console.log(`<FetchDocument> useEffect() - fetching db: `, db);
+      const docRef = doc(db, 'sales', id);
+      console.log(`<FetchDocument> useEffect() - fetching PATH: `, docRef.path);
+      getDoc(docRef)
+        .then((docSnapshot) => {
+          if (docSnapshot.exists()) {
+            setDocument(docSnapshot.data());
+          } else {
+            console.log('Document not found');
+          }
+        })
+        .catch((error) => {
+          console.error('Error fetching document:', error);
+        });
+
     }
   };
 
@@ -211,6 +257,21 @@ const SalesListingInfo = () => {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+export default function SalesListingInfo(props) {
+  let { salesId } = useParams();
 
 
 
@@ -348,6 +409,7 @@ const SalesListingInfo = () => {
     setShowDeleteDialog(true);
   };
 
+
   const handleDeleteConfirm = async () => {
     if (deleteConfirmation.toLowerCase() === 'delete') {
       try {
@@ -363,8 +425,91 @@ const SalesListingInfo = () => {
       alert("Please type 'delete' to confirm.");
     }
   };
+=======
+  return (
+    <div className='bg-black h-fit'>
 
 
+        
+      <Nav />
+
+      <Link to='/Sale'>
+        <button>
+          <svg
+            xmlns='http://www.w3.org/2000/svg'
+            fill='none'
+            viewBox='0 0 24 24'
+            strokeWidth={1.5}
+            stroke='currentColor'
+            className='w-8 h-8 stroke-white m-2'
+          >
+            <path
+              strokeLinecap='round'
+              strokeLinejoin='round'
+              d='M6.75 15.75L3 12m0 0l3.75-3.75M3 12h18'
+            />
+          </svg>
+        </button>
+      </Link>
+
+      <div className='grid grid-cols-5 gap-7 p-2'>
+        <div className=' mt-60 col-span-2'>
+          <form onSubmit={editSale}>
+            <FetchDocument id={salesId} />
+
+            <div className='flex justify-between my-7 '>
+              <h1 className='text-xl tracking-tighter text-zinc-400 '>
+                Property Name:
+              </h1>
+              <h1 className='text-2xl tracking-tighter text-white max-w-sm '>
+                {sale.name}
+              </h1>
+              <input
+                className='text-xl tracking-tighter text-white max-w-sm bg-transparent'
+                placeholder={saleName}
+                value={sale.name}
+                onChange={(e) => setSaleName(e.target.value)}
+              />
+            </div>
+
+            <div className='flex justify-between my-7 '>
+              <h1 className='text-xl tracking-tighter text-zinc-400 '>
+                Property Location:
+              </h1>
+              <h1 className='text-2xl tracking-tighter text-white max-w-sm '>
+                {sale.location}
+              </h1>
+              <input
+                className='text-xl tracking-tighter text-white max-w-sm bg-transparent'
+                placeholder={saleLocation}
+                value={saleLocation}
+                onChange={(e) => setSaleLocation(e.target.value)}
+              />
+            </div>
+
+
+
+
+
+
+<div>
+      {imageUrl && <img src={imageUrl} alt="Downloadable Image" />}
+      <button className='bg-white px-4' onClick={handleDownload} disabled={!downloadUrl}>
+        Download Image
+      </button>
+    </div>
+       
+      
+    
+
+
+
+
+            <img
+              className='object-cover h-full w-full'
+              src={sale.imageUrls[1]}
+              alt=''
+            />
 
 
   const copyUrlToClipboard = () => {
