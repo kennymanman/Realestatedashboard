@@ -53,21 +53,9 @@ import { cn } from "../lib/utils";
 // Import icons
 import { CalendarIcon } from "@radix-ui/react-icons";
 
-
 // import Cal, { getCalApi } from "@calcom/embed-react";
 
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
-import { v4 as uuidv4 } from 'uuid';
-import { imageDB } from '../config/firebaseConfig'
-
-
 import Scheduler from '../components/Scheduler';
-
-
-import BeatLoader from "react-spinners/BeatLoader";
-
-
-
 
 
 
@@ -90,7 +78,7 @@ L.Icon.Default.mergeOptions({
   shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
 });
 
-const SalesListingInfo = () => {
+const RentListingInfo = () => {
   
 
   const [date, setDate] = useState(null);
@@ -174,8 +162,8 @@ const SalesListingInfo = () => {
     e.preventDefault();
     const inspectionData = {
       date: date.toISOString(),
-      saleName: sale.name,
-      saleLocation: sale.location,
+      rentName: rent.name,
+      rentLocation: rent.location,
       ...formData
     };
     
@@ -188,40 +176,6 @@ const SalesListingInfo = () => {
       // setShowForm(false);
     } catch (error) {
       console.error("Error scheduling inspection: ", error);
-
-
-
-
-
-
-
-
-
-
-
-
-
-function FetchDocument(props) {
-  const { id } = props;
-  const [document, setDocument] = useState(null);
-  useEffect(() => {
-    if (!document && id) {
-      console.log(`<FetchDocument> useEffect() - fetching doc: `, id);
-      console.log(`<FetchDocument> useEffect() - fetching db: `, db);
-      const docRef = doc(db, 'sales', id);
-      console.log(`<FetchDocument> useEffect() - fetching PATH: `, docRef.path);
-      getDoc(docRef)
-        .then((docSnapshot) => {
-          if (docSnapshot.exists()) {
-            setDocument(docSnapshot.data());
-          } else {
-            console.log('Document not found');
-          }
-        })
-        .catch((error) => {
-          console.error('Error fetching document:', error);
-        });
-
     }
   };
 
@@ -230,30 +184,6 @@ function FetchDocument(props) {
 
 
 
-  const property = {
-    name: "Villa Serenity",
-    location: "123 Ocean Drive, Malibu, CA 90265",
-    price: 12500000,
-    type: "Villa",
-    size: 8500,
-    parking: true,
-    floors: 3,
-    bedrooms: 6,
-    bathrooms: 7.5,
-    serviced: true,
-    realtorsNote: "This stunning oceanfront villa offers breathtaking views and luxurious amenities. Perfect for those seeking the ultimate in coastal living.",
-    images: [
-      "https://images.unsplash.com/photo-1613490493576-7fde63acd811?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1471&q=80",
-      "https://images.unsplash.com/photo-1613977257363-707ba9348227?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
-      "https://images.unsplash.com/photo-1613977257592-4871e5fcd7c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
-      "https://images.unsplash.com/photo-1613977257365-aaae5a9817ff?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
-      "https://images.unsplash.com/photo-1613977257431-9a35543ced9a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
-      "https://images.unsplash.com/photo-1613977257372-718d42e6b5ef?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
-    ],
-    videoUrl: "https://player.vimeo.com/external/510850877.hd.mp4?s=d5e9ed9ea40ba755e28512cce6c1ad00d92506f7&profile_id=174",
-    panoramaUrl: "https://pannellum.org/images/alma.jpg",
-    mapLocation: { lat: 34.0259, lng: -118.7798 },
-  };
 
 
 
@@ -267,41 +197,26 @@ function FetchDocument(props) {
 
 
 
-
-
-
-export default function SalesListingInfo(props) {
-  let { salesId } = useParams();
-
-
-
-
-
-
-
-
-
-
-  const { salesId } = useParams();
+  const { rentId } = useParams();
   const location = useLocation();
  
-  const sale = location.state.sale;
+  const rent = location.state.rent;
 
-  const [saleName, setSaleName] = useState(sale.name);
-  const [saleLocation, setSaleLocation] = useState(sale.location);
-  const [firstImage, setFirstImage] = useState(sale.imageUrls[0]);
-  const [imageOne, setImageOne] = useState(sale.imageUrls[1]);
-  const [isSold, setIsSold] = useState(sale.sold || false);
+  const [rentName, setRentName] = useState(rent.name);
+  const [rentLocation, setRentLocation] = useState(rent.location);
+  const [firstImage, setFirstImage] = useState(rent.imageUrls[0]);
+  const [imageOne, setImageOne] = useState(rent.imageUrls[1]);
+  const [isSold, setIsSold] = useState(rent.sold || false);
   const [coordinates, setCoordinates] = useState([0, 0]);
 
-  const [isAvailable, setIsAvailable] = useState(!sale.sold);
+  const [isAvailable, setIsAvailable] = useState(!rent.sold);
 
   useEffect(() => {
     const geocodeAddress = async () => {
       try {
         const response = await axios.get(`https://nominatim.openstreetmap.org/search`, {
           params: {
-            q: sale.location,
+            q: rent.location,
             format: 'json',
             limit: 1,
           },
@@ -318,7 +233,7 @@ export default function SalesListingInfo(props) {
     };
 
     geocodeAddress();
-  }, [sale.location]);
+  }, [rent.location]);
 
   // useEffect(() => {
   //   (function (C, A, L) {
@@ -356,13 +271,13 @@ export default function SalesListingInfo(props) {
 
 
 
-  const editSale = async (event) => {
+  const editRent = async (event) => {
     event.preventDefault();
 
     let imageUrls = [];
 
     if (firstImage !== null) {
-      const firstImageRef = ref(imageDB, `forsale/${uuidv4()}`);
+      const firstImageRef = ref(imageDB, `forrent/${uuidv4()}`);
       const value = await uploadBytes(firstImageRef, firstImage);
       const firstImageUrl = await getDownloadURL(value.ref);
       if (firstImageUrl) {
@@ -371,7 +286,7 @@ export default function SalesListingInfo(props) {
     }
 
     if (imageOne !== null) {
-      const imageOneRef = ref(imageDB, `forsale/${uuidv4()}`);
+      const imageOneRef = ref(imageDB, `forrent/${uuidv4()}`);
       const value = await uploadBytes(imageOneRef, imageOne);
       const imageOneUrl = await getDownloadURL(value.ref);
       if (imageOneUrl) {
@@ -379,20 +294,20 @@ export default function SalesListingInfo(props) {
       }
     }
 
-    const saleDoc = doc(db, 'sale', sale.id);
+    const rentDoc = doc(db, 'rent', rent.id);
     const newData = {
-      name: saleName,
-      location: saleLocation,
+      name: rentName,
+      location: rentLocation,
       imageUrls: imageUrls,
       sold: isSold,
     };
-    return updateDoc(saleDoc, newData);
+    return updateDoc(rentDoc, newData);
   };
 
-  const deleteSale = async () => {
+  const deleteRent = async () => {
     if (window.confirm("Are you sure you want to delete this listing?")) {
       try {
-        await deleteDoc(doc(db, 'sale', sale.id));
+        await deleteDoc(doc(db, 'rent', rent.id));
         console.log("Listing deleted successfully");
         navigate('/Sale'); // Redirect to the sales listing page after deletion
       } catch (error) {
@@ -409,14 +324,13 @@ export default function SalesListingInfo(props) {
     setShowDeleteDialog(true);
   };
 
-
   const handleDeleteConfirm = async () => {
     if (deleteConfirmation.toLowerCase() === 'delete') {
       try {
-        await deleteDoc(doc(db, 'sale', sale.id));
+        await deleteDoc(doc(db, 'rent', rent.id));
         console.log("Listing deleted successfully");
         setShowDeleteDialog(false);
-        navigate('/Sale'); // Redirect to the sales listing page after deletion
+        navigate('/Rent'); // Redirect to the sales listing page after deletion
       } catch (error) {
         console.error("Error deleting listing: ", error);
         alert("An error occurred while deleting the listing. Please try again.");
@@ -425,91 +339,8 @@ export default function SalesListingInfo(props) {
       alert("Please type 'delete' to confirm.");
     }
   };
-=======
-  return (
-    <div className='bg-black h-fit'>
 
 
-        
-      <Nav />
-
-      <Link to='/Sale'>
-        <button>
-          <svg
-            xmlns='http://www.w3.org/2000/svg'
-            fill='none'
-            viewBox='0 0 24 24'
-            strokeWidth={1.5}
-            stroke='currentColor'
-            className='w-8 h-8 stroke-white m-2'
-          >
-            <path
-              strokeLinecap='round'
-              strokeLinejoin='round'
-              d='M6.75 15.75L3 12m0 0l3.75-3.75M3 12h18'
-            />
-          </svg>
-        </button>
-      </Link>
-
-      <div className='grid grid-cols-5 gap-7 p-2'>
-        <div className=' mt-60 col-span-2'>
-          <form onSubmit={editSale}>
-            <FetchDocument id={salesId} />
-
-            <div className='flex justify-between my-7 '>
-              <h1 className='text-xl tracking-tighter text-zinc-400 '>
-                Property Name:
-              </h1>
-              <h1 className='text-2xl tracking-tighter text-white max-w-sm '>
-                {sale.name}
-              </h1>
-              <input
-                className='text-xl tracking-tighter text-white max-w-sm bg-transparent'
-                placeholder={saleName}
-                value={sale.name}
-                onChange={(e) => setSaleName(e.target.value)}
-              />
-            </div>
-
-            <div className='flex justify-between my-7 '>
-              <h1 className='text-xl tracking-tighter text-zinc-400 '>
-                Property Location:
-              </h1>
-              <h1 className='text-2xl tracking-tighter text-white max-w-sm '>
-                {sale.location}
-              </h1>
-              <input
-                className='text-xl tracking-tighter text-white max-w-sm bg-transparent'
-                placeholder={saleLocation}
-                value={saleLocation}
-                onChange={(e) => setSaleLocation(e.target.value)}
-              />
-            </div>
-
-
-
-
-
-
-<div>
-      {imageUrl && <img src={imageUrl} alt="Downloadable Image" />}
-      <button className='bg-white px-4' onClick={handleDownload} disabled={!downloadUrl}>
-        Download Image
-      </button>
-    </div>
-       
-      
-    
-
-
-
-
-            <img
-              className='object-cover h-full w-full'
-              src={sale.imageUrls[1]}
-              alt=''
-            />
 
 
   const copyUrlToClipboard = () => {
@@ -534,27 +365,14 @@ export default function SalesListingInfo(props) {
   // };
 
 
-  const handleScheduleInspection = () => {
 
-    
-    // if (calApi) {
-    //   calApi("openModal", {
-    //     date: format(new Date(), "yyyy-MM-dd"),
-    //     config: {
-    //       title: `House Inspection for ${property.name}`,
-    //       eventName: "House Inspection",
-    //       eventDescription: `Inspection for property at ${property.location}`,
-    //     },
-    //   });
-    // }
-  };
 
 
   const handleAvailabilityChange = async (newAvailability) => {
     setIsAvailable(newAvailability);
-    const saleDoc = doc(db, 'sale', sale.id);
+    const rentDoc = doc(db, 'rent', rent.id);
     try {
-      await updateDoc(saleDoc, { sold: !newAvailability });
+      await updateDoc(rentDoc, { sold: !newAvailability });
       console.log("Availability updated successfully");
     } catch (error) {
       console.error("Error updating availability: ", error);
@@ -583,11 +401,11 @@ export default function SalesListingInfo(props) {
     <div className="container mx-auto px-4 py-8">
     <Card className="mb-8">
       <CardHeader>
-        <CardTitle className="text-3xl font-bold">{sale.name}</CardTitle>
+        <CardTitle className="text-3xl font-bold">{rent.name}</CardTitle>
         <div className="flex items-center justify-between">
           <div className="flex items-center text-gray-600">
             <MapPin className="mr-2" />
-            {sale.location}
+            {rent.location}
           </div>
           <div className="flex items-center space-x-2">
             <Switch
@@ -606,43 +424,43 @@ export default function SalesListingInfo(props) {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
           <div className="flex items-center">
           
-            <span className="font-bold">{sale.currency}{property.price.toLocaleString()}</span>
+            <span className="font-bold">{rent.currency}{rent.price.toLocaleString()}</span>
           </div>
           <div className="flex items-center">
             <Home className="mr-2" />
-            <span className="font-bold">{sale.type}</span>
+            <span className="font-bold">{rent.type}</span>
           </div>
           <div className="flex items-center">
             <Square className="mr-2" />
-            <span className="font-bold">{sale.size} sq ft</span>
+            <span className="font-bold">{rent.size} sq ft</span>
           </div>
           <div className="flex items-center">
             <Car className="mr-2" />
-            <span>{sale.parking ? 'Parking Available' : 'No Parking'}</span>
+            <span>{rent.parking ? 'Parking Available' : 'No Parking'}</span>
           </div>
           <div className="flex items-center">
             <Building className="mr-2" />
-            <span>{sale.floors} Floors</span>
+            <span>{rent.floors} Floors</span>
           </div>
           <div className="flex items-center">
             <Bed className="mr-2" />
-            <span>{sale.bedrooms} Bedrooms</span>
+            <span>{rent.bedrooms} Bedrooms</span>
           </div>
           <div className="flex items-center">
             <Bath className="mr-2" />
-            <span>{sale.bathrooms} Bathrooms</span>
+            <span>{rent.bathrooms} Bathrooms</span>
           </div>
           <div className="flex items-center">
-            {property.serviced ? <Check className="mr-2" /> : <X className="mr-2" />}
-            <span>{sale.serviced ? 'Serviced' : 'Not Serviced'}</span>
+            {rent.serviced ? <Check className="mr-2" /> : <X className="mr-2" />}
+            <span>{rent.serviced ? 'Serviced' : 'Not Serviced'}</span>
           </div>
         </div>
         <p className="text-gray-700 mb-4">
-          <span className="font-bold">Realtors Note:</span> {sale.realtorsNote}
+          <span className="font-bold">Realtors Note:</span> {rent.realtorsNote}
         </p>
         <div className="flex flex-wrap gap-4">
           {/* <Button onClick={() => setShowCalendar(!showCalendar)}> */}
-          <Scheduler sale={sale} />
+          <Scheduler sale={rent} />
 
 
 
@@ -750,7 +568,7 @@ export default function SalesListingInfo(props) {
           notes: `Inspection for property at ${property.location}`,
         }}
       /> */}
-          <Link to={`/edit-sales-listing/${sale.id}`}>
+          <Link to={`/edit-rent-listing/${rent.id}`}>
             <Button variant="outline">
               <Edit className="mr-2" />
               Edit Listing
@@ -805,14 +623,14 @@ export default function SalesListingInfo(props) {
       </TabsList>
       <TabsContent value="gallery">
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          {sale.imageUrls.map((image, index) => (
+          {rent.imageUrls.map((image, index) => (
             <img key={index} src={image} alt={`Property view ${index + 1}`} className="w-full h-64 object-cover rounded-lg" />
           ))}
         </div>
       </TabsContent>
       <TabsContent value="video">
         <video controls className="w-full aspect-video">
-          <source src={sale.videoUrl} type="video/mp4" />
+          <source src={rent.videoUrl} type="video/mp4" />
           Your browser does not support the video tag.
         </video>
       </TabsContent>
@@ -831,7 +649,7 @@ export default function SalesListingInfo(props) {
         /> */}
       </TabsContent>
       <TabsContent value="floor-plan">
-        <img src={sale.floorPlanUrl} alt="Floor Plan" className="w-full h-auto" />
+        <img src={rent.floorPlanUrl} alt="Floor Plan" className="w-full h-auto" />
       </TabsContent>
       <TabsContent value="map">
         <div style={{ height: '400px', width: '100%' }}>
@@ -842,7 +660,7 @@ export default function SalesListingInfo(props) {
             />
             <Marker position={coordinates}>
               <Popup>
-                {sale.name}<br/>{sale.location}
+                {rent.name}<br/>{rent.location}
               </Popup>
             </Marker>
           </MapContainer>
@@ -853,4 +671,4 @@ export default function SalesListingInfo(props) {
 )
 }
 
-export default SalesListingInfo;
+export default RentListingInfo;

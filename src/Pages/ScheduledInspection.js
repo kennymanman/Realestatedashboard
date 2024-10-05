@@ -1,86 +1,147 @@
-import React, { useEffect } from "react";
-import Nav from "../components/Nav";
-import { useCalendlyEventListener, InlineWidget } from "react-calendly";
-import { Link } from "react-router-dom";
-import { PopupButton } from "react-calendly";
+import React, { useState, useEffect } from 'react';
+import { format, parseISO, startOfMonth, endOfMonth, eachDayOfInterval } from 'date-fns';
+import { Calendar } from "../components/ui/calendar";
+import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
+import { Badge } from "../components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../components/ui/table";
+import { Loader2 } from "lucide-react";
 
-import Cal, { getCalApi } from "@calcom/embed-react";
+const CAL_API_KEY = 'cal_live_af9ebb540be1a5b0b05c49a7da90b5fb'; // Replace with your actual Cal.com API key
+const CAL_USERNAME = 'wokeupbored';
+const EVENT_TYPE = 'schedule-inspection';
 
-// import Calendar from "@ericz1803/react-google-calendar";
-
-export default function ScheduledInspection() {
-  useCalendlyEventListener({
-    onProfilePageViewed: () => console.log("onProfilePageViewed"),
-    onDateAndTimeSelected: () => console.log("onDateAndTimeSelected"),
-    onEventTypeViewed: () => console.log("onEventTypeViewed"),
-    onEventScheduled: (e) => console.log(e.data.payload),
-  });
-
-  //Cal.com code
-
-  useEffect(() => {
-    (async function () {
-      const cal = await getCalApi();
-      cal("ui", {
-        styles: { branding: { brandColor: "#000000" } },
-        hideEventTypeDetails: false,
-        layout: "month_view",
-      });
-    })();
-  }, []);
-
-  const Schedule = () => {
-    <Cal
-      calLink="wokeupbored/schedule-inspection"
-      style={{ width: "100%", height: "100%", overflow: "scroll" }}
-      config={{ layout: "month_view" }}
-    />;
+const fetchCalEvents = async (start, end) => {
+    const startDate = format(start, 'yyyy-MM-dd');
+    const endDate = format(end, 'yyyy-MM-dd');
+    
+    const apiUrl = `https://api.cal.com/v1/schedules/${CAL_USERNAME}/${EVENT_TYPE}/availability`;
+    const params = new URLSearchParams({
+      apiKey: CAL_API_KEY,
+      dateFrom: startDate,
+      dateTo: endDate
+    });
+  
+    try {
+      const response = await fetch(`${apiUrl}?${params}`);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      
+      // Transform the data to match our expected format
+      return data.busy.map((event, index) => ({
+        id: index,
+        title: 'Scheduled Inspection',
+        date: event.start,
+      }));
+    } catch (error) {
+      console.error('Error fetching Cal.com events:', error);
+      throw error;
+    }
   };
 
+export default function ScheduledInspection() {
+  const [date, setDate] = useState(new Date());
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const start = startOfMonth(date);
+        const end = endOfMonth(date);
+        const fetchedEvents = await fetchCalEvents(start, end);
+        setEvents(fetchedEvents);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEvents();
+  }, [date]);
+
+  const daysWithEvents = events.map(event => format(parseISO(event.date), 'yyyy-MM-dd'));
+
   return (
-    <div className="bg-black h-fit ">
-      <Nav />
-      <Link to="/Dashboard">
-        <button>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-8 h-8 stroke-white m-2"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M6.75 15.75L3 12m0 0l3.75-3.75M3 12h18"
+    <div className="container mx-auto py-10">
+      <h1 className="text-3xl font-bold mb-8">Scheduled Inspections</h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <Card>
+          <CardHeader>
+            <CardTitle>Inspection Calendar</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Calendar
+              mode="single"
+              selected={date}
+              onSelect={setDate}
+              className="rounded-md border"
+              components={{
+                day: ({ date, ...props }) => {
+                  const dateString = format(date, 'yyyy-MM-dd');
+                  const hasEvent = daysWithEvents.includes(dateString);
+                  return (
+                    <div {...props}>
+                      {props.children}
+                      {hasEvent && <Badge className="absolute bottom-0 right-0" variant="secondary" />}
+                    </div>
+                  );
+                },
+              }}
             />
-          </svg>
-        </button>
-      </Link>
-      <button
-        className="px-7 py-1 bg-blue-500 rounded-full"
-        data-cal-link="wokeupbored/schedule-inspection"
-        data-cal-config='{"layout":"month_view"}'
-      >
-        Inspect
-      </button>
-      ;
-      <div className="m-4">
-        <iframe
-          className="w-full h-screen "
-          src="https://calendar.google.com/calendar/embed?height=600&wkst=1&bgcolor=%23ffffff&ctz=Africa%2FLagos&title=Scheduled%20Inspections&src=NjI1ZWE0YTFjZWM0NzQ4MzBhMTFiOTllZTljNTI1ZDEyODkxNGEyYTk2ODg3ZjdiODExYmQyMmU2MDc1OWQ5NUBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=ZW4ubmcjaG9saWRheUBncm91cC52LmNhbGVuZGFyLmdvb2dsZS5jb20&color=%23F4511E&color=%230B8043"
-        ></iframe>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Upcoming Inspections</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {loading ? (
+              <div className="flex justify-center items-center h-64">
+                <Loader2 className="h-8 w-8 animate-spin" />
+              </div>
+            ) : error ? (
+              <div className="text-red-500 text-center">{error}</div>
+            ) : (
+              <Table>
+                <TableCaption>A list of upcoming property inspections</TableCaption>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Property</TableHead>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Time</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {events.map((event) => (
+                    <TableRow key={event.id}>
+                      <TableCell className="font-medium">{event.title}</TableCell>
+                      <TableCell>{format(parseISO(event.date), 'MMMM d, yyyy')}</TableCell>
+                      <TableCell>{format(parseISO(event.date), 'h:mm a')}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
+          </CardContent>
+        </Card>
       </div>
-      {/* 
-      <PopupButton
-      className='bg-green-500 py-10 px-20'
-        url="https://calendly.com/primarkhills/property-inspection" 
-       
-        rootElement={document.getElementById("root")}
-        text="Click here to schedule!"
-      />
-       */}
     </div>
   );
 }

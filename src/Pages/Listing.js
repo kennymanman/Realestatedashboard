@@ -4,6 +4,7 @@ import rent from '../Images/rent.jpg';
 import Sale from '../Images/Sale.jpg';
 import contactimagefive from '../Images/contactimagefive.jpg';
 import { Link, useNavigate } from 'react-router-dom';
+import listingsbg from "../Images/listingsbu.jpg"
 
 export default function Listing() {
   const navigate = useNavigate();
@@ -11,6 +12,8 @@ export default function Listing() {
   return (
     <div className='  bg-black min-h-screen max-h-fit'>
       <Nav />
+
+      <img src={listingsbg} className='absolute h-screen  w-full ' alt="artificial intelligence"   />
 
       {/* <div className='flex justify-between'> */}
 
@@ -22,7 +25,7 @@ export default function Listing() {
             viewBox='0 0 24 24'
             strokeWidth={1.5}
             stroke='currentColor'
-            className='w-8 h-8 stroke-white m-2'
+            className='w-8 h-8 stroke-black m-2 relative'
           >
             <path
               strokeLinecap='round'
@@ -41,114 +44,83 @@ export default function Listing() {
 
 <hr className='border-black mt-2'/> */}
 
-      <div className='grid grid-cols-3 gap-5 mt-32 '>
-        <div className='col-span-1 h-5/6 '>
+
+<h1 className='font- tracking-tighter text-center  text-5xl mt-3 text-black relative'>
+        Listings.
+      </h1>
+
+      <hr className='bg-slate-600 relative mt-4'/>
+
+      <div className='grid grid-cols-3 gap-5 mt-20 relative mx-2 '>
+        <div className='col-span-1 h-96 '>
           <img
-            className='h-full w-full object-cover'
+            className='h-full w-full object-cover rounded-xl hover:rounded-full'
             src={contactimagefive}
             alt=''
           />
 
           <div className='flex justify-between'>
-            <h1 className='text-2xl tracking-tighter text-white'>
-              Manage For Sale
+        
+            <h1 className='text-2xl tracking-tighter text-black'>
+              Manage for sale
             </h1>
 
+        
             <Link to='/Sale'>
-              <svg
-                xmlns='http://www.w3.org/2000/svg'
-                fill='none'
-                viewBox='0 0 24 24'
-                strokeWidth={1.5}
-                stroke='currentColor'
-                className='w-8 h-8 stroke-white'
-              >
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  d='M12.75 15l3-3m0 0l-3-3m3 3h-7.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
-                />
-              </svg>
+              <button className='bg-black text-white px-7 rounded-full py-1 tracking-tighter mt-2 hover:bg-white hover:text-black'>See everything</button>
             </Link>
           </div>
+
+       
+          <p className='text-slate-500 text-sm tracking-tighter mt-1'>Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took  specimen book.</p>
+
         </div>
 
-        <div className='col-span-1 h-5/6 '>
+
+
+        <div className='col-span-1 h-96  '>
           <img
-            className='h-full w-full object-cover'
+            className='h-full w-full object-cover rounded-xl hover:rounded-full'
             src={contactimagefive}
             alt=''
           />
           <div className='flex justify-between'>
-            <h1 className='text-2xl tracking-tighter text-white'>
-              Manage For Rent
+            <h1 className='text-2xl tracking-tighter text-black'>
+              Manage for rent
             </h1>
 
             <Link to='/Rent'>
-              <svg
-                xmlns='http://www.w3.org/2000/svg'
-                fill='none'
-                viewBox='0 0 24 24'
-                strokeWidth={1.5}
-                stroke='currentColor'
-                className='w-8 h-8 stroke-white'
-              >
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  d='M12.75 15l3-3m0 0l-3-3m3 3h-7.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
-                />
-              </svg>
+            <button className='bg-black text-white px-7 rounded-full py-1 tracking-tighter mt-2 hover:bg-white hover:text-black'>See everything</button>
             </Link>
           </div>
+          <p className='text-slate-500 text-sm tracking-tighter mt-1'>Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took  specimen book.</p>
         </div>
 
-        <div className='col-span-1 h-5/6 '>
+        <div className='col-span-1 h-96 '>
           <img
-            className='h-full w-full object-cover'
+            className='h-full w-full object-cover rounded-xl hover:rounded-full'
             src={contactimagefive}
             alt=''
           />
           <div className='flex justify-between'>
-            <h1 className='text-2xl tracking-tighter text-white'>
-              Manage For Shortlet
+            <h1 className='text-2xl tracking-tighter text-black'>
+              Manage for shortlet
             </h1>
 
             <Link to='/Shortlet'>
-              <svg
-                xmlns='http://www.w3.org/2000/svg'
-                fill='none'
-                viewBox='0 0 24 24'
-                strokeWidth={1.5}
-                stroke='currentColor'
-                className='w-8 h-8 stroke-white'
-              >
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  d='M12.75 15l3-3m0 0l-3-3m3 3h-7.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
-                />
-              </svg>
+            <button className='bg-black text-white px-7 rounded-full py-1 tracking-tighter mt-2 hover:bg-white hover:text-black'>See everything</button>
             </Link>
           </div>
+
+          <p className='text-slate-500 text-sm tracking-tighter mt-1'>Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took  specimen book.</p>
         </div>
       </div>
 
-      <h1 className='tracking-tighter text-center text-4xl mt-4 text-white'>
-        Keep Track of all your listing with AugustFlow.
-      </h1>
-      <p className='tracking-tighter text-center px-36 text-white'>
-        Lorem Ipsum is simply dummy text of the printing and typesetting
-        industry. Lorem Ipsum has been the industry&apos;s standard dummy text
-        ever since the 1500s, when an unknown printer took a galley of type and
-        scrambled it to make a type specimen book.
-      </p>
+   
 
-      <hr className='border-black mt-7' />
+      
 
-      <h2 className='tracking-tighter text-center mt-2'>
-        Developed & designed by August Deep Tech
-      </h2>
+     
     </div>
   );
 }
