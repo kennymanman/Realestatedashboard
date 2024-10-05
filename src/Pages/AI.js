@@ -2,6 +2,12 @@ import React from 'react'
 import Nav from '../components/Nav'
 import Aione from "../Images/Aione.jpg"
 
+import { Link } from 'react-router-dom'
+
+
+
+
+
 export default function AI() {
   return (
     <div className='bg-black '>
@@ -25,6 +31,27 @@ export default function AI() {
 
   <hr className='relative mx-2' />
 
+
+  {/* <h2 className='text-white tracking-tighter relative text-2xl py-7 px-2'>Combining Real estate with cutting edge Artificial Intelligence Lorem Ipsum is simply dummy text of the printing and typesetting industry..</h2> */}
+
+
+<div className='grid grid-cols-2 mt-7'>
+
+  <div className='col-span-1'>
+    <h2 className='tracking-tighter text-slate-300 text-lg'>August Deep Tech</h2>
+   <h2 className='tracking-tighter text-white text-xl'>Artificial Intelligence meets Real Estate</h2>
+  </div>
+
+
+  <div className='col-span-1'>
+    <h2 className='tracking-tighter text-slate-300 text-lg'>2023</h2>
+   <h2 className='tracking-tighter text-white text-xl'>Combining Real estate with cutting edge Artificial Intelligence alongside property management & collaboration.</h2>
+   <h2 className='tracking-tighter text-slate-300 text-lg mt-8'>support@augustdeeptech.com</h2>
+  </div>
+
+
+</div>
+
   <h2 className='text-white tracking-tighter relative text-4xl py-7 px-2'>Combining Real estate with cutting edge<br/> Artificial Intelligence.</h2>
 
     
@@ -42,29 +69,52 @@ export default function AI() {
 
 <div className='grid grid-cols-2 h-96 gap-2 '>
 
+
+<div className='col-span-1 bg-white rounded-lg p-2 grid hover:scale-105 '>
 <div className='col-span-1 bg-white rounded-lg p-2 grid '>
+
 <div className='place-self-start '>
 <h3 className='tracking-tighter text-lg '>01.</h3>
 </div>
 
 <div className='place-self-center '>
+
+<h3 className='tracking-tighter text-3xl text-center '>Prime-GPT</h3>
+<p className='text-slate-400 tracking-tighter text-center mt-3'>Think of ChatGPT but designed, trained and built for just your agency.</p>
+</div>
+
+ <div className='place-self-end '>
+<Link to="/GPT">
+ <button className='bg-black rounded-full text-white px-9 '>T</button>
+ </Link>
+
 <h3 className='tracking-tighter text-2xl '>Prime-GPT</h3>
 </div>
 
  <div className='place-self-end '>
  <button className='bg-black rounded-full text-white px-9 '>T</button>
+
  </div>
 </div>
 
 
 
+
+<div className='col-span-1 bg-white rounded-lg p-2 grid hover:scale-105 '>
+
 <div className='col-span-1 bg-white rounded-lg p-2 grid '>
+
 <div className='place-self-start '>
 <h3 className='tracking-tighter text-lg place-content-start'>02.</h3>
 </div>
 
 <div className='place-self-center '>
+
+<h3 className='tracking-tighter text-3xl text-center '>Chat with PDF</h3>
+<p className='text-slate-400 tracking-tighter text-center mt-3'>Communicate & converse with documents with the power of A.I.</p>
+
 <h3 className='tracking-tighter text-2xl '>Chat with PDF</h3>
+
 </div>
 
  <div className='place-self-end '>
@@ -81,14 +131,25 @@ export default function AI() {
     
 <div className='grid grid-cols-2 h-96 gap-2 mt-2 '>
 
+
+<div className='col-span-1 bg-white rounded-lg p-2 grid hover:scale-105 '>
+<div className='place-self-start '>
+<h3 className='tracking-tighter text-lg place-content-start'>03.</h3>
+
 <div className='col-span-1 bg-white rounded-lg p-2 grid '>
 <div className='place-self-start '>
 <h3 className='tracking-tighter text-lg place-content-start'>03</h3>
+
 </div>
 
 
 <div className='place-self-center '>
+
+<h3 className='tracking-tighter text-3xl '>AI Summarizer</h3>
+<p className='text-slate-400 tracking-tighter text-center mt-3'>Summarize and save time with A.I</p>
+
 <h3 className='tracking-tighter text-2xl '>AI Summarizer</h3>
+
 </div>
 
  <div className='place-self-end '>
@@ -110,6 +171,12 @@ export default function AI() {
 
 
 
+
+
+<div className='relative flex justify-center mt-52'>
+
+<button className='border-2 border-white rounded-full px-4  text-white tracking-tighter hover:bg-white hover:text-black'>To the top</button>
+</div>
 
 
 
