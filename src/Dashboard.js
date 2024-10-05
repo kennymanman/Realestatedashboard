@@ -135,7 +135,7 @@ export default function Dashboard() {
               {/* <p className='text-md tracking-tighter max-w-xl text-zinc-600 my-3'>Create & manage property listing for your agency and your website. Real-time sync and listing manangement. </p> */}
 
               <div className='self-end'>
-                <Link to='/ScheduledInspection'>
+                <Link to='/schedules'>
                   <button className='bg-black px-7 py-1  rounded-full  place-self-end'>
                     <svg
                       xmlns='http://www.w3.org/2000/svg'
@@ -242,7 +242,7 @@ export default function Dashboard() {
             </div>
 
             <div className='col-span-2 bg-yellow-400 rounded-lg p-2'>
-              <Link to='/Blog'>
+              <Link to='/TaskManager'>
                 <button className='bg-black px-8 py-1 rounded-full  place-self-end'>
                   <svg
                     xmlns='http://www.w3.org/2000/svg'

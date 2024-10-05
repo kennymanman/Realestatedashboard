@@ -27,11 +27,12 @@ import PageNotFound from './components/PageNotFound';
 import AI from "./Pages/AI"
 import GPT from "./AI-screens/GPT";
 import Calculator from "./Pages/Calculator";
-
-
-
-
-
+import Schedules from './Pages/Schedules';
+import EditSalesInfo from './Pages/EditSalesInfo';
+import NewRentListing from "./Pages/NewRentListing";
+import RentListingInfo from "./Pages/RentListingInfo"
+import Maps from "./components/Maps";
+import TaskManager from "./Pages/TaskManager";
 
 function App() {
   return (
@@ -68,6 +69,7 @@ function App() {
     <Route path="/Sale" element={<Sale />} />
     {/* <Route path="/SalesListingInfo" element={<SalesListingInfo />} /> */}
     <Route path="/NewSalesListing" element={<NewSalesListing />} />
+    <Route path="/NewRentListing" element={<NewRentListing />} />
     <Route path="/CreateStaff" element={<CreateStaff />} />
     <Route path="/MediaDetails" element={<MediaDetails />} />
     <Route path="/BlogDetails" element={<BlogDetails />} />
@@ -77,13 +79,22 @@ function App() {
     <Route path="/Insights" element={<Insights/>} />
     <Route path="/AI" element={<AI/>} />
     <Route path="/GPT" element={<GPT/>} />
+    <Route path="/Maps" element={<Maps/>} />
     <Route path="*" element={<PageNotFound/>} />
     <Route path="/propertyvaluecalculator" element={<Calculator/>} />
+    <Route path="/TaskManager" element={<TaskManager/>} />
      
      {/* Sales Listing Information routing */}
     <Route path="/SalesListingInfo/:salesId" element={<SalesListingInfo />} />
+    <Route path="/edit-sales-listing/:salesId" element={<EditSalesInfo />} />
 
 
+       {/* Rent Listing Information routing */}
+       <Route path="/RentListingInfo/:rentId" element={<RentListingInfo />} />
+
+
+
+  <Route path="/schedules" element={<Schedules />} />
 
   </Routes>
   </Router>

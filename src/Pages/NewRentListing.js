@@ -16,12 +16,12 @@ import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import Success from '../components/Success';
 
-export default function NewSalesListing(props) {
-  const [sale, setSale] = useState([]);
-  const [saleName, setSaleName] = useState('');
-  const [saleLocation, setSaleLocation] = useState('');
-  const [salePrice, setSalePrice] = useState('');
-  const [saleType, setSaleType] = useState('');
+export default function NewRentListing(props) {
+  const [rent, setRent] = useState([]);
+  const [rentName, setRentName] = useState('');
+  const [rentLocation, setRentLocation] = useState('');
+  const [rentPrice, setRentPrice] = useState('');
+  const [rentType, setRentType] = useState('');
 
   const [firstImage, setFirstImage] = useState('');
   const [firstImageUrl, setFirstImageUrl] = useState('');
@@ -29,7 +29,7 @@ export default function NewSalesListing(props) {
   const [imageOne, setImageOne] = useState('');
   const [imageOneUrl, setImageOneUrl] = useState('');
 
-  const [saleSize, setSaleSize] = useState('');
+  const [rentSize, setRentSize] = useState('');
   const [parking, setParking] = useState('');
   const [availability, setAvailability] = useState('');
   const [floor, setFloor] = useState('');
@@ -48,11 +48,11 @@ export default function NewSalesListing(props) {
   const [floorPlan, setFloorPlan] = useState(null);
   const [image360, setImage360] = useState(null);
 
-  const [saleCurrency, setSaleCurrency] = useState('₦'); // Default to Naira
+  const [rentCurrency, setRentCurrency] = useState('₦'); // Default to Naira
 
   const [isSuccessOpen, setIsSuccessOpen] = useState(false);
 
-  const createSaleListing = async (e) => {
+  const createRentListing = async (e) => {
     e.preventDefault();
 
     try {
@@ -61,7 +61,7 @@ export default function NewSalesListing(props) {
 
       for (let image of imagesToUpload) {
         if (image) {
-          const imageRef = ref(imageDB, `forsale/${uuidv4()}`);
+          const imageRef = ref(imageDB, `forrent/${uuidv4()}`);
           const value = await uploadBytes(imageRef, image);
           const url = await getDownloadURL(value.ref);
           imageUrls.push(url);
@@ -70,33 +70,33 @@ export default function NewSalesListing(props) {
 
       let videoUrl = '';
       if (video) {
-        const videoRef = ref(imageDB, `forsale/videos/${uuidv4()}`);
+        const videoRef = ref(imageDB, `forrent/videos/${uuidv4()}`);
         const value = await uploadBytes(videoRef, video);
         videoUrl = await getDownloadURL(value.ref);
       }
 
       let floorPlanUrl = '';
       if (floorPlan) {
-        const floorPlanRef = ref(imageDB, `forsale/floorplans/${uuidv4()}`);
+        const floorPlanRef = ref(imageDB, `forrent/floorplans/${uuidv4()}`);
         const value = await uploadBytes(floorPlanRef, floorPlan);
         floorPlanUrl = await getDownloadURL(value.ref);
       }
 
       let image360Url = '';
       if (image360) {
-        const image360Ref = ref(imageDB, `forsale/360images/${uuidv4()}`);
+        const image360Ref = ref(imageDB, `forrent/360images/${uuidv4()}`);
         const value = await uploadBytes(image360Ref, image360);
         image360Url = await getDownloadURL(value.ref);
       }
 
-      await addDoc(collection(db, 'sale'), {
+      await addDoc(collection(db, 'rent'), {
         id: uuidv4(),
-        name: saleName,
-        location: saleLocation,
-        price: salePrice,
-        currency: saleCurrency,
-        type: saleType,
-        size: saleSize,
+        name: rentName,
+        location: rentLocation,
+        price: rentPrice,
+        currency: rentCurrency,
+        type: rentType,
+        size: rentSize,
         parking: parking,
         availability: availability,
         floor: floor,
@@ -115,12 +115,12 @@ export default function NewSalesListing(props) {
       setIsSuccessOpen(true);
 
       // Reset form fields
-      setSaleName('');
-      setSaleLocation('');
-      setSalePrice('');
-      setSaleCurrency('₦');
-      setSaleType('');
-      setSaleSize('');
+      setRentName('');
+      setRentLocation('');
+      setRentPrice('');
+      setRentCurrency('₦');
+      setRentType('');
+      setRentSize('');
       setParking('');
       setAvailability('');
       setFloor('');
@@ -140,7 +140,7 @@ export default function NewSalesListing(props) {
       setImage360(null);
 
     } catch (error) {
-      console.error("Error creating new listing: ", error);
+      console.error("Error creating new listing for Rent: ", error);
       alert("An error occurred while creating the listing. Please try again.");
     }
   };
@@ -159,24 +159,24 @@ export default function NewSalesListing(props) {
 
   // Read todo from firebase
   useEffect(() => {
-    const q = query(collection(db, 'sale'));
+    const q = query(collection(db, 'rent'));
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      let saleArr = [];
+      let rentArr = [];
       querySnapshot.forEach((doc) => {
-        saleArr.push({ ...doc.data(), id: doc.id });
+        rentArr.push({ ...doc.data(), id: doc.id });
       });
-      setSale(saleArr);
+      setRent(rentArr);
     });
     return () => unsubscribe();
   }, []);
 
-  const Sale = ({ sale, toggleComplete, deleteSale }) => {
+  const Rent = ({ rent, toggleComplete, deleteRent }) => {
     return (
       <li>
         <div>
-          <p className='text-white '>{sale.name}</p>
+          <p className='text-white '>{rent.name}</p>
         </div>
-        <button className='bg-red-400 px-4' onClick={() => deleteSale(sale.id)}>
+        <button className='bg-red-400 px-4' onClick={() => deleteRent(rent.id)}>
           Delete
         </button>
       </li>
@@ -189,7 +189,7 @@ export default function NewSalesListing(props) {
 
       <div className='grid grid-cols-2 p-2 '>
         <div className='col-span-1'>
-          <Link to='/Sale'>
+          <Link to='/Rent'>
             <button>
               <svg
                 xmlns='http://www.w3.org/2000/svg'
@@ -209,7 +209,7 @@ export default function NewSalesListing(props) {
           </Link>
 
           <h1 className='text-6xl text-white tracking-tighter mt-8'>
-            New Sale listing details
+            New Rent listing details
           </h1>
           <p className='text-white tracking-tighter w-3/4 mt-5'>
             Lorem Ipsum is simply dummy text of the printing and typesetting
@@ -218,20 +218,20 @@ export default function NewSalesListing(props) {
             type and scrambled it to make a type specimen book.
           </p>
 
-          <ol>
-            {sale.map((sale, index) => (
-              <Sale
+          {/* <ol>
+            {rent.map((rent, index) => (
+              <Rent
                 key={index}
-                sale={sale}
+                rent={rent}
 
                 // deleteSale={deleteSale}
               />
             ))}
-          </ol>
+          </ol> */}
         </div>
 
         <div className='col-span-1'>
-          <form onSubmit={createSaleListing}>
+          <form onSubmit={createRentListing}>
             <div className='my-5'>
               <h1 className='text-white text-xl tracking-tighter'>
                 Listing Name*
@@ -239,9 +239,10 @@ export default function NewSalesListing(props) {
               <input
                 className='bg-transparent border-b-2 border-slate-400 text-white w-96 text-xl tracking-tighter mt-3 '
                 placeholder='Type property name'
-                value={saleName}
+                value={rentName}
                 type='text'
-                onChange={(e) => setSaleName(e.target.value)}
+                required
+                onChange={(e) => setRentName(e.target.value)}
               />
             </div>
 
@@ -252,14 +253,14 @@ export default function NewSalesListing(props) {
               <input
                 className='bg-transparent border-b-2 border-slate-400 text-white w-96 text-xl tracking-tighter mt-3'
                 placeholder='Type location'
-                value={saleLocation}
-                onChange={(e) => setSaleLocation(e.target.value)}
+                value={rentLocation}
+                onChange={(e) => setRentLocation(e.target.value)}
               />
             </div>
 
             <div className='my-5'>
               <h1 className='text-white text-xl tracking-tighter'>Currency*</h1>
-              <Select onValueChange={setSaleCurrency} defaultValue="₦">
+              <Select onValueChange={setRentCurrency} defaultValue="₦">
                 <SelectTrigger className="w-96 bg-white text-black">
                   <SelectValue placeholder="Select currency" />
                 </SelectTrigger>
@@ -278,13 +279,13 @@ export default function NewSalesListing(props) {
                 Listing Price*
               </h1>
               <div className="flex items-center">
-                <span className="text-white mr-2">{saleCurrency}</span>
+                <span className="text-white mr-2">{rentCurrency}</span>
                 <input
                   className='bg-transparent border-b-2 border-slate-400 text-white w-96 text-xl tracking-tighter mt-3'
                   placeholder='Type sale price'
                   type='number'
-                  value={salePrice}
-                  onChange={(e) => setSalePrice(e.target.value)}
+                  value={rentPrice}
+                  onChange={(e) => setRentPrice(e.target.value)}
                 />
               </div>
             </div>
@@ -296,8 +297,8 @@ export default function NewSalesListing(props) {
               <input
                 className='bg-transparent border-b-2 border-slate-400 text-white w-96 text-xl tracking-tighter mt-3'
                 placeholder='Studio Apartment/Duplex'
-                value={saleType}
-                onChange={(e) => setSaleType(e.target.value)}
+                value={rentType}
+                onChange={(e) => setRentType(e.target.value)}
               />
             </div>
 
@@ -309,8 +310,8 @@ export default function NewSalesListing(props) {
                 className='bg-transparent border-b-2 border-slate-400 text-white w-96 text-xl tracking-tighter mt-3'
                 placeholder='Type listing size'
                 type='number'
-                value={saleSize}
-                onChange={(e) => setSaleSize(e.target.value)}
+                value={rentSize}
+                onChange={(e) => setRentSize(e.target.value)}
               />
             </div>
 

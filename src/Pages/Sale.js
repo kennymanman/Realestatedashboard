@@ -234,7 +234,7 @@ export default function Sale(props) {
         </Link> */}
 
 <div>
-        <p className="text-slate-300 tracking-tighter text-lg">Created number of listings for sale: {sale.length < 1 ? <>0</> : <>{`${sale.length} `}</>} </p>
+        <p className="text-slate-300 tracking-tighter text-lg">Created. number of listings for sale: {sale.length < 1 ? <>0</> : <>{`${sale.length} `}</>} </p>
         <Link to="/NewSalesListing">
         <button className="bg-white px-5 tracking-tighter rounded-full mt-6 hover:bg-green-600">Create a new listing</button>
         </Link>
