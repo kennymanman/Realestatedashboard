@@ -1,7 +1,18 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { UserAuth } from "../context/AuthContext";
-// import { signInWithGoogle } from '../config/firebaseConfig';
+import { Button } from "../components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+import backgroundImage from "../Images/Aione.jpg";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -23,30 +34,54 @@ const Login = () => {
   };
 
   return (
-    <div>
-      Login
-      <input
-        onChange={(e) => setEmail(e.target.value)}
-        className="border-b-2 border-black py-4 w-full relative bg-transparent rounded-t-lg placeholder:text-black p-2 text-black text-2xl"
-        type="email"
-        placeholder="EMAIL"
-      />
-      {/*<label className='py-2 font-medium'>Password</label>*/}
-      <input
-        onChange={(e) => setPassword(e.target.value)}
-        className="border-b-2 border-black py-4 w-full relative bg-transparent rounded-t-lg placeholder:text-black p-2 text-black text-2xl"
-        type="password"
-        placeholder="PASSWORD"
-      />
-      <button
-        onClick={handleSubmit}
-        className="w-full bg-black text-white rounded-lg py-3 font-medium tracking-tighter font-custom text-xl bg-gradient-to-r from-black to-black hover:from-pink-500 hover:to-yellow-500 "
-      >
-        {" "}
-        Sign In
-      </button>
-      <Link to="/ForgotPassword">ForgotPassword?</Link>
-      <Link to="/Signup">Create Account</Link>
+    <div className="flex min-h-screen">
+      <div className="flex-1 bg-cover bg-center" style={{backgroundImage: `url(${backgroundImage})`}}></div>
+      <div className="flex-1 flex items-center justify-center">
+        <Card className="w-[350px]">
+          <CardHeader className="space-y-1">
+            <CardTitle className="text-2xl text-center">Sign in</CardTitle>
+            <CardDescription className="text-center">
+              Enter your email below to sign in to your account
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="grid gap-4">
+            <div className="grid gap-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="m@example.com"
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+          </CardContent>
+          <CardFooter className="flex flex-col">
+            <Button className="w-full bg-black text-white" onClick={handleSubmit}>
+              Sign In
+            </Button>
+            {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+            <div className="mt-4 text-center text-sm">
+              <Link to="/ForgotPassword" className="underline text-sm text-muted-foreground">
+                Forgot password?
+              </Link>
+            </div>
+            <div className="mt-4 text-center text-sm">
+              Dont have an account?{" "}
+              <Link to="/Signup" className="underline text-sm text-muted-foreground">
+                Sign up
+              </Link>
+            </div>
+          </CardFooter>
+        </Card>
+      </div>
     </div>
   );
 };

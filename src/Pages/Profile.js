@@ -1,106 +1,214 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Nav from "../components/Nav";
 import { UserAuth } from "../context/AuthContext";
-import { updateProfile } from "firebase/auth";
-import { Link } from "react-router-dom";
-import { sendPasswordResetEmail } from "firebase/auth";
-import { auth } from "../config/firebaseConfig";
+import { updateProfile, sendPasswordResetEmail } from "firebase/auth";
+import { getFirestore, doc, getDoc, updateDoc } from "firebase/firestore";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { toast } from "sonner";
+import { Separator } from "../components/ui/separator";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../components/ui/card";
+import { Label } from "../components/ui/label";
+import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
 
 export default function Profile() {
-  const { user } = UserAuth();
-  const [displayName, setDisplayName] = useState("");
+  const { user } = UserAuth() || {};
+  const [userData, setUserData] = useState(null);
+  const [formData, setFormData] = useState({
+    username: "",
+    jobTitle: "",
+    jobRole: "",
+    email: "",
+    phoneNumber: "",
+    profilePicture: "",
+  });
+  const [resetEmail, setResetEmail] = useState("");
+  const [profilePicture, setProfilePicture] = useState(null);
+  const db = getFirestore();
+  const storage = getStorage();
 
-  const [photoURL, setPhotoUrl] = useState("");
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (user && user.uid) {
+        try {
+          const userDoc = await getDoc(doc(db, "users", user.uid));
+          if (userDoc.exists()) {
+            const data = userDoc.data();
+            setUserData(data);
+            setFormData({
+              username: data.username || "",
+              jobTitle: data.jobTitle || "",
+              jobRole: data.role || "",
+              email: data.email || "",
+              phoneNumber: data.phoneNumber || "",
+              profilePicture: data.profilePicture || "",
+            });
+          }
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+          toast.error("Failed to load user data");
+        }
+      }
+    };
+    fetchUserData();
+  }, [user, db]);
 
-  const updateuserdata = async () => {
-    updateProfile(user, {
-      displayName,
-      photoURL:
-        "https://99designs-blog.imgix.net/blog/wp-content/uploads/2022/05/Shell_logo.svg-e1659037248878.png?auto=format&q=60&fit=max&w=930",
-    })
-      .then(() => {
-        console.log(user.displayName);
-        // Profile updated!
-        // ...
-      })
-      .catch((error) => {
-        console.log("Error.");
-        // An error occurred
-        // ...
-      });
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const [email, setEmail] = useState("");
-  const [error, setError] = useState("");
-
-  const Reset = async () => {
-    sendPasswordResetEmail(auth, email)
-      .then(() => {
-        // Password reset email sent!
-        // ..
-      })
-      .catch((error) => {
-        console.log("Reset Activated.");
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        // ..
-      });
+  const handleProfilePictureChange = (e) => {
+    if (e.target.files[0]) {
+      setProfilePicture(e.target.files[0]);
+    }
   };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!user || !user.uid) {
+      toast.error("User not authenticated");
+      return;
+    }
+    try {
+      let profilePictureUrl = formData.profilePicture;
+
+      if (profilePicture) {
+        const storageRef = ref(storage, `profilePictures/${user.uid}`);
+        await uploadBytes(storageRef, profilePicture);
+        profilePictureUrl = await getDownloadURL(storageRef);
+      }
+
+      const updatedFormData = { ...formData, profilePicture: profilePictureUrl };
+      await updateDoc(doc(db, "users", user.uid), updatedFormData);
+      await updateProfile(user, { 
+        displayName: formData.username,
+        photoURL: profilePictureUrl
+      });
+      setFormData(updatedFormData);
+      toast.success("Profile updated successfully");
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      toast.error("Error updating profile");
+    }
+  };
+
+  const handleResetPassword = async (e) => {
+    e.preventDefault();
+    if (!user || !user.auth) {
+      toast.error("User not authenticated");
+      return;
+    }
+    try {
+      await sendPasswordResetEmail(user.auth, resetEmail);
+      toast.success("Password reset email sent");
+    } catch (error) {
+      console.error("Error sending password reset email:", error);
+      toast.error("Error sending password reset email");
+    }
+  };
+
+  if (!user) {
+    return <div>Loading...</div>;
+  }
 
   return (
-    <div className="bg-black h-screen">
+    <div className="bg-background min-h-screen bg-black">
       <Nav />
-
-      <div className="px-2">
-        <h1 className="text-6xl text-white tracking-tighter mt-5">Profile</h1>
-
-        <h1 className="text-4xl text-white tracking-tighter mt-5">
-          Hey {user.displayName} .
-        </h1>
-
-        <div className="grid grid-cols-2">
-          <div className="col-span-1">
-            <h1 className="text-4xl text-white tracking-tighter mt-40">
-              Edit Username:
-            </h1>
-
-            <input
-              onChange={(e) => setDisplayName(e.target.value)}
-              className="border-b-2 border-white py-4 w-full relative bg-transparent rounded-t-lg placeholder: font-custom text-white p-2 tracking-tighter text-5xl"
-              type="text"
-              value={displayName}
-              placeholder={user.displayName}
-            />
-
-            <button
-              className="w-full mt-7 bg-black text-black rounded-lg py-3 font-medium tracking-tighter font-custom text-xl bg-gradient-to-r from-white to-white hover:from-pink-500 hover:to-yellow-500 "
-              disabled={!displayName}
-              onClick={updateuserdata}
-            >
-              {" "}
-              Update
-            </button>
+      <div className="container mx-auto px-4 py-8 bg-white">
+        <div className="space-y-6">
+          <div>
+            <h3 className="text-lg font-medium">Profile</h3>
+            <p className="text-sm text-muted-foreground">
+              Manage your account settings and set e-mail preferences.
+            </p>
           </div>
-
-          <div className="col-span-1">
-            <div className="bg-green-600">
-              <input
-                onChange={(e) => setEmail(e.target.value)}
-                className="mt-5 border-b-2 border-white py-4 w-full relative bg-transparent rounded-t-lg placeholder: font-custom text-white p-2 tracking-tighter text-4xl"
-                type="text"
-                value={email}
-                placeholder={user.email}
-              />
-
-              <button
-                onClick={Reset}
-                className="w-full mt-7 text-black rounded-lg py-3 font-medium tracking-tighter font-custom text-xl bg-white "
-              >
-                {" "}
-                Reset Password
-              </button>
-            </div>
-          </div>
+          <Separator />
+          <Card>
+            <CardHeader>
+              <CardTitle>Account</CardTitle>
+              <CardDescription>
+                Make changes to your account here. Click save when you are done.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <form onSubmit={handleSubmit}>
+                <div className="space-y-4">
+                  <div className="flex items-center space-x-4">
+                    <Avatar className="w-20 h-20">
+                      <AvatarImage src={formData.profilePicture} alt={formData.username} />
+                      <AvatarFallback>{formData.username ? formData.username.charAt(0) : 'U'}</AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <Label htmlFor="profile-picture">Profile Picture</Label>
+                      <Input
+                        id="profile-picture"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleProfilePictureChange}
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="username">Username</Label>
+                      <Input id="username" name="username" value={formData.username} onChange={handleInputChange} placeholder="Username" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="jobTitle">Job Title</Label>
+                      <Input id="jobTitle" name="jobTitle" value={formData.jobTitle} onChange={handleInputChange} placeholder="Job Title" />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input id="email" name="email" type="email" value={formData.email} onChange={handleInputChange} placeholder="Email" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="phoneNumber">Phone Number</Label>
+                    <Input id="phoneNumber" name="phoneNumber" value={formData.phoneNumber} onChange={handleInputChange} placeholder="Phone Number" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="jobRole">Job Role</Label>
+                    <Input id="jobRole" name="jobRole" value={formData.jobRole} readOnly disabled />
+                    <p className="text-sm text-muted-foreground mt-1">
+                      To change your job role, please contact an administrator.
+                    </p>
+                  </div>
+                </div>
+                <CardFooter className="flex justify-end pt-6">
+                  <Button type="submit" className="bg-black text-white hover:bg-gray-800">Save changes</Button>
+                </CardFooter>
+              </form>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Password</CardTitle>
+              <CardDescription>
+                Change your password or reset it if you have forgotten it.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleResetPassword} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="resetEmail">Email</Label>
+                  <Input
+                    id="resetEmail"
+                    placeholder="Enter your email"
+                    type="email"
+                    value={resetEmail}
+                    onChange={(e) => setResetEmail(e.target.value)}
+                    required
+                  />
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  Enter the email associated with your account to reset your password.
+                </p>
+                <Button type="submit" className="bg-black text-white hover:bg-gray-800">Reset Password</Button>
+              </form>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>

@@ -1,43 +1,32 @@
 import React, { useState } from "react";
 import { sendPasswordResetEmail } from "firebase/auth";
 import { database } from "../config/firebaseConfig";
-// import { UserAuth } from '../context/AuthContext';
-
 import { Link, useNavigate } from "react-router-dom";
+import { Button } from "../components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+import { Icons } from "../components/ui/icons"; // Changed this import
+
+import backgroundImage from "../Images/Aione.jpg"; // Import the background image
 
 export default function ForgotPassword() {
-  const history = useNavigate();
-
-  // const { user } = UserAuth();
   const navigate = useNavigate();
-
-  // const [email, setEmail] = useState("")
   const [error, setError] = useState("");
-
-  //       const Reset = async () => {
-
-  //           sendPasswordResetEmail(auth, email)
-  //     .then(() => {
-  //       // alertPassword reset email sent!
-  //       // ..
-  //     })
-  //     .catch((error) => {
-
-  //       console.log("Reset Activated.")
-  //       const errorCode = error.code;
-  //       const errorMessage = error.message;
-  //       // ..
-  //     });
-
-  //   }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const emalVal = e.target.email.value;
-    sendPasswordResetEmail(database, emalVal)
+    const emailVal = e.target.email.value;
+    sendPasswordResetEmail(database, emailVal)
       .then((data) => {
         alert("Check your gmail");
-        history("/");
+        navigate("/");
       })
       .catch((err) => {
         alert("This Email is not linked to any account.");
@@ -45,50 +34,48 @@ export default function ForgotPassword() {
   };
 
   return (
-    <div>
-      <h2>Reset Password</h2>
-
-      <Link>
-        <button onClick={() => navigate(-1)}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-8 h-8 stroke-black m-2"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M6.75 15.75L3 12m0 0l3.75-3.75M3 12h18"
-            />
-          </svg>
-        </button>
-      </Link>
-
-      <div className="bg-blue-600 m-5">
-        {/* <form onSubmit={(e)=>handleSubmit(e)}>
-<input name="email"  className='mt-5 border-b-2 border-white py-4 w-full relative bg-transparent rounded-t-lg placeholder: font-custom text-white p-2 tracking-tighter text-4xl' type='text' value={email} placeholder="Type Email"   />
-
-<button className='w-full mt-7 text-black rounded-lg py-3 font-medium tracking-tighter font-custom text-xl bg-white '> Reset Password</button>
-
-</form> */}
-
-        <form onSubmit={(e) => handleSubmit(e)}>
-          <input
-            name="email"
-            className="m-5 border-b-2 border-white py-4 w-full relative bg-transparent rounded-t-lg placeholder:font-custom text-white p-6 tracking-tighter text-4xl"
-            type="text"
-            placeholder="Type Email"
-          />
-          <br />
-          <br />
-          <button className="w-full mt-7 text-black rounded-lg py-3 font-medium tracking-tighter font-custom text-xl bg-slate-300 ">
-            Reset
-          </button>
-        </form>
-      </div>
+    <div className="min-h-screen bg-cover bg-center flex items-center justify-center relative" style={{backgroundImage: `url(${backgroundImage})`}}>
+      <Button
+        variant="ghost"
+        onClick={() => navigate(-1)}
+        className="absolute top-4 left-4 text-white"
+      >
+        <Icons.arrowLeft className="mr-2 h-4 w-4" />
+        Back
+      </Button>
+      <Card className="mx-auto max-w-sm w-full bg-white">
+        <CardHeader>
+          <CardTitle className="text-xl">Reset Password</CardTitle>
+          <CardDescription>
+            Enter your email to reset your password
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit}>
+            <div className="grid gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="m@example.com"
+                  required
+                />
+              </div>
+              <Button type="submit" className="w-full bg-black text-white hover:bg-gray-800">
+                Reset Password
+              </Button>
+            </div>
+          </form>
+          <div className="mt-4 text-center text-sm">
+            Remember your password?{" "}
+            <Link to="/" className="underline">
+              Sign in
+            </Link>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

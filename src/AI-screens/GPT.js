@@ -2,14 +2,16 @@ import React, {useRef, useState, useEffect} from 'react'
 import Nav from '../components/Nav'
 import aiusericon from "../Images/aiusericon.jpg"
 import aireplyicon from "../Images/aireplyicon.jpg"
-import { sendMsgToOpenAI } from '../assets/openai'
+import { sendMsgToOpenAI } from '../config/openai'
 import { Link } from 'react-router-dom'
-
 
 
 export default function GPT() {
 
 const msgEnd = useRef(null)
+
+// Remove this line
+// const apiKey = process.env.OPENAI_API_KEY;
 
 const [input, setInput] = useState("")
 const [messages, setMessages] = useState([
@@ -29,16 +31,23 @@ useEffect(() => {
 
 
 const handleSend = async () => {
+  try {
+    const res = await sendMsgToOpenAI(input);
+    console.log(res);
 
-  const res = await sendMsgToOpenAI(input);
-  console.log(res);
-
-  setMessages([
- ...messages,
- {text: input, isBot: false},
- {text: res, isBot: true}
-
-  ])
+    setMessages([
+      ...messages,
+      {text: input, isBot: false},
+      {text: res, isBot: true}
+    ]);
+  } catch (error) {
+    console.error('Error sending message to OpenAI:', error);
+    setMessages([
+      ...messages,
+      {text: input, isBot: false},
+      {text: "Sorry, I encountered an error. Please try again later.", isBot: true}
+    ]);
+  }
 }
 
 

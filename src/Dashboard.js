@@ -1,43 +1,51 @@
 import React, { useState, useEffect } from 'react';
 import Nav from './components/Nav';
 import augustflowdashboard from './Images/augustflowdashboard.jpg';
-// import dashvideo from "./Video/dashvideo.mp4"
 import { Link } from 'react-router-dom';
 import * as dayjs from 'dayjs';
+import { getFirestore, doc, getDoc } from 'firebase/firestore';
 
 export default function Dashboard() {
-  //Regular code to get the time
   const [time, setTime] = useState(new Date());
+  const [orgName, setOrgName] = useState('');
+
   useEffect(() => {
     setInterval(() => setTime(new Date()), 1000);
+
+    // Fetch organization name
+    const fetchOrgName = async () => {
+      const db = getFirestore();
+      const orgDoc = await getDoc(doc(db, "organization", "info"));
+      if (orgDoc.exists()) {
+        setOrgName(orgDoc.data().name);
+      }
+    };
+
+    fetchOrgName();
   }, []);
 
-  //For date by Day.JS
   const c = dayjs();
 
   return (
     <div className='bg-black h-fit'>
       <Nav />
 
-      {/* <h1 className='text-5xl tracking-tighter text-white px-2 py-4'>Nigeria</h1>
-
-<p className='text-lg tracking-tighter max-w-xl text-zinc-400  px-2'>Today, 29 October, 2023</p> */}
-
       <div className='grid grid-cols-2 h-fit p-2 gap-2'>
         <div className='col-span-1 grid grid-rows-3 gap-2'>
           <div className='row-span-1 grid grid-cols-3 gap-2  h-64'>
             <div className='col-span-2  flex justify-between   '>
               <div>
+                {orgName && (
+                  <h1 className='text-xl tracking-tighter text-white py-2'>
+                    {orgName}
+                  </h1>
+                )}
                 <h1 className='text-6xl tracking-tighter text-white  py-4'>
                   Nigeria
                 </h1>
-                {/* Day Format */}
                 <p className='text-xl tracking-tighter max-w-xl text-zinc-400  '>
                   Today {c.format('DD MMMM, YYYY')}{' '}
                 </p>
-                {/* <img className='absolute object-cover h-full w-full rounded-xl' src={augustflowdashboard} alt=""  />
-<h1 className='relative text-5xl tracking-tighter text-white px-2  place-self-center'>Dashboard.</h1> */}
-
                 <h1 className='text-6xl tracking-tighter text-green-500  py-4'>
                   {time.toLocaleTimeString()}
                 </h1>
@@ -74,8 +82,6 @@ export default function Dashboard() {
                 }
                 type='mp4'
               />
-              {/* <h1 className='tracking-tighter text-xl text-center self-start'>Scheduled Inspections</h1> */}
-
               <h1 className='tracking-tighter text-7xl  text-black relative p-2 place-self-center mt-16 '>
                 AI
               </h1>
@@ -131,9 +137,6 @@ export default function Dashboard() {
               <h1 className='tracking-tighter text-3xl text-start text-white'>
                 Scheduled Inspections
               </h1>
-              {/* <hr className='my-2'/> */}
-              {/* <p className='text-md tracking-tighter max-w-xl text-zinc-600 my-3'>Create & manage property listing for your agency and your website. Real-time sync and listing manangement. </p> */}
-
               <div className='self-end'>
                 <Link to='/schedules'>
                   <button className='bg-black px-7 py-1  rounded-full  place-self-end'>
@@ -160,7 +163,6 @@ export default function Dashboard() {
               <h1 className='tracking-tighter text-3xl text-start text-black'>
                 Property Listing
               </h1>
-              {/* <hr className='my-2'/> */}
               <p className='text-md tracking-tighter max-w-xl text-zinc-600 my-3'>
                 Create & manage property listing for your agency and your
                 website. Real-time sync and listing manangement.{' '}
@@ -242,7 +244,7 @@ export default function Dashboard() {
             </div>
 
             <div className='col-span-2 bg-yellow-400 rounded-lg p-2'>
-              <Link to='/TaskManager'>
+              <Link to='/Admin'>
                 <button className='bg-black px-8 py-1 rounded-full  place-self-end'>
                   <svg
                     xmlns='http://www.w3.org/2000/svg'
@@ -302,41 +304,6 @@ export default function Dashboard() {
           five centuries, but also the leap into electronic typesetting,
           remaining essentially unchanged.
         </p>
-
-        {/* 
-<div className='col-span-2'>
-
-  <div className='flex'>
-<p className='text-black tracking-tighter px-2 col-span-1 text-start text-5xl font-semibold leading-8 mt-3'>Dashboard</p>
-
-<p className='text-black tracking-tighter  col-span-1 text-start text-xl font-semibold '>Ⓡ</p>
-</div>
-
-
-<p className='text-black tracking-tighter px-2 col-span-1 text-start text-2xl font-semibold mt-2'>by August Deep Tech.</p>
-
-    <p className='text-black tracking-tighter px-2 col-span-1 mt-8 '>Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-    Lorem Ipsum has been the industry&apos;s standard dummy. Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-    Lorem Ipsum has been the industry standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
-.</p>
-
-</div> */}
-
-        {/* <div className='flex gap-3 col-span-3 flex-row-reverse '>
- 
-
-
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-  <path strokeLinecap="round" strokeLinejoin="round" d="M12.75 3.03v.568c0 .334.148.65.405.864l1.068.89c.442.369.535 1.01.216 1.49l-.51.766a2.25 2.25 0 01-1.161.886l-.143.048a1.107 1.107 0 00-.57 1.664c.369.555.169 1.307-.427 1.605L9 13.125l.423 1.059a.956.956 0 01-1.652.928l-.679-.906a1.125 1.125 0 00-1.906.172L4.5 15.75l-.612.153M12.75 3.031a9 9 0 00-8.862 12.872M12.75 3.031a9 9 0 016.69 14.036m0 0l-.177-.529A2.25 2.25 0 0017.128 15H16.5l-.324-.324a1.453 1.453 0 00-2.328.377l-.036.073a1.586 1.586 0 01-.982.816l-.99.282c-.55.157-.894.702-.8 1.267l.073.438c.08.474.49.821.97.821.846 0 1.598.542 1.865 1.345l.215.643m5.276-3.67a9.012 9.012 0 01-5.276 3.67m0 0a9 9 0 01-10.275-4.835M15.75 9c0 .896-.393 1.7-1.016 2.25" />
-</svg>
-
-
-
-<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-  <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
-</svg>
-
-</div> */}
       </div>
     </div>
   );
