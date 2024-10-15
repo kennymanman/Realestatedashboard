@@ -17,6 +17,13 @@ code {
 }
 
 
+
+@font-face {
+  font-family: 'NeueHelveticaBQMedium';
+ src: url('fonts/NeueHelveticaBQMedium.otf') format('otf'); 
+}
+
+
 @layer base {
   :root {
     --background: 0 0% 100%;

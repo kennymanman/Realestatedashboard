@@ -13,23 +13,30 @@ import {
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import backgroundImage from "../Images/Aione.jpg";
+import { Eye, EyeOff } from "lucide-react";
+import { toast } from "sonner";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const { signIn } = UserAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
     try {
       await signIn(email, password);
       navigate("/Dashboard");
-    } catch (e) {
-      setError(e.message);
-      console.log(e.message);
+    } catch (error) {
+      if (error.code === 'auth/user-not-found') {
+        toast.error("The email is not associated with any account. Please create an account.");
+      } else if (error.code === 'auth/wrong-password') {
+        toast.error("Incorrect password. Please try again.");
+      } else {
+        toast.error("An error occurred during sign in. Please try again.");
+      }
+      console.error(error);
     }
   };
 
@@ -56,18 +63,30 @@ const Login = () => {
             </div>
             <div className="grid gap-2">
               <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                onChange={(e) => setPassword(e.target.value)}
-              />
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2"
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4 text-gray-500" />
+                  ) : (
+                    <Eye className="h-4 w-4 text-gray-500" />
+                  )}
+                </button>
+              </div>
             </div>
           </CardContent>
           <CardFooter className="flex flex-col">
             <Button className="w-full bg-black text-white" onClick={handleSubmit}>
               Sign In
             </Button>
-            {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
             <div className="mt-4 text-center text-sm">
               <Link to="/ForgotPassword" className="underline text-sm text-muted-foreground">
                 Forgot password?

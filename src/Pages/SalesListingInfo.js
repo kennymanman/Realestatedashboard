@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useParams, useNavigate, Link } from 'react-router-dom';
 import { updateDoc, doc, deleteDoc, getDoc,  addDoc, collection } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
@@ -24,6 +24,18 @@ import { format } from 'date-fns';
 import { Calendar } from "../components/ui/calendar";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../components/ui/alert-dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../components/ui/select";
+
+import { Viewer } from "@photo-sphere-viewer/core";
+import "@photo-sphere-viewer/core/index.css";
+
+
 
 
 
@@ -61,6 +73,12 @@ import Scheduler from '../components/Scheduler';
 
 
 
+import { getStorage } from "firebase/storage";
+
+
+
+
+
 
 
 
@@ -81,7 +99,46 @@ L.Icon.Default.mergeOptions({
 const SalesListingInfo = () => {
   
 
-  const [date, setDate] = useState(null);
+  const [date, setDate] = useState(new Date());
+  const [time, setTime] = useState("12:00");
+  const [amPm, setAmPm] = useState("AM");
+  const [isTimePickerOpen, setIsTimePickerOpen] = useState(false);
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+
+  const hours = Array.from({ length: 12 }, (_, i) => (i + 1).toString().padStart(2, '0'));
+  const minutes = Array.from({ length: 60 }, (_, i) => i.toString().padStart(2, '0'));
+
+  const handleDateSelect = (selectedDate) => {
+    setDate(selectedDate);
+    setIsTimePickerOpen(true);
+  };
+
+  const handleTimeSelect = (value) => {
+    setTime(value);
+  };
+
+  const handleAmPmSelect = (value) => {
+    setAmPm(value);
+  };
+
+  const handleConfirm = async () => {
+    const inspectionData = {
+      date: date.toISOString(),
+      time: `${time} ${amPm}`,
+      saleName: sale.name,
+      saleLocation: sale.location,
+    };
+    
+    try {
+      await addDoc(collection(db, "inspections"), inspectionData);
+      console.log("Inspection scheduled successfully");
+      setIsTimePickerOpen(false);
+      setIsCalendarOpen(false);
+    } catch (error) {
+      console.error("Error scheduling inspection: ", error);
+    }
+  };
+
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({ name: '', phone: '', email: '' });
   const [showDialog, setShowDialog] = useState(false);
@@ -128,6 +185,7 @@ const SalesListingInfo = () => {
 
 
 
+
   // useEffect(() => {
   //   const script = document.createElement('script');
   //   script.src = "https://app.cal.com/embed/embed.js";
@@ -150,9 +208,9 @@ const SalesListingInfo = () => {
 
 
 
-   const handleDateSelect = (selectedDate) => {
+  //  const handleDateSelect = (selectedDate) => {
    
-  };
+  // };
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -220,7 +278,6 @@ const SalesListingInfo = () => {
 
 
 
-
   const { salesId } = useParams();
   const location = useLocation();
  
@@ -234,6 +291,97 @@ const SalesListingInfo = () => {
   const [coordinates, setCoordinates] = useState([0, 0]);
 
   const [isAvailable, setIsAvailable] = useState(!sale.sold);
+
+  const [image360Url, setImage360Url] = useState('');
+  const viewerRef = useRef(null);
+  const containerRef = useRef(null);
+
+
+// Previous panorama thing
+  // useEffect(() => {
+  //   const fetchImage360Url = async () => {
+  //     if (sale.image360Url) {
+  //       const storage = getStorage();
+  //       const imageRef = ref(storage, sale.image360Url);
+  //       try {
+  //         const url = await getDownloadURL(imageRef);
+  //         setImage360Url(url);
+  //       } catch (error) {
+  //         console.error("Error fetching 360 image URL:", error);
+  //       }
+  //     }
+  //   };
+
+  //   fetchImage360Url();
+  // }, [sale.image360Url]);
+
+  // useEffect(() => {
+  //   if (image360Url && containerRef.current) {
+  //     if (viewerRef.current) {
+  //       viewerRef.current.destroy();
+  //     }
+  //     viewerRef.current = new Viewer({
+  //       container: containerRef.current,
+  //       panorama: image360Url,
+  //     });
+  //   }
+
+  //   return () => {
+  //     if (viewerRef.current) {
+  //       viewerRef.current.destroy();
+  //     }
+  //   };
+  // }, [image360Url]);
+
+  useEffect(() => {
+    const fetchImage360Url = async () => {
+      if (sale.image360Url) {
+        const storage = getStorage();
+        const imageRef = ref(storage, sale.image360Url);
+        try {
+          const url = await getDownloadURL(imageRef);
+          setImage360Url(url);
+        } catch (error) {
+          console.error("Error fetching 360 image URL:", error);
+          // Set a fallback URL if the image doesn't exist
+          setImage360Url('https://photo-sphere-viewer-data.netlify.app/assets/sphere.jpg');
+        }
+      } else {
+        // Set a fallback URL if no 360 image is provided
+        setImage360Url('https://photo-sphere-viewer-data.netlify.app/assets/sphere.jpg');
+      }
+    };
+
+    fetchImage360Url();
+  }, [sale.image360Url]);
+
+  useEffect(() => {
+    if (image360Url && containerRef.current) {
+      if (viewerRef.current) {
+        viewerRef.current.destroy();
+      }
+      viewerRef.current = new Viewer({
+        container: containerRef.current,
+        panorama: image360Url,
+        navbar: [
+          'autorotate',
+          'zoom',
+          'fullscreen',
+        ],
+        defaultZoomLvl: 0,
+      });
+    }
+
+    return () => {
+      if (viewerRef.current) {
+        viewerRef.current.destroy();
+      }
+    };
+  }, [image360Url]);
+
+
+
+console.log(sale.image360Url, "image360Url")
 
   useEffect(() => {
     const geocodeAddress = async () => {
@@ -429,22 +577,77 @@ const SalesListingInfo = () => {
 
 
 
+  console.log(sale, "ekene")
 
 
 
 
+
+  // Placeholder URLs
+  const placeholderImage = "https://via.placeholder.com/150";
+  const placeholderVideo = "https://videos.pexels.com/video-files/1197802/1197802-sd_640_360_25fps.mp4";
+  const placeholder360Image = "https://images.unsplash.com/photo-1505252772853-08ed4d526ceb?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8MzYwfGVufDB8fDB8fHww";
+  const placeholderFloorPlan = "https://via.placeholder.com/600x400";
+
+  const handleCustomerViewClick = () => {
+    navigate('/customer-view', { 
+      state: { 
+        listing: {
+          ...sale,
+          image360Url: image360Url // Pass the resolved URL
+        } 
+      }
+    });
+  };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-    <Card className="mb-8">
+
+    <div className='bg-black'>
+      <Nav/>
+
+    <div className="container bg-white mx-auto px-4 py-8">
+
+
+  
+
+
+   
+
+    <Card className="mb-2">
       <CardHeader>
-        <CardTitle className="text-3xl font-bold">{sale.name}</CardTitle>
+
+      <button  onClick={() => navigate(-1)}>
+          <svg
+            xmlns='http://www.w3.org/2000/svg'
+            fill='none'
+            viewBox='0 0 24 24'
+            strokeWidth={1.5}
+            stroke='currentColor'
+            className='w-8 h-8 stroke-black m-2 relative'
+          >
+            <path
+              strokeLinecap='round'
+              strokeLinejoin='round'
+              d='M6.75 15.75L3 12m0 0l3.75-3.75M3 12h18'
+            />
+          </svg>
+        </button>
+
+
+      <div className="text-end ">
+          <h2 className="text-xl font-hel tracking-tighter">
+            {isAvailable ? "This Listing is Available" : "This Listing is Unavailable"}
+          </h2>
+        </div>
+
+
+        <CardTitle className="text-5xl font-bold font-hel tracking-tight">{sale.name}</CardTitle>
         <div className="flex items-center justify-between">
-          <div className="flex items-center text-gray-600">
+          <div className="flex items-center text-gray-600 font-hel tracking-tight text-xl">
             <MapPin className="mr-2" />
             {sale.location}
           </div>
-          <div className="flex items-center space-x-2">
+          {/* <div className="flex items-center space-x-2">
             <Switch
               id="availability-status"
               checked={isAvailable}
@@ -454,167 +657,69 @@ const SalesListingInfo = () => {
             <Label htmlFor="availability-status">
               {isAvailable ? 'Available' : 'Unavailable'}
             </Label>
-          </div>
+          </div> */}
         </div>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
           <div className="flex items-center">
           
-            <span className="font-bold">{sale.currency}{property.price.toLocaleString()}</span>
+            <span className="font-hel tracking-tighter text-2xl">Price:  {sale.currency}{property.price.toLocaleString()}</span>
           </div>
           <div className="flex items-center">
             <Home className="mr-2" />
-            <span className="font-bold">{sale.type}</span>
+            <span className="font-hel tracking-tighter text-2xl">{sale.type}</span>
           </div>
           <div className="flex items-center">
             <Square className="mr-2" />
-            <span className="font-bold">{sale.size} sq ft</span>
+            <span className="font-hel tracking-tighter text-xl">{sale.size} SQ ft</span>
           </div>
           <div className="flex items-center">
             <Car className="mr-2" />
-            <span>{sale.parking ? 'Parking Available' : 'No Parking'}</span>
+            <span className='font-hel tracking-tighter text-2xl'>{sale.parking ? 'Parking Available' : 'No Parking'}</span>
           </div>
           <div className="flex items-center">
             <Building className="mr-2" />
-            <span>{sale.floors} Floors</span>
+            <span className='font-hel tracking-tighter text-2xl'>{sale.floors} Floors</span>
           </div>
           <div className="flex items-center">
             <Bed className="mr-2" />
-            <span>{sale.bedrooms} Bedrooms</span>
+            <span className='font-hel tracking-tighter text-2xl'>{sale.bedrooms} Bedrooms</span>
           </div>
           <div className="flex items-center">
             <Bath className="mr-2" />
-            <span>{sale.bathrooms} Bathrooms</span>
+            <span className='font-hel tracking-tighter text-2xl'>{sale.bathrooms} Bathrooms</span>
           </div>
           <div className="flex items-center">
             {property.serviced ? <Check className="mr-2" /> : <X className="mr-2" />}
-            <span>{sale.serviced ? 'Serviced' : 'Not Serviced'}</span>
+            <span className='font-hel tracking-tighter text-2xl'>{sale.serviced ? 'Serviced' : 'Not Serviced'}</span>
           </div>
         </div>
-        <p className="text-gray-700 mb-4">
-          <span className="font-bold">Realtors Note:</span> {sale.realtorsNote}
+        <p className="text-gray-700 mb-4 font-hel tracking-tighter text-xl">
+          <span className="font-bold font-hel tracking-tighter text-2xl">Realtors Note:</span> {sale.realtorsNote}
         </p>
         <div className="flex flex-wrap gap-4">
-          {/* <Button onClick={() => setShowCalendar(!showCalendar)}> */}
+
+          
+        
           <Scheduler sale={sale} />
 
 
 
-{/* Check this out */}
-      
-          {/* <Dialog>
-        <DialogTrigger asChild>
-          <Button>
-            <Calendar className="mr-2" />
-            Schedule Inspection
-          </Button>
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Schedule Property Inspection</DialogTitle>
-          </DialogHeader>
-          {!showForm ? (
-            <Calendar
-              mode="single"
-              selected={date}
-              onSelect={handleDateSelect}
-              className="rounded-md border"
-            />
-          ) : (
-            <form onSubmit={handleSubmit}>
-              <div className="grid gap-4 py-4">
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="name" className="text-right">Name</Label>
-                  <Input id="name" name="name" value={formData.name} onChange={handleInputChange} className="col-span-3" />
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="phone" className="text-right">Phone</Label>
-                  <Input id="phone" name="phone" value={formData.phone} onChange={handleInputChange} className="col-span-3" />
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="email" className="text-right">Email</Label>
-                  <Input id="email" name="email" type="email" value={formData.email} onChange={handleInputChange} className="col-span-3" />
-                </div>
-              </div>
-              <Button type="submit">Submit</Button>
-            </form>
-          )}
-        </DialogContent>
-      </Dialog> */}
-
-{/* 
-{showDialog && (
-              <Dialog open={showDialog} onOpenChange={setShowDialog}>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Schedule Property Inspection</DialogTitle>
-                  </DialogHeader>
-                  {!showForm ? (
-                    <Calendar
-                      mode="single"
-                      selected={date}
-                      onSelect={handleDateSelect}
-                      className="rounded-md border"
-                    />
-                  ) : (
-                    <form onSubmit={handleSubmit}>
-                      <div className="grid gap-4 py-4">
-                        <div className="grid grid-cols-4 items-center gap-4">
-                          <Label htmlFor="name" className="text-right">Name</Label>
-                          <Input id="name" name="name" value={formData.name} onChange={handleInputChange} className="col-span-3" />
-                        </div>
-                        <div className="grid grid-cols-4 items-center gap-4">
-                          <Label htmlFor="phone" className="text-right">Phone</Label>
-                          <Input id="phone" name="phone" value={formData.phone} onChange={handleInputChange} className="col-span-3" />
-                        </div>
-                        <div className="grid grid-cols-4 items-center gap-4">
-                          <Label htmlFor="email" className="text-right">Email</Label>
-                          <Input id="email" name="email" type="email" value={formData.email} onChange={handleInputChange} className="col-span-3" />
-                        </div>
-                      </div>
-                      <Button type="submit">Submit</Button>
-                    </form>
-                  )}
-                </DialogContent>
-              </Dialog>
-            )} */}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-          {/* <Cal
-        calLink="your-cal-username/house-inspection"
-        style={{width:"100%",height:"100%",overflow:"scroll"}}
-        config={{
-          name: property.name,
-          notes: `Inspection for property at ${property.location}`,
-        }}
-      /> */}
           <Link to={`/edit-sales-listing/${sale.id}`}>
-            <Button variant="outline">
-              <Edit className="mr-2" />
+            <Button className="bg-black tracking-tighter px-10 py-1 text-white mt-4" >
+              {/* <Edit className="mr-2" /> */}
               Edit Listing
             </Button>
           </Link>
+
+
+
+
           <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
             <AlertDialogTrigger asChild>
-              <Button onClick={handleDeleteClick} variant="destructive">
-                <Trash2 className="mr-2" />
+              <Button  className="bg-black tracking-tighter px-10 py-1 text-white mt-4" onClick={handleDeleteClick} variant="destructive">
+                {/* <Trash2 className="mr-2" /> */}
                 Delete Listing
               </Button>
             </AlertDialogTrigger>
@@ -640,53 +745,90 @@ const SalesListingInfo = () => {
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
-          <Link to="/customer-view">
-            <Button variant="secondary">
-              <Eye className="mr-2" />
-              Customer View
-            </Button>
-          </Link>
+
+
+
+
+
+
+
+          <Button className="bg-black tracking-tighter px-10 py-1 text-white mt-4" onClick={handleCustomerViewClick}>
+            <Eye className="mr-2" />
+            Customer View
+          </Button>
+
+
+
+
+          {/* <div className="flex items-center space-x-2">
+            <Switch
+              id="availability-status"
+              checked={isAvailable}
+              onCheckedChange={handleAvailabilityChange}
+              className={isAvailable ? "bg-green-500" : "bg-red-500"}
+            />
+            <Label htmlFor="availability-status">
+              {isAvailable ? 'Available' : 'Unavailable'}
+            </Label>
+          </div> */}
+
+
+<div className="flex items-center space-x-2">
+                <Switch
+                  id="availability-status"
+                  checked={isAvailable}
+                  onCheckedChange={handleAvailabilityChange}
+                  className={`relative inline-flex items-center h-6 rounded-full w-11 transition-colors duration-200 ease-in-out ${isAvailable ? 'bg-green-500' : 'bg-red-500'}`}
+                >
+                  <span className={`transform transition-transform duration-200 ease-in-out inline-block w-4 h-4 bg-white rounded-full ${isAvailable ? 'translate-x-6' : 'translate-x-1'}`} />
+                </Switch>
+              
+                <Label htmlFor="availability-status">
+                  {isAvailable ? 'Available' : 'Unavailable'}
+                </Label>
+
+                <p className='font-hel tracking-tighter text-slate-500 '>Toogle this switch to set this listing to available or unavailable</p>
+              </div>
+
+
         </div>
       </CardContent>
     </Card>
 
+
+
+
+
+   
+
     <Tabs defaultValue="gallery" className="mb-8">
       <TabsList className="grid w-full grid-cols-5">
-        <TabsTrigger value="gallery">Gallery</TabsTrigger>
-        <TabsTrigger value="video">Video Tour</TabsTrigger>
-        <TabsTrigger value="360-view">360° View</TabsTrigger>
-        <TabsTrigger value="floor-plan">Floor Plan</TabsTrigger>
-        <TabsTrigger value="map">Map</TabsTrigger>
+        <TabsTrigger className="font-hel tracking-tighter text-xl font-bold" value="gallery">Gallery</TabsTrigger>
+        <TabsTrigger  className="font-hel tracking-tighter text-xl font-bold"  value="video">Video Tour</TabsTrigger>
+        <TabsTrigger  className="font-hel tracking-tighter text-xl font-bold" value="360-view">360° View</TabsTrigger>
+        <TabsTrigger  className="font-hel tracking-tighter text-xl font-bold" value="floor-plan">Floor Plan</TabsTrigger>
+        <TabsTrigger  className="font-hel tracking-tighter text-xl font-bold" value="map">Map</TabsTrigger>
       </TabsList>
       <TabsContent value="gallery">
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          {sale.imageUrls.map((image, index) => (
-            <img key={index} src={image} alt={`Property view ${index + 1}`} className="w-full h-64 object-cover rounded-lg" />
+        <div className="grid grid-cols-2 md:grid-cols-2 gap-4  ">
+          {(sale.imageUrls.length > 0 ? sale.imageUrls : [placeholderImage]).map((image, index) => (
+            <img key={index} src={image || placeholderImage } alt={`Property view ${index + 1}`} className="w-full h-screen object-cover " />
           ))}
         </div>
       </TabsContent>
       <TabsContent value="video">
         <video controls className="w-full aspect-video">
-          <source src={sale.videoUrl} type="video/mp4" />
+          <source src={sale.videoUrl || placeholderVideo} type="video/mp4" />
           Your browser does not support the video tag.
         </video>
       </TabsContent>
+
       <TabsContent value="360-view">
-        {/* <Pannellum
-          width="100%"
-          height="500px"
-          image={property.panoramaUrl}
-          pitch={10}
-          yaw={180}
-          hfov={110}
-          autoLoad
-          onLoad={() => {
-            console.log("360 view loaded");
-          }}
-        /> */}
+      <div ref={containerRef} style={{ width: '100%', height: '500px' }}></div>
+    
       </TabsContent>
       <TabsContent value="floor-plan">
-        <img src={sale.floorPlanUrl} alt="Floor Plan" className="w-full h-auto" />
+        <img src={sale.floorPlanUrl || placeholderFloorPlan} alt="Floor Plan" className="w-full h-auto" />
       </TabsContent>
       <TabsContent value="map">
         <div style={{ height: '400px', width: '100%' }}>
@@ -704,6 +846,8 @@ const SalesListingInfo = () => {
         </div>
       </TabsContent>
     </Tabs>
+  </div>
+
   </div>
 )
 }

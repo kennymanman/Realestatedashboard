@@ -1,12 +1,26 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { UserAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import Augustflow4 from "../logo/Augustflow4.png";
+import { getFirestore, doc, getDoc } from "firebase/firestore";
 
 export default function Nav() {
   const { user, logout } = UserAuth();
   const navigate = useNavigate();
+  const [orgLogo, setOrgLogo] = useState(null);
+  const db = getFirestore();
+
+  useEffect(() => {
+    const fetchOrgLogo = async () => {
+      const orgDoc = await getDoc(doc(db, "organization", "info"));
+      if (orgDoc.exists() && orgDoc.data().logoUrl) {
+        setOrgLogo(orgDoc.data().logoUrl);
+      }
+    };
+
+    fetchOrgLogo();
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -18,24 +32,21 @@ export default function Nav() {
     }
   };
 
-  
   return (
     <div>
-      <div className="flex  justify-between  px-2 py-3">
-        {/* <h1 className='tracking-tighter text-3xl text-white  '>AugustFlow + Real Estate</h1> */}
-
+      <div className="flex justify-between px-2 py-3">
         <div className="flex justify-between">
           <Link to="/Dashboard">
             <img
-              className="w-44 "
-              src={Augustflow4}
-              alt="AugustFlow by August Deep Tech"
+              className="w-12 h-12"
+              src={orgLogo || Augustflow4}
+              alt="Organization Logo"
             />
           </Link>
 
-          <h1 className="tracking-tighter text-3xl text-white  ">
+          {/* <h1 className="tracking-tighter text-3xl text-white ml-2">
             +Real Estate
-          </h1>
+          </h1> */}
         </div>
 
         <div className="flex gap-7">
@@ -63,7 +74,7 @@ export default function Nav() {
               viewBox="0 0 24 24"
               strokeWidth={1.5}
               stroke="currentColor"
-              className="w-8 h-7 fill-red-600 stroke-black"
+              className="w-8 h-8 fill-red-600 stroke-black"
             >
               <path
                 strokeLinecap="round"

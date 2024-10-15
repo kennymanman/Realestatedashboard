@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserAuth } from "../context/AuthContext";
 import { getFirestore, collection, getDocs, doc, deleteDoc, setDoc, getDoc } from "firebase/firestore";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import {
@@ -19,12 +20,15 @@ export default function Admin() {
   const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [orgName, setOrgName] = useState("");
+  const [logoFile, setLogoFile] = useState(null);
+  const [logoUrl, setLogoUrl] = useState("");
   const { user } = UserAuth();
   const navigate = useNavigate();
   const db = getFirestore();
+  const storage = getStorage();
 
   useEffect(() => {
-    const checkAdminAndFetchUsers = async () => {
+    const checkAdminAndFetchData = async () => {
       if (!user) {
         navigate("/login");
         return;
@@ -38,9 +42,10 @@ export default function Admin() {
 
       fetchUsers();
       fetchOrgName();
+      fetchOrgLogo();
     };
 
-    checkAdminAndFetchUsers();
+    checkAdminAndFetchData();
   }, [user, navigate, db]);
 
   const fetchUsers = async () => {
@@ -57,10 +62,37 @@ export default function Admin() {
     }
   };
 
+  const fetchOrgLogo = async () => {
+    const orgDoc = await getDoc(doc(db, "organization", "info"));
+    if (orgDoc.exists() && orgDoc.data().logoUrl) {
+      setLogoUrl(orgDoc.data().logoUrl);
+    }
+  };
+
   const handleOrgNameSubmit = async (e) => {
     e.preventDefault();
     await setDoc(doc(db, "organization", "info"), { name: orgName });
     toast.success("Organization name updated successfully");
+  };
+
+  const handleLogoUpload = async (e) => {
+    e.preventDefault();
+    if (!logoFile) {
+      toast.error("Please select a file to upload");
+      return;
+    }
+
+    const storageRef = ref(storage, `orgLogo/${logoFile.name}`);
+    try {
+      const snapshot = await uploadBytes(storageRef, logoFile);
+      const downloadUrl = await getDownloadURL(snapshot.ref);
+      await setDoc(doc(db, "organization", "info"), { logoUrl: downloadUrl }, { merge: true });
+      setLogoUrl(downloadUrl);
+      toast.success("Logo uploaded successfully");
+    } catch (error) {
+      console.error("Error uploading logo:", error);
+      toast.error("Failed to upload logo");
+    }
   };
 
   const handleDeleteUser = async (userId) => {
@@ -91,6 +123,23 @@ export default function Admin() {
         />
         <Button type="submit">Update Organization Name</Button>
       </form>
+
+      <form onSubmit={handleLogoUpload} className="mb-8">
+        <Input
+          type="file"
+          accept="image/*"
+          onChange={(e) => setLogoFile(e.target.files[0])}
+          className="mb-2"
+        />
+        <Button type="submit">Upload Organization Logo</Button>
+      </form>
+
+      {logoUrl && (
+        <div className="mb-8">
+          <h2 className="text-xl font-bold mb-2">Current Logo:</h2>
+          <img src={logoUrl} alt="Organization Logo" className="max-w-xs" />
+        </div>
+      )}
 
       <Input
         type="text"

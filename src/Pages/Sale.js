@@ -145,18 +145,18 @@ export default function Sale(props) {
                   state: { sale },
                 });
               }} 
-              className="relative bg-white tracking-tighter px-4 rounded-full hover:bg-orange-500">Details</button>
+              className="relative bg-white tracking-tighter px-4 rounded-full hover:bg-black hover:text-white">Details</button>
 </div>
 
 
 
 
 <div className="p-3 grid content-end ">
-<p className="text-slate-300 relative tracking-tighter text-lg"> {sale.location} . {sale.type}</p>
+<p className="text-slate-300 relative tracking-tighter text-xl font-hel"> {sale.location} . {sale.type}</p>
 <div className="flex justify-between ">
-  <p className="text-white relative tracking-tighter text-xl"> {sale.name}</p>
+  <p className="text-white relative tracking-tighter text-xl font-hel"> {sale.name}</p>
 
-  <p className="text-white relative tracking-tighter text-xl"> ₦ {sale.price}</p>
+  <p className="text-white relative tracking-tighter font-hel text-2xl"> ₦ {sale.price}</p>
 </div>
 
 </div>
@@ -236,7 +236,7 @@ export default function Sale(props) {
 <div>
         <p className="text-slate-300 tracking-tighter text-lg">Created. number of listings for sale: {sale.length < 1 ? <>0</> : <>{`${sale.length} `}</>} </p>
         <Link to="/NewSalesListing">
-        <button className="bg-white px-5 tracking-tighter rounded-full mt-6 hover:bg-green-600">Create a new listing</button>
+        <button className="bg-white px-7 py-1 tracking-tighter rounded-lg mt-6 font-hel text-xl hover:bg-black hover:text-white">Create a new listing</button>
         </Link>
 </div>
 

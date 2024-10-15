@@ -208,7 +208,7 @@ export function DataTable({ data, onComplete, onDelete, onStatusChange, statuses
                 <DotsHorizontalIcon className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent className="bg-white" align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem
                 onClick={() => navigator.clipboard.writeText(task.id)}
@@ -273,7 +273,7 @@ export function DataTable({ data, onComplete, onDelete, onStatusChange, statuses
               Columns <ChevronDownIcon className="ml-2 h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
+          <DropdownMenuContent className="bg-white" align="end">
             {table
               .getAllColumns()
               .filter((column) => column.getCanHide())

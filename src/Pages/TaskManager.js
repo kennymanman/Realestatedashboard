@@ -129,6 +129,7 @@ export default function TaskManager() {
 					onStatusChange={handleStatusChange}
 					statuses={statuses}
 					priorities={priorities}
+					
 				/>
 			</div>
 		</>

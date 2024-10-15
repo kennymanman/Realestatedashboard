@@ -131,9 +131,9 @@ const TaskManager = () => {
       <div className="border shadow-sm rounded-lg">
         <Table>
           <TableHeader>
-            <TableRow>
-              <TableHead className="w-[100px]">Task</TableHead>
-              <TableHead>Title</TableHead>
+            <TableRow className="bg-white">
+              <TableHead className="w-[100px] bg-white">Task</TableHead>
+              <TableHead >Title</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Priority</TableHead>
               <TableHead className="text-right">Actions</TableHead>

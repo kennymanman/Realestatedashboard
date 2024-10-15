@@ -4,6 +4,7 @@ import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, imageDB } from '../config/firebaseConfig';
 import { v4 as uuidv4 } from 'uuid';
+import { FaTimes } from 'react-icons/fa'; // Import the cancel icon
 
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
@@ -144,6 +145,7 @@ const EditSalesInfo = () => {
       await updateDoc(saleDoc, updatedData);
       setAlertMessage('Listing Edited Successfully');
       setIsSuccess(true);
+      // alert("Edit of this listing was successful");
     } catch (error) {
       console.error('Error updating document: ', error);
       setAlertMessage('Edit Failed');
@@ -155,8 +157,8 @@ const EditSalesInfo = () => {
   const handleAlertClose = () => {
     setShowAlert(false);
     if (isSuccess) {
-      // Navigate to the Rent page
-      navigate('/Rent');
+      // Navigate to the refreshed SalesListingInfo page for the specific listing
+      navigate(`/Sale`);
     }
   };
 
@@ -164,7 +166,10 @@ const EditSalesInfo = () => {
     <div className="container mx-auto px-4 py-8">
       <Card className="w-full max-w-4xl mx-auto">
         <CardHeader>
-          <CardTitle className="text-3xl font-bold">Edit Listing</CardTitle>
+          <div className="flex justify-between items-center">
+            <CardTitle className="text-3xl font-bold">Edit Listing</CardTitle>
+            <FaTimes onClick={() => navigate(-1)} className="text-red-500 cursor-pointer" size={24} />
+          </div>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -191,7 +196,8 @@ const EditSalesInfo = () => {
                   <SelectTrigger className="bg-white">
                     <SelectValue placeholder="Select currency" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-white">
+                    <SelectItem value="NGR">NGR</SelectItem>
                     <SelectItem value="USD">USD</SelectItem>
                     <SelectItem value="EUR">EUR</SelectItem>
                     <SelectItem value="GBP">GBP</SelectItem>
@@ -200,21 +206,7 @@ const EditSalesInfo = () => {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="type">Property Type</Label>
-                <Select 
-                  name="type" 
-                  value={formData.type} 
-                  onValueChange={(value) => handleSelectChange('type', value)}
-                >
-                  <SelectTrigger className="bg-white">
-                    <SelectValue placeholder="Select property type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="House">House</SelectItem>
-                    <SelectItem value="Apartment">Apartment</SelectItem>
-                    <SelectItem value="Condo">Condo</SelectItem>
-                    <SelectItem value="Villa">Villa</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Input type="text" id="type" name="type" value={formData.type} onChange={handleChange} required />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="size">Size (sq ft)</Label>
@@ -239,7 +231,7 @@ const EditSalesInfo = () => {
                 id="parking" 
                 name="parking" 
                 checked={formData.parking} 
-                onCheckedChange={(checked) => handleSelectChange('parking', checked)}
+                onCheckedChange={(checked) => handleChange({ target: { name: 'parking', type: 'checkbox', checked } })}
                 className={formData.parking ? "bg-green-500" : "bg-red-500"}
               />
               <Label htmlFor="parking">Parking Available</Label>
@@ -249,7 +241,7 @@ const EditSalesInfo = () => {
                 id="serviced" 
                 name="serviced" 
                 checked={formData.serviced} 
-                onCheckedChange={(checked) => handleSelectChange('serviced', checked)}
+                onCheckedChange={(checked) => handleChange({ target: { name: 'serviced', type: 'checkbox', checked } })}
                 className={formData.serviced ? "bg-green-500" : "bg-red-500"}
               />
               <Label htmlFor="serviced">Serviced Property</Label>
@@ -284,6 +276,7 @@ const EditSalesInfo = () => {
                 <video src={formData.videoUrl} controls className="w-full mb-2" />
               )}
               <Input type="file" id="newVideo" name="newVideo" onChange={(e) => handleFileChange(e, 'newVideo')} accept="video/*" />
+              <p className="text-sm text-gray-500">Maximum file size: 100MB</p>
             </div>
             
             <div className="space-y-2">
@@ -302,7 +295,7 @@ const EditSalesInfo = () => {
               <Input type="file" id="newFloorPlan" name="newFloorPlan" onChange={(e) => handleFileChange(e, 'newFloorPlan')} accept="image/*" />
             </div>
             
-            <Button type="submit" className="w-full">Edit Listing</Button>
+            <Button type="submit" className="w-full bg-black text-white">Edit Listing</Button>
           </form>
         </CardContent>
       </Card>

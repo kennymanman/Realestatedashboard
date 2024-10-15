@@ -13,7 +13,7 @@ export default function Listing() {
     <div className='  bg-black min-h-screen max-h-fit'>
       <Nav />
 
-      <img src={listingsbg} className='absolute h-screen  w-full ' alt="artificial intelligence"   />
+      <img src={listingsbg} className='absolute h-fit  w-full ' alt="artificial intelligence"   />
 
       {/* <div className='flex justify-between'> */}
 
@@ -45,7 +45,7 @@ export default function Listing() {
 <hr className='border-black mt-2'/> */}
 
 
-<h1 className='font- tracking-tighter text-center  text-5xl mt-3 text-black relative'>
+<h1 className='tracking-tighter text-center font-hel  text-6xl mt-3 text-black relative'>
         Listings.
       </h1>
 
@@ -61,7 +61,7 @@ export default function Listing() {
 
           <div className='flex justify-between'>
         
-            <h1 className='text-2xl tracking-tighter text-black'>
+            <h1 className='text-2xl font-hel tracking-tighter text-black'>
               Manage for sale
             </h1>
 
@@ -72,7 +72,7 @@ export default function Listing() {
           </div>
 
        
-          <p className='text-slate-500 text-sm tracking-tighter mt-1'>Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took  specimen book.</p>
+          <p className='text-slate-500 text-sm tracking-tighter mt-1 font-hel'>Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took  specimen book.</p>
 
         </div>
 
@@ -85,7 +85,7 @@ export default function Listing() {
             alt=''
           />
           <div className='flex justify-between'>
-            <h1 className='text-2xl tracking-tighter text-black'>
+            <h1 className='text-2xl tracking-tighter font-hel text-black'>
               Manage for rent
             </h1>
 
@@ -93,7 +93,7 @@ export default function Listing() {
             <button className='bg-black text-white px-7 rounded-full py-1 tracking-tighter mt-2 hover:bg-white hover:text-black'>See everything</button>
             </Link>
           </div>
-          <p className='text-slate-500 text-sm tracking-tighter mt-1'>Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took  specimen book.</p>
+          <p className='text-slate-500 text-sm tracking-tighter mt-1 font-hel'>Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took  specimen book.</p>
         </div>
 
         <div className='col-span-1 h-96 '>
@@ -103,7 +103,7 @@ export default function Listing() {
             alt=''
           />
           <div className='flex justify-between'>
-            <h1 className='text-2xl tracking-tighter text-black'>
+            <h1 className='text-2xl tracking-tighter text-black font-hel'>
               Manage for shortlet
             </h1>
 
@@ -112,7 +112,7 @@ export default function Listing() {
             </Link>
           </div>
 
-          <p className='text-slate-500 text-sm tracking-tighter mt-1'>Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took  specimen book.</p>
+          <p className='text-slate-500 text-sm tracking-tighter mt-1 font-hel'>Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took  specimen book.</p>
         </div>
       </div>
 

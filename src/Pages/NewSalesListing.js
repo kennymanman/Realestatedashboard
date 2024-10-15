@@ -208,26 +208,17 @@ export default function NewSalesListing(props) {
             </button>
           </Link>
 
-          <h1 className='text-6xl text-white tracking-tighter mt-8'>
+          <h1 className='text-7xl text-white tracking-tighter mt-8 font-hel'>
             New Sale listing details
           </h1>
-          <p className='text-white tracking-tighter w-3/4 mt-5'>
+          <p className='text-white tracking-tighter w-3/4 mt-5 font-hel'>
             Lorem Ipsum is simply dummy text of the printing and typesetting
             industry. Lorem Ipsum has been the industry&apos;s standard dummy
             text ever since the 1500s, when an unknown printer took a galley of
             type and scrambled it to make a type specimen book.
           </p>
 
-          <ol>
-            {sale.map((sale, index) => (
-              <Sale
-                key={index}
-                sale={sale}
-
-                // deleteSale={deleteSale}
-              />
-            ))}
-          </ol>
+         
         </div>
 
         <div className='col-span-1'>
@@ -486,6 +477,7 @@ export default function NewSalesListing(props) {
                 onChange={(e) => setVideo(e.target.files[0])}
                 className='bg-transparent border-b-2 border-slate-400 text-white w-96 text-xl tracking-tighter mt-3'
               />
+              <p className="text-sm text-gray-500">Maximum file size: 100MB</p>
             </div>
 
             <div className='my-5'>
@@ -504,7 +496,7 @@ export default function NewSalesListing(props) {
             <div className='my-5'>
               <h1 className='text-white text-xl tracking-tighter'>360 Images & Videos</h1>
               <p className='text-white tracking-tighter text-md my-4'>
-                Upload 360-degree images or videos.
+                Upload 360-degree images .
               </p>
               <input
                 type='file'
@@ -514,7 +506,7 @@ export default function NewSalesListing(props) {
               />
             </div>
 
-            <button className='bg-white tracking-tighter rounded-full px-12 py-2 mt-16 hover:bg-green-500'>
+            <button className='bg-white tracking-tighter rounded-xl w-full px-12 py-2 mt-16 hover:bg-green-500'>
               Submit
             </button>
           </form>
