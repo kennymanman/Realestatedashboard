@@ -293,7 +293,7 @@ const priorities = [
               </h1>
 
               <div className='place-self-center  relative p-2'>
-                <Link to='/AI'>
+                <Link to=''>
                   <button className='bg-black px-8 py-1 rounded-full  place-self-end'>
                     <svg
                       xmlns='http://www.w3.org/2000/svg'

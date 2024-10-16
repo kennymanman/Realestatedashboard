@@ -28,7 +28,7 @@ import Help from './Pages/Help';
 import ForgotPassword from './Authcomponents/ForgotPassword';
 import Insights from './Pages/Insights';
 import PageNotFound from './components/PageNotFound';
-import AI from "./Pages/AI"
+// import AI from "./Pages/AI"
 
 import GPT from "./AI-screens/GPT";
 import Calculator from "./Pages/Calculator";
@@ -133,7 +133,7 @@ function App() {
         <Route path="/Profile" element={<Profile />} />
         <Route path="/Help" element={<Help />} />
         <Route path="/Insights" element={<Insights />} />
-        <Route path="/AI" element={<AI />} />
+        {/* <Route path="/AI" element={<AI />} /> */}
         <Route path="/GPT" element={<GPT />} />
         <Route path="/Maps" element={<Maps />} />
         <Route path="/propertyvaluecalculator" element={<Calculator />} />
