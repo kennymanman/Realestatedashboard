@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { collection, getDocs, updateDoc, doc, deleteDoc } from 'firebase/firestore';
+import { collection, getDocs, updateDoc, doc, deleteDoc, onSnapshot } from 'firebase/firestore';
 import { db, auth } from '../config/firebaseConfig';
 import { Task } from "../components/Task"
 import { DataTable } from "../components/DataTable"
@@ -18,20 +18,23 @@ export default function TaskManager() {
 	const [user, setUser] = useState(null)
 
 	useEffect(() => {
-		const fetchTasks = async () => {
-			const taskSnapshot = await getDocs(collection(db, 'tasks'));
-			const taskList = taskSnapshot.docs.map(doc => ({...doc.data(), id: doc.id}));
-			setTasks(taskList);
-		};
+			// Set up auth state listener
+			const unsubscribe = auth.onAuthStateChanged((user) => {
+				setUser(user);
+				if (user) {
+					// Set up real-time listener for tasks
+					const tasksUnsubscribe = onSnapshot(collection(db, 'tasks'), (snapshot) => {
+						const taskList = snapshot.docs.map(doc => ({...doc.data(), id: doc.id}));
+						setTasks(taskList);
+					});
 
-		fetchTasks();
+					return () => {
+						tasksUnsubscribe();
+					};
+				}
+			});
 
-		// Set up auth state listener
-		const unsubscribe = auth.onAuthStateChanged((user) => {
-			setUser(user);
-		});
-
-		return () => unsubscribe();
+			return () => unsubscribe();
 	}, []);
 
 	const handleTaskCompletion = async (taskId, completed) => {
@@ -39,9 +42,7 @@ export default function TaskManager() {
 			await updateDoc(doc(db, 'tasks', taskId), {
 				completed: completed
 			});
-			setTasks(tasks.map(task => 
-				task.id === taskId ? {...task, completed: completed} : task
-			));
+			// No need to update local state, as it will be updated by the onSnapshot listener
 		} catch (error) {
 			console.error("Error updating task: ", error);
 		}

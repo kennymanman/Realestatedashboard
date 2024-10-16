@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import Nav from './components/Nav';
 import { Link } from 'react-router-dom';
 import * as dayjs from 'dayjs';
-import { getFirestore, doc, getDoc, getDocs, collection, query } from 'firebase/firestore';
+import { getFirestore, doc, getDoc, getDocs, collection, query, updateDoc } from 'firebase/firestore';
 import { db } from './config/firebaseConfig';
 import { MapContainer, TileLayer, Marker, Popup, Tooltip } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css'; 
@@ -228,6 +228,19 @@ const priorities = [
     }
   };
 
+  const handleTaskCompletion = async (taskId, completed) => {
+    try {
+      await updateDoc(doc(db, 'tasks', taskId), {
+        completed: completed
+      });
+      setTasks(tasks.map(task => 
+        task.id === taskId ? {...task, completed: completed} : task
+      ));
+    } catch (error) {
+      console.error("Error updating task: ", error);
+    }
+  };
+
   return (
     <div className='bg-black h-fit'>
       <Nav />
@@ -345,7 +358,11 @@ const priorities = [
               {tasks.map((task) => (
                 <div key={task.id} className='flex items-center justify-between border-b border-gray-200 py-2'>
                   <div className='flex items-center space-x-4'>
-                    <Checkbox id={`task-${task.id}`} />
+                    <Checkbox 
+                      id={`task-${task.id}`} 
+                      checked={task.completed}
+                      onCheckedChange={(checked) => handleTaskCompletion(task.id, checked)}
+                    />
                     <div>
                       <h3 className='font-hel text-xl tracking-tighter'>{task.name}</h3>
                       <div className='flex space-x-2 text-sm text-gray-500'>
@@ -357,9 +374,6 @@ const priorities = [
                           {getPriorityIcon(task.priority)}
                           <span className="ml-1">{task.priority}</span>
                         </span>
-                        {/* <span className="flex items-center">
-                          <FaRegCalendarAlt className="mr-1" /> {task.dueDate}
-                        </span> */}
                       </div>
                     </div>
                   </div>

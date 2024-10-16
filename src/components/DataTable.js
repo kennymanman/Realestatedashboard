@@ -235,6 +235,17 @@ export function DataTable({ data, onComplete, onDelete, onStatusChange, statuses
         )
       },
     },
+    {
+      id: "completed",
+      header: "Completed",
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.original.completed}
+          onCheckedChange={(value) => onComplete(row.original.id, value)}
+          aria-label="Toggle task completion"
+        />
+      ),
+    },
   ]
 
   const table = useReactTable({
