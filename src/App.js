@@ -29,6 +29,7 @@ import ForgotPassword from './Authcomponents/ForgotPassword';
 import Insights from './Pages/Insights';
 import PageNotFound from './components/PageNotFound';
 import AI from "./Pages/AI"
+
 import GPT from "./AI-screens/GPT";
 import Calculator from "./Pages/Calculator";
 import Schedules from './Pages/Schedules';
