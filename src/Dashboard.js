@@ -248,7 +248,7 @@ const priorities = [
       <div className='grid grid-cols-2 h-fit p-2 gap-2'>
         <div className='col-span-1 grid grid-rows-3 gap-2'>
           <div className='row-span-1 grid grid-cols-3 gap-2  h-64'>
-            <div className='col-span-2  flex justify-between   '>
+            <div className='col-span-2  flex justify-between'>
               <div>
 
               <p className='text-xl tracking-tighter max-w-xl text-zinc-400 font-hel  '>
@@ -306,7 +306,7 @@ const priorities = [
               </h1>
 
               <div className='place-self-center  relative p-2'>
-                <Link to=''>
+                <Link to='/trash'>
                   <button className='bg-black px-8 py-1 rounded-full  place-self-end'>
                     <svg
                       xmlns='http://www.w3.org/2000/svg'

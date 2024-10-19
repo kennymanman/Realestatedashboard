@@ -41,6 +41,7 @@ import TaskManager from "./Pages/TaskManager";
 import Admin from './Pages/Admin';
 import CustomerView from './Pages/CustomerView';
 import Footer from "./components/Footer"
+import Trashboard from './Trashboard';
 
 function App() {
   
@@ -144,6 +145,7 @@ function App() {
         <Route path="/schedules" element={<Schedules />} />
         <Route path="/customer-view" element={<CustomerView />} />
         <Route path="/Admin" element={<Admin />} />
+        <Route path="/trash" element={<Trashboard />} />
         <Route path="*" element={<PageNotFound />} />
       </Routes>
     </>
