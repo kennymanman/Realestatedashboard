@@ -15,6 +15,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import Success from '../components/Success';
+import Footer from '../components/Footer';
 
 export default function NewSalesListing(props) {
   const [sale, setSale] = useState([]);
@@ -184,8 +185,11 @@ export default function NewSalesListing(props) {
   };
 
   return (
-    <div className='bg-black h-fit'>
-      <Nav />
+
+    <>
+    <Nav/>
+    <div className=' h-fit mb-10'>
+      
 
       <div className='grid grid-cols-2 p-2 '>
         <div className='col-span-1'>
@@ -197,7 +201,7 @@ export default function NewSalesListing(props) {
                 viewBox='0 0 24 24'
                 strokeWidth={1.5}
                 stroke='currentColor'
-                className='w-8 h-8 stroke-white m-2'
+                className='w-8 h-8 stroke-black m-2'
               >
                 <path
                   strokeLinecap='round'
@@ -208,10 +212,10 @@ export default function NewSalesListing(props) {
             </button>
           </Link>
 
-          <h1 className='text-7xl text-white tracking-tighter mt-8 font-hel'>
-            New Sale listing details
+          <h1 className='text-7xl text-black tracking-tighter mt-8 font-hel'>
+            Create a new listing for sale.
           </h1>
-          <p className='text-white tracking-tighter w-3/4 mt-5 font-hel'>
+          <p className='text-gray-500 tracking-tighter w-3/4 mt-5 font-hel'>
             Lorem Ipsum is simply dummy text of the printing and typesetting
             industry. Lorem Ipsum has been the industry&apos;s standard dummy
             text ever since the 1500s, when an unknown printer took a galley of
@@ -224,33 +228,35 @@ export default function NewSalesListing(props) {
         <div className='col-span-1'>
           <form onSubmit={createSaleListing}>
             <div className='my-5'>
-              <h1 className='text-white text-xl tracking-tighter'>
+              <h1 className='text-black font-hel text-xl tracking-tighter'>
                 Listing Name*
               </h1>
               <input
                 className='bg-transparent border-b-2 border-slate-400 text-white w-96 text-xl tracking-tighter mt-3 '
                 placeholder='Type property name'
                 value={saleName}
+                required
                 type='text'
                 onChange={(e) => setSaleName(e.target.value)}
               />
             </div>
 
             <div className='my-5'>
-              <h1 className='text-white text-xl tracking-tighter'>
+              <h1 className='text-black font-hel text-xl tracking-tighter'>
                 Listing Location*
               </h1>
               <input
                 className='bg-transparent border-b-2 border-slate-400 text-white w-96 text-xl tracking-tighter mt-3'
                 placeholder='Type location'
+                required
                 value={saleLocation}
                 onChange={(e) => setSaleLocation(e.target.value)}
               />
             </div>
 
             <div className='my-5'>
-              <h1 className='text-white text-xl tracking-tighter'>Currency*</h1>
-              <Select onValueChange={setSaleCurrency} defaultValue="₦">
+              <h1 className='text-black font-hel text-xl tracking-tighter'>Currency*</h1>
+              <Select onValueChange={setSaleCurrency} required defaultValue="₦">
                 <SelectTrigger className="w-96 bg-white text-black">
                   <SelectValue placeholder="Select currency" />
                 </SelectTrigger>
@@ -265,7 +271,7 @@ export default function NewSalesListing(props) {
             </div>
 
             <div className='my-5'>
-              <h1 className='text-white text-xl tracking-tighter'>
+              <h1 className='text-black font-hel text-xl tracking-tighter'>
                 Listing Price*
               </h1>
               <div className="flex items-center">
@@ -274,6 +280,7 @@ export default function NewSalesListing(props) {
                   className='bg-transparent border-b-2 border-slate-400 text-white w-96 text-xl tracking-tighter mt-3'
                   placeholder='Type sale price'
                   type='number'
+                  required
                   value={salePrice}
                   onChange={(e) => setSalePrice(e.target.value)}
                 />
@@ -281,7 +288,7 @@ export default function NewSalesListing(props) {
             </div>
 
             <div className='my-5'>
-              <h1 className='text-white text-xl tracking-tighter'>
+              <h1 className='text-black font-hel text-xl tracking-tighter'>
                 Listing Type*
               </h1>
               <input
@@ -293,7 +300,7 @@ export default function NewSalesListing(props) {
             </div>
 
             <div className='my-5'>
-              <h1 className='text-white text-xl tracking-tighter'>
+              <h1 className='text-black font-hel text-xl tracking-tighter'>
                 Listing Size*
               </h1>
               <input
@@ -306,7 +313,7 @@ export default function NewSalesListing(props) {
             </div>
 
             <div className='my-5'>
-              <h1 className='text-white text-xl tracking-tighter'>Parking*</h1>
+              <h1 className='text-black font-hel text-xl tracking-tighter'>Parking*</h1>
               <Select onValueChange={setParking}>
                 <SelectTrigger className="w-96 bg-white text-black">
                   <SelectValue placeholder="Select parking availability" />
@@ -319,7 +326,7 @@ export default function NewSalesListing(props) {
             </div>
 
             <div className='my-5'>
-              <h1 className='text-white text-xl tracking-tighter'>
+              <h1 className='text-black font-hel text-xl tracking-tighter'>
                 Availability*
               </h1>
               <Select onValueChange={setAvailability}>
@@ -334,7 +341,7 @@ export default function NewSalesListing(props) {
             </div>
 
             <div className='my-5'>
-              <h1 className='text-white text-xl tracking-tighter'>Floor*</h1>
+              <h1 className='text-black font-hel text-xl tracking-tighter'>Floor*</h1>
               <Select onValueChange={setFloor}>
                 <SelectTrigger className="w-96 bg-white text-black">
                   <SelectValue placeholder="Select floor" />
@@ -349,7 +356,7 @@ export default function NewSalesListing(props) {
             </div>
 
             <div className='my-5'>
-              <h1 className='text-white text-xl tracking-tighter'>Bedrooms*</h1>
+              <h1 className='text-black font-hel text-xl tracking-tighter'>Bedrooms*</h1>
               <input
                 className='bg-transparent border-b-2 border-slate-400 text-white w-96 text-xl tracking-tighter mt-3'
                 placeholder='Number of bedrooms'
@@ -360,7 +367,7 @@ export default function NewSalesListing(props) {
             </div>
 
             <div className='my-5'>
-              <h1 className='text-white text-xl tracking-tighter'>
+              <h1 className='text-black font-hel text-xl tracking-tighter'>
                 Bathrooms*
               </h1>
               <input
@@ -373,7 +380,7 @@ export default function NewSalesListing(props) {
             </div>
 
             <div className='my-5'>
-              <h1 className='text-white text-xl tracking-tighter'>Serviced*</h1>
+              <h1 className='text-black font-hel text-xl tracking-tighter'>Serviced*</h1>
               <Select onValueChange={setServiced}>
                 <SelectTrigger className="w-96 bg-white text-black">
                   <SelectValue placeholder="Is it serviced?" />
@@ -386,7 +393,7 @@ export default function NewSalesListing(props) {
             </div>
 
             <div className='my-5'>
-              <h1 className='text-white text-xl tracking-tighter'>
+              <h1 className='text-black font-hel text-xl tracking-tighter'>
                 Realtor&apos;s Note
               </h1>
               <textarea
@@ -400,7 +407,7 @@ export default function NewSalesListing(props) {
             <hr />
 
             <div className='my-5'>
-              <h1 className='text-white text-xl tracking-tighter'>
+              <h1 className='text-black font-hel text-xl tracking-tighter'>
                 First Impression Image
               </h1>
               <input
@@ -411,7 +418,7 @@ export default function NewSalesListing(props) {
             </div>
 
             <div className='my-5'>
-              <h1 className='text-white text-xl tracking-tighter'>Image 1</h1>
+              <h1 className='text-black font-hel text-xl tracking-tighter'>Image 1</h1>
               <input
                 type='file'
                 onChange={(e) => setImageOne(e.target.files[0])}
@@ -420,7 +427,7 @@ export default function NewSalesListing(props) {
             </div>
 
             <div className='my-5'>
-              <h1 className='text-white text-xl tracking-tighter'>Image 2</h1>
+              <h1 className='text-black font-hel text-xl tracking-tighter'>Image 2</h1>
               <input
                 type='file'
                 onChange={(e) => setImageTwo(e.target.files[0])}
@@ -429,7 +436,7 @@ export default function NewSalesListing(props) {
             </div>
 
             <div className='my-5'>
-              <h1 className='text-white text-xl tracking-tighter'>Image 3</h1>
+              <h1 className='text-black font-hel text-xl tracking-tighter'>Image 3</h1>
               <input
                 type='file'
                 onChange={(e) => setImageThree(e.target.files[0])}
@@ -438,7 +445,7 @@ export default function NewSalesListing(props) {
             </div>
 
             <div className='my-5'>
-              <h1 className='text-white text-xl tracking-tighter'>Image 4</h1>
+              <h1 className='text-black font-hel text-xl tracking-tighter'>Image 4</h1>
               <input
                 type='file'
                 onChange={(e) => setImageFour(e.target.files[0])}
@@ -447,7 +454,7 @@ export default function NewSalesListing(props) {
             </div>
 
             <div className='my-5'>
-              <h1 className='text-white text-xl tracking-tighter'>Image 5</h1>
+              <h1 className='text-black font-hel text-xl tracking-tighter'>Image 5</h1>
               <input
                 type='file'
                 onChange={(e) => setImageFive(e.target.files[0])}
@@ -456,7 +463,7 @@ export default function NewSalesListing(props) {
             </div>
 
             <div className='my-5'>
-              <h1 className='text-white text-xl tracking-tighter'>Image 6</h1>
+              <h1 className='text-black font-hel text-xl tracking-tighter'>Image 6</h1>
               <input
                 type='file'
                 onChange={(e) => setImageSix(e.target.files[0])}
@@ -467,8 +474,8 @@ export default function NewSalesListing(props) {
             <hr />
 
             <div className='my-5'>
-              <h1 className='text-white text-xl tracking-tighter'>Video</h1>
-              <p className='text-white tracking-tighter text-md my-4'>
+              <h1 className='text-black font-hel text-xl tracking-tighter'>Video</h1>
+              <p className='text-black font-hel tracking-tighter text-md my-4'>
                 Upload a video tour of the property.
               </p>
               <input
@@ -481,8 +488,8 @@ export default function NewSalesListing(props) {
             </div>
 
             <div className='my-5'>
-              <h1 className='text-white text-xl tracking-tighter'>Floorplan</h1>
-              <p className='text-white tracking-tighter text-md my-4'>
+              <h1 className='text-black font-hel text-xl tracking-tighter'>Floorplan</h1>
+              <p className='text-black font-hel tracking-tighter text-md my-4'>
                 Upload the floorplan image.
               </p>
               <input
@@ -494,8 +501,8 @@ export default function NewSalesListing(props) {
             </div>
 
             <div className='my-5'>
-              <h1 className='text-white text-xl tracking-tighter'>360 Images & Videos</h1>
-              <p className='text-white tracking-tighter text-md my-4'>
+              <h1 className='text-black font-hel text-xl tracking-tighter'>360 Images & Videos</h1>
+              <p className='text-black font-heltracking-tighter text-md my-4'>
                 Upload 360-degree images .
               </p>
               <input
@@ -506,7 +513,7 @@ export default function NewSalesListing(props) {
               />
             </div>
 
-            <button className='bg-white tracking-tighter rounded-xl w-full px-12 py-2 mt-16 hover:bg-green-500'>
+            <button className='bg-black font-hel tracking-tighter text-white w-full px-12 py-2 mt-16 hover:bg-green-500'>
               Submit
             </button>
           </form>
@@ -514,5 +521,8 @@ export default function NewSalesListing(props) {
       </div>
       <Success isOpen={isSuccessOpen} onClose={() => setIsSuccessOpen(false)} />
     </div>
+
+<Footer/>
+    </>
   );
 }

@@ -3,21 +3,65 @@ import footerimage from '../Images/footerimage.jpg'
 
 export default function Footer() {
   return (
-    <div className='grid grid-cols-5 gap-2 p-2 bg-slate-200 h-fit'>
 
-        <div className='col-span-1 text-center w-full h-full  '>
-            <img src={footerimage} alt="footerimage" className='object-cover rounded-lg w-fit ' />
+    <div className='bg-black h-fit py-3'>
 
-            <h2 className='text-3xl tracking-tighter font-hel text-center mt-3 '>AugustFlow+ Real Estate.</h2>
-            <p className='text-slate-700 font-hel tracking-tighter text-sm mt-4 text-center'>Learn more</p>
+<h1 className='text-white font-hel tracking-tighter text-2xl text-center'>AugustFlow+ Real Estate.</h1>
+    <div className='grid grid-cols-3 gap-4 p-2  '>
+
+
+
+      <div className='col-span-1 '>
+        {/* <h1 className='text-white font-hel tracking-tighter text-2xl'>AugustFlow+ Real Estate.</h1> */}
+        <p className='text-gray-400 tracking-tight font-hel mt-5'>Created by</p>
+        <p className='text-white tracking-tight font-hel'>August Deep Tech</p>
+
+      </div>
+
+
+
+
+
+      <div className='col-span-1 flex justify-between '>
+        {/* <h1 className='text-white font-hel tracking-tighter text-2xl'>AugustFlow+ Real Estate.</h1> */}
+        <div>
+        <p className='text-gray-400 tracking-tight font-hel mt-5'>Instagram</p>
+        <p className='text-white tracking-tight font-hel'>@AugustDeepTech</p>
         </div>
 
-        <div className='col-span-2 '>
-  
+
+        <div>
+        <p className='text-gray-400 tracking-tight font-hel mt-5'>Twitter</p>
+        <p className='text-white tracking-tight font-hel'>@AugustDeepTech</p>
         </div>
 
-        <div className='col-span-2 bg-slate-400'>one</div>
+
+
+        <div>
+        <p className='text-gray-400 tracking-tight font-hel mt-5'>Web</p>
+        <p className='text-white tracking-tight font-hel'>Augustdeeptech.com</p>
+        </div>
+      </div>
+
+
+
+
+
+
+
+
+      <div className='col-span-1'>
+      <p className='text-gray-400 tracking-tight font-hel mt-5 text-sm'>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum is simply dummy text of the printing and typesetting industry. </p>
+
+      </div>
+
+
+
+
+       
         
+    </div>
+
     </div>
   )
 }

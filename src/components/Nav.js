@@ -51,17 +51,17 @@ export default function Nav() {
 
         <div className="flex gap-7">
           <div className="flex gap-2">
-            <h1 className="tracking-tighter text-lg text-zinc-400 mt-2">
+            <h1 className="tracking-tighter text-lg text-gray-500 mt-2">
               Logged as
             </h1>
-            <h1 className="tracking-tighter text-2xl text-white mt-1">
+            <h1 className="tracking-tighter text-2xl  font-hel mt-1 text-black">
               {user.displayName}
             </h1>
           </div>
 
           <Link to="/Help">
             <button>
-              <p className="text-white text-sm bg-slate-600 px-6 py-2 rounded-full">
+              <p className="text-white text-sm bg-black px-6 py-2 ">
                 Help
               </p>
             </button>
@@ -74,7 +74,7 @@ export default function Nav() {
               viewBox="0 0 24 24"
               strokeWidth={1.5}
               stroke="currentColor"
-              className="w-8 h-8 fill-red-600 stroke-black"
+              className="w-8 h-8 fill-red-600 "
             >
               <path
                 strokeLinecap="round"

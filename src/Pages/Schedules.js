@@ -6,11 +6,19 @@ import { Checkbox } from "../components/ui/checkbox";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
+import Nav from "../components/Nav"
+import Footer from "../components/Footer"
+import { useLocation, useNavigate } from 'react-router-dom';
+
+
+
+
 
 const Schedules = () => {
   const [inspections, setInspections] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('latest');
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchInspections();
@@ -77,73 +85,112 @@ const Schedules = () => {
     )
   ));
 
+
+
+
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-4">Scheduled Inspections</h1>
-      <div className="flex gap-4 mb-4">
-        <Input
-          type="text"
-          placeholder="Search schedules..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="flex-grow"
-        />
-        <Select onValueChange={setSortBy} defaultValue={sortBy}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Sort by" />
-          </SelectTrigger>
-          <SelectContent className="bg-white">
-            <SelectItem value="latest">Latest Added</SelectItem>
-            <SelectItem value="done">Done</SelectItem>
-            <SelectItem value="undone">Undone</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-      <Table>
-        <TableCaption>A list of all scheduled property inspections.</TableCaption>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Done</TableHead>
-            <TableHead>Date</TableHead>
-            <TableHead>Time</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>Phone</TableHead>
-            <TableHead>Email</TableHead>
-            <TableHead>Property Name</TableHead>
-            <TableHead>Property Location</TableHead>
-            <TableHead>Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {filteredInspections.map((inspection) => (
-            <TableRow key={inspection.id}>
-              <TableCell>
-                <Checkbox
-                  checked={inspection.isDone}
-                  onCheckedChange={() => handleCheckboxChange(inspection.id, inspection.isDone)}
-                />
-              </TableCell>
-              <TableCell>{formatDate(inspection.date)}</TableCell>
-              <TableCell>{inspection.time}</TableCell>
-              <TableCell>{inspection.name}</TableCell>
-              <TableCell>{inspection.phone}</TableCell>
-              <TableCell>{inspection.email}</TableCell>
-              <TableCell>{inspection.saleName}</TableCell>
-              <TableCell>{inspection.saleLocation}</TableCell>
-              <TableCell>
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  onClick={() => handleDelete(inspection.id)}
-                >
-                  Delete
-                </Button>
-              </TableCell>
+    <>
+      <Nav/>
+      <div className="container mx-auto px-4 py-8">
+
+<button onClick={() => navigate(-1)}>
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-6 w-6">
+  <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 15.75 3 12m0 0 3.75-3.75M3 12h18" />
+</svg>
+</button>
+
+
+
+
+        <h1 className="text-6xl font-hel tracking-tighter text-end mb-5" >Scheduled Inspections</h1>
+        <div className="flex gap-4 mb-4">
+          <Input
+            type="text"
+            placeholder="Search schedules..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="flex-grow"
+          />
+          <Select className="" onValueChange={setSortBy} defaultValue={sortBy}>
+            <SelectTrigger className="w-[180px] bg-black text-white font-hel tracking-tight">
+              <SelectValue placeholder="Sort by" />
+            </SelectTrigger>
+            <SelectContent className="bg-white">
+              <SelectItem value="latest">Latest Added</SelectItem>
+              <SelectItem value="done">Done</SelectItem>
+              <SelectItem value="undone">Undone</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <Table className="min-h-screen">
+          <TableCaption>A list of all scheduled property inspections.</TableCaption>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="font-hel tracking-tight text-base text-gray-500">Done</TableHead>
+              <TableHead className="font-hel tracking-tight text-base text-gray-500">Image</TableHead>
+              <TableHead className="font-hel tracking-tight text-base text-gray-500">Date</TableHead>
+              <TableHead className="font-hel tracking-tight text-base text-gray-500">Time</TableHead>
+              <TableHead className="font-hel tracking-tight text-base text-gray-500">Client Name</TableHead>
+              <TableHead className="font-hel tracking-tight text-base text-gray-500">Phone</TableHead>
+              <TableHead className="font-hel tracking-tight text-base text-gray-500">Email</TableHead>
+              <TableHead className="font-hel tracking-tight text-base text-gray-500">Property Name</TableHead>
+              <TableHead className="font-hel tracking-tight text-base text-gray-500">Property Location</TableHead>
+              <TableHead className="font-hel tracking-tight text-base text-gray-500">Actions</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
+          </TableHeader>
+          <TableBody>
+            {filteredInspections.length > 0 ? (
+              filteredInspections.map((inspection) => (
+                <TableRow 
+                  key={inspection.id}
+                  className="transition-colors hover:bg-black hover:text-white"
+                >
+                  <TableCell>
+                    <Checkbox
+                      checked={inspection.isDone}
+                      onCheckedChange={() => handleCheckboxChange(inspection.id, inspection.isDone)}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    {inspection.sale && inspection.sale.firstImage && (
+                      <img
+                        src={inspection.sale.firstImage}
+                        alt={`Image of ${inspection.saleName}`}
+                        style={{ width: '50px', height: '50px', objectFit: 'cover' }}
+                        className="rounded"
+                      />
+                    )}
+                  </TableCell>
+                  <TableCell className="font-hel text-lg tracking-tight">{formatDate(inspection.date)}</TableCell>
+                  <TableCell className="font-hel text-lg tracking-tight">{inspection.time}</TableCell>
+                  <TableCell className="font-hel text-lg tracking-tight">{inspection.name}</TableCell>
+                  <TableCell className="font-hel text-lg tracking-tight">{inspection.phone}</TableCell>
+                  <TableCell className="font-hel text-lg tracking-tight">{inspection.email}</TableCell>
+                  <TableCell className="font-hel text-lg tracking-tight">{inspection.saleName}</TableCell>
+                  <TableCell className="font-hel text-lg tracking-tight">{inspection.saleLocation}</TableCell>
+                  <TableCell>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => handleDelete(inspection.id)}
+                    >
+                      Delete
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={10} className="text-center py-10">
+                  <p className="text-xl font-hel tracking-tighter text-gray-500">No Scheduled Inspection history yet</p>
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
+      <Footer/>
+    </>
   );
 };
 
