@@ -12,6 +12,7 @@ import "@photo-sphere-viewer/core/index.css";
 import Scheduler from '../components/Scheduler';
 import axios from 'axios';
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
+import Footer from "../components/Footer"
 
 
 
@@ -112,6 +113,8 @@ console.log(listing.image360Url, "Panorama")
   }, [image360Url]);
 
   return (
+
+    <>
     <div className='grid grid-cols-9 p-3 gap-2 h-screen w-full'>
       <div className='col-span-4 mb-4'>
         <div className='flex items-center space-x-2'>
@@ -124,7 +127,7 @@ console.log(listing.image360Url, "Panorama")
             Copy
           </Button>
 
-          <Button onClick={() => navigate(-1)} className="bg-black text-white tracking-tighter rounded-none font-hel w-full">Return to Dashboard</Button>
+          <Button onClick={() => navigate(-1)} className="bg-black text-white tracking-tighter rounded-none font-hel w-full">Return to Previous Page</Button>
         </div>
       </div>
 
@@ -182,6 +185,19 @@ console.log(listing.image360Url, "Panorama")
             <div>
               <h1 className='tracking-tighter font-hel text-gray-500'>Serviced</h1>
               <h1 className='text-2xl tracking-tight font-hel'>{listing ? (listing.serviced ? 'Yes' : 'No') : 'Not Available'}</h1>
+
+              <div>
+              <h1 className='tracking-tighter font-hel text-gray-500'>Call</h1>
+              <h1 className='text-xl tracking-tight font-hel'>{listing ? listing.contactPhone : 'Not Available'}</h1>
+            </div>
+
+
+            
+            <div>
+              <h1 className='tracking-tighter font-hel text-gray-500'>Email</h1>
+              <h1 className='text-xl tracking-tight font-hel'>{listing ? listing.contactEmail : 'Not Available'}</h1>
+            </div>
+
             </div>
           </section>
 
@@ -318,5 +334,8 @@ console.log(listing.image360Url, "Panorama")
         </div>
       </Tabs>
     </div>
+
+
+    </>
   )
 }
