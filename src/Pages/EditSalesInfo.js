@@ -4,7 +4,7 @@ import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, imageDB } from '../config/firebaseConfig';
 import { v4 as uuidv4 } from 'uuid';
-import { FaTimes } from 'react-icons/fa'; // Import the cancel icon
+import { FaTimes, FaTrash } from 'react-icons/fa'; // Import the cancel icon and trash icon
 
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
@@ -48,6 +48,8 @@ const EditSalesInfo = () => {
     imageUrls: [],
     videoUrl: '',
     floorPlanUrl: '',
+    contactPhone: '',
+    contactEmail: '',
   });
 
   const [showAlert, setShowAlert] = useState(false);
@@ -90,6 +92,18 @@ const EditSalesInfo = () => {
       ...prevState,
       [field]: file
     }));
+  };
+
+  const handleDeleteFile = (field, index = null) => {
+    setFormData(prevState => {
+      const newState = { ...prevState };
+      if (field === 'imageUrls' && index !== null) {
+        newState.imageUrls = newState.imageUrls.filter((_, i) => i !== index);
+      } else {
+        newState[field] = '';
+      }
+      return newState;
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -224,6 +238,26 @@ const EditSalesInfo = () => {
                 <Label htmlFor="bathrooms">Number of Bathrooms</Label>
                 <Input type="number" id="bathrooms" name="bathrooms" value={formData.bathrooms} onChange={handleChange} required />
               </div>
+              <div className="space-y-2">
+                <Label htmlFor="contactPhone">Contact Phone</Label>
+                <Input 
+                  type="tel" 
+                  id="contactPhone" 
+                  name="contactPhone" 
+                  value={formData.contactPhone} 
+                  onChange={handleChange} 
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="contactEmail">Contact Email</Label>
+                <Input 
+                  type="email" 
+                  id="contactEmail" 
+                  name="contactEmail" 
+                  value={formData.contactEmail} 
+                  onChange={handleChange} 
+                />
+              </div>
             </div>
             
             <div className="flex items-center space-x-2">
@@ -257,7 +291,18 @@ const EditSalesInfo = () => {
                 <div key={num} className="space-y-2">
                   <Label htmlFor={`image${num}`}>Image {num}</Label>
                   {formData.imageUrls && formData.imageUrls[num - 1] && (
-                    <img src={formData.imageUrls[num - 1]} alt={`Current Image ${num}`} className="w-full h-32 object-cover mb-2" />
+                    <div className="relative">
+                      <img src={formData.imageUrls[num - 1]} alt={`Current Image ${num}`} className="w-full h-32 object-cover mb-2" />
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="icon"
+                        className="absolute top-0 right-0 m-1 bg-white"
+                        onClick={() => handleDeleteFile('imageUrls', num - 1)}
+                      >
+                        <FaTrash />
+                      </Button>
+                    </div>
                   )}
                   <Input 
                     type="file" 
@@ -273,7 +318,18 @@ const EditSalesInfo = () => {
             <div className="space-y-2">
               <Label htmlFor="newVideo">Video Tour</Label>
               {formData.videoUrl && (
-                <video src={formData.videoUrl} controls className="w-full mb-2" />
+                <div className="relative">
+                  <video src={formData.videoUrl} controls className="w-full mb-2" />
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="icon"
+                    className="absolute top-0 right-0 m-1 bg-white"
+                    onClick={() => handleDeleteFile('videoUrl')}
+                  >
+                    <FaTrash />
+                  </Button>
+                </div>
               )}
               <Input type="file" id="newVideo" name="newVideo" onChange={(e) => handleFileChange(e, 'newVideo')} accept="video/*" />
               <p className="text-sm text-gray-500">Maximum file size: 100MB</p>
@@ -282,7 +338,18 @@ const EditSalesInfo = () => {
             <div className="space-y-2">
               <Label htmlFor="new360Image">360 Image</Label>
               {formData.image360Url && (
-                <img src={formData.image360Url} alt="Current 360 Image" className="w-full h-32 object-cover mb-2" />
+                <div className="relative">
+                  <img src={formData.image360Url} alt="Current 360 Image" className="w-full h-32 object-cover mb-2" />
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="icon"
+                    className="absolute top-0 right-0 m-1 bg-white"
+                    onClick={() => handleDeleteFile('image360Url')}
+                  >
+                    <FaTrash />
+                  </Button>
+                </div>
               )}
               <Input type="file" id="new360Image" name="new360Image" onChange={(e) => handleFileChange(e, 'new360Image')} accept="image/*" />
             </div>
@@ -290,7 +357,18 @@ const EditSalesInfo = () => {
             <div className="space-y-2">
               <Label htmlFor="newFloorPlan">Floor Plan</Label>
               {formData.floorPlanUrl && (
-                <img src={formData.floorPlanUrl} alt="Current Floor Plan" className="w-full h-32 object-cover mb-2" />
+                <div className="relative">
+                  <img src={formData.floorPlanUrl} alt="Current Floor Plan" className="w-full h-32 object-cover mb-2" />
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="icon"
+                    className="absolute top-0 right-0 m-1 bg-white"
+                    onClick={() => handleDeleteFile('floorPlanUrl')}
+                  >
+                    <FaTrash />
+                  </Button>
+                </div>
               )}
               <Input type="file" id="newFloorPlan" name="newFloorPlan" onChange={(e) => handleFileChange(e, 'newFloorPlan')} accept="image/*" />
             </div>

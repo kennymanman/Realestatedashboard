@@ -53,6 +53,9 @@ export default function NewSalesListing(props) {
 
   const [isSuccessOpen, setIsSuccessOpen] = useState(false);
 
+  const [contactPhone, setContactPhone] = useState('');
+  const [contactEmail, setContactEmail] = useState('');
+
   const createSaleListing = async (e) => {
     e.preventDefault();
 
@@ -109,6 +112,8 @@ export default function NewSalesListing(props) {
         videoUrl: videoUrl,
         floorPlanUrl: floorPlanUrl,
         image360Url: image360Url,
+        contactPhone: contactPhone,
+        contactEmail: contactEmail,
         createdAt: new Date(),
       });
 
@@ -139,6 +144,9 @@ export default function NewSalesListing(props) {
       setVideo(null);
       setFloorPlan(null);
       setImage360(null);
+
+      setContactPhone('');
+      setContactEmail('');
 
     } catch (error) {
       console.error("Error creating new listing: ", error);
@@ -513,6 +521,32 @@ export default function NewSalesListing(props) {
               />
             </div>
 
+            <div className='my-5'>
+              <h1 className='text-black font-hel text-xl tracking-tighter'>
+                Contact Phone Number
+              </h1>
+              <input
+                className='bg-transparent border-b-2 border-slate-400 text-white w-96 text-xl tracking-tighter mt-3'
+                placeholder='Enter contact phone number'
+                type='tel'
+                value={contactPhone}
+                onChange={(e) => setContactPhone(e.target.value)}
+              />
+            </div>
+
+            <div className='my-5'>
+              <h1 className='text-black font-hel text-xl tracking-tighter'>
+                Contact Email
+              </h1>
+              <input
+                className='bg-transparent border-b-2 border-slate-400 text-white w-96 text-xl tracking-tighter mt-3'
+                placeholder='Enter contact email'
+                type='email'
+                value={contactEmail}
+                onChange={(e) => setContactEmail(e.target.value)}
+              />
+            </div>
+
             <button className='bg-black font-hel tracking-tighter text-white w-full px-12 py-2 mt-16 hover:bg-green-500'>
               Submit
             </button>
@@ -522,7 +556,7 @@ export default function NewSalesListing(props) {
       <Success isOpen={isSuccessOpen} onClose={() => setIsSuccessOpen(false)} />
     </div>
 
-<Footer/>
+    <Footer/>
     </>
   );
 }

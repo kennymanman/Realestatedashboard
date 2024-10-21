@@ -61,6 +61,7 @@ export default function Sale(props) {
         saleArr.push({ ...doc.data(), id: doc.id });
       });
       setSale(saleArr);
+      setIsLoading(false); // Set loading to false when data is fetched
     });
     return () => unsubscribe();
   }, []);
@@ -93,62 +94,12 @@ export default function Sale(props) {
 
 
 
-  const Sale = ({ sale, toggleComplete, deleteSale, index }) => {
-    setIsPending(false);
-
-
-
-
+  const SaleItem = ({ sale, deleteSale }) => {
     return (
-      <>
-       
+      <div className="h-5/6">
+        <div className="h-96 relative grid">
 
-        {/* <div className="h-4/6">
           <img
-            className="object-fit h-full w-full"
-            src={sale.imageUrls[0]}
-            alt=""
-          />
-          <h1 className="tracking-tighter text-white text-xl mt-3">
-            {sale.id}
-          </h1>
-          <h1 className="tracking-tighter text-white text-2xl mt-3">
-            {sale.name}
-          </h1>
-          <hr className="border-white my-1" />
-          <h1 className="tracking-tighter text-white text-xl ">
-            ${sale.price}
-          </h1>
-          <hr className="border-white my-1" />
-          <h1 className="tracking-tighter text-white text-xl ">
-            {sale.location}
-          </h1>
-          <hr className="border-white my-1" />
-          <h1 className="tracking-tighter text-white text-xl ">
-            Type: {sale.type}
-          </h1>
-
-          <div className="text-end">
-       
-
-            <button
-              onClick={() => {
-                navigate("/SalesListingInfo/5i0buXSUr6JlDY01UmcR", {
-                  state: { sale },
-                });
-              }}
-              className="bg-green-500 rounded-full px-3  tracking-tighter"
-            >
-              More info
-            </button>
-          </div>
-        </div>  */}
-
-
-<div className="h-5/6">
-<div className="h-96 relative grid">
-
-  <img
             className="object-cover h-full w-full  absolute "
             src={sale.imageUrls[0]}
             alt=""
@@ -183,8 +134,7 @@ export default function Sale(props) {
 
 
 </div>
-</div>
-      </>
+      </div>
     );
   };
 
@@ -198,6 +148,8 @@ export default function Sale(props) {
     item.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
     item.type.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const [isLoading, setIsLoading] = useState(true);
 
   return (
     <>
@@ -244,24 +196,34 @@ export default function Sale(props) {
           />
         </div>
 
-        {/* ... (loading spinner) */}
-
-        <div className="grid grid-cols-3 gap-4 mx-7 ">
-          <div>
-            <h1 className="font-hel text-6xl tracking-tighter mt-4">Sale.</h1>
-            <p className="text-gray-500 tracking-tighter text-lg font-hel">
-              Created number of listings for sale:
-              <span className="text-black font-hel tracking-tighter text-4xl">
-                {filteredSales.length}
-              </span>
-            </p>
-            {/* ... (rest of the content) */}
+        {isLoading ? (
+          <div className="flex justify-center items-center h-64">
+            <BeatLoader color="#000000" loading={isLoading} size={15} />
           </div>
+        ) : (
+          <div className="grid grid-cols-3 gap-4 mx-7 ">
+            <div>
+              <h1 className="font-hel text-6xl tracking-tighter mt-4">Sale.</h1>
+              <p className="text-gray-500 tracking-tighter text-lg font-hel">
+                Created number of listings for sale: 
+                <span className="text-black font-hel tracking-tighter text-4xl ml-2">
+                  {filteredSales.length}
+                </span>
+              </p>
 
-          {filteredSales.map((sale, index) => (
-            <Sale key={index} sale={sale} deleteSale={deleteSale} />
-          ))}
-        </div>
+              <Link to="/NewSalesListing">
+                <button className="bg-black w-full font-hel text-white tracking-tighter mt-6 py-2">Create a new listing</button>
+              </Link>
+             
+              <p className="tracking-tighter text-gray-500 text-sm font-hel mt-3">Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+              Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>
+            </div>
+
+            {filteredSales.map((sale, index) => (
+              <SaleItem key={index} sale={sale} deleteSale={deleteSale} />
+            ))}
+          </div>
+        )}
       </div>
 
       <Footer/>

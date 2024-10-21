@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Nav from "../components/Nav"
 import shortletlisting from "../Images/shortletlisting.jpg"
 import { useLocation, useParams, useNavigate, Link } from 'react-router-dom';
-import { updateDoc, doc, deleteDoc, addDoc, collection } from 'firebase/firestore';
+import { updateDoc, doc, deleteDoc, addDoc, collection, getDoc } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytes, getStorage } from 'firebase/storage';
 import axios from 'axios';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
@@ -75,7 +75,7 @@ export default function SalesListingInfo() {
   const [isSold, setIsSold] = useState(sale.sold || false);
   const [coordinates, setCoordinates] = useState([0, 0]);
   const [isAvailable, setIsAvailable] = useState(!sale.sold);
-  const [image360Url, setImage360Url] = useState('');
+  const [image360Url, setImage360Url] = useState(sale.image360Url);
   const [date, setDate] = useState(new Date());
   const [time, setTime] = useState("12:00");
   const [amPm, setAmPm] = useState("AM");
@@ -91,8 +91,9 @@ export default function SalesListingInfo() {
   const containerRef = useRef(null);
 
   const placeholderImage = "https://via.placeholder.com/150";
-  const placeholderVideo = "https://videos.pexels.com/video-files/1197802/1197802-sd_640_360_25fps.mp4";
-  const placeholderFloorPlan = "https://via.placeholder.com/600x400";
+  const placeholderVideo = "https://example.com/placeholder-video.mp4";
+  const placeholder360Image = "https://example.com/placeholder-360-image.jpg";
+  const placeholderFloorPlan = "https://via.placeholder.com/600x400?text=Floor+Plan+Not+Available";
 
 
 
@@ -319,12 +320,12 @@ export default function SalesListingInfo() {
 </svg>
 </button>
 
-    <div className='grid grid-cols-2 gap-2 p-2'>
+    <div className='grid grid-cols-2 gap-2 p-2 '>
 
 
 
-      <div className='col-span-1 relative'>
-        <img src={shortletlisting} alt="" className='w-full h-full object-cover' />
+      <div className='col-span-1 relative '>
+        <img src={sale.imageUrls[0]} alt="" className='w-full  object-cover' />
         <div 
           className='absolute top-2 right-2 cursor-pointer'
           onMouseEnter={() => setShowImageInfo(true)}
@@ -366,7 +367,9 @@ export default function SalesListingInfo() {
 
         <p className='text-gray-500 tracking-tighter font-hel text-xl '>Servicing: <span className='text-black tracking-tighter text-2xl'>{sale.serviced ? 'Serviced' : 'Not Serviced'}</span></p>
 
-        <p className='text-gray-500 tracking-tighter font-hel text-xl '>Call: <span className='text-black tracking-tighter text-2xl'>09078976568</span></p>
+        <p className='text-gray-500 tracking-tighter font-hel text-xl '>Call: <span className='text-black tracking-tighter text-2xl'>{sale.contactPhone}</span></p>
+
+        <p className='text-gray-500 tracking-tighter font-hel text-xl '>Email: <span className='text-black tracking-tighter text-2xl'>{sale.contactEmail}</span></p>
 
         <div className='flex items-center mt-4'>
           <span className='text-gray-500 tracking-tighter font-hel text-xl mr-2'>Available:</span>
@@ -450,22 +453,45 @@ export default function SalesListingInfo() {
         </TabsList>
         <TabsContent value="gallery">
           <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
-            {(sale.imageUrls.length > 0 ? sale.imageUrls : [placeholderImage]).map((image, index) => (
+            {(sale.imageUrls && sale.imageUrls.length > 0 ? sale.imageUrls : [placeholderImage]).map((image, index) => (
               <img key={index} src={image || placeholderImage} alt={`Property view ${index + 1}`} className="w-full h-screen object-cover" />
             ))}
           </div>
         </TabsContent>
         <TabsContent value="video">
-          <video controls className="w-full aspect-video">
-            <source src={sale.videoUrl || placeholderVideo} type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
+          {sale.videoUrl ? (
+            <video controls className="w-full aspect-video">
+              <source src={sale.videoUrl} type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          ) : (
+            <div className="w-full aspect-video bg-gray-200 flex items-center justify-center">
+              <p className="text-gray-500 font-hel tracking-tighter">Video tour not available</p>
+            </div>
+          )}
         </TabsContent>
         <TabsContent value="360-view">
-          <div ref={containerRef} style={{ width: '100%', height: '500px' }}></div>
+          {image360Url ? (
+            <div ref={containerRef} style={{ width: '100%', height: '500px' }}></div>
+          ) : (
+            <div className="w-full h-[500px] bg-gray-200 flex items-center justify-center">
+              <p className="text-gray-500 font-hel tracking-tighter">360° view not available</p>
+            </div>
+          )}
         </TabsContent>
         <TabsContent value="floor-plan">
-          <img src={sale.floorPlanUrl || placeholderFloorPlan} alt="Floor Plan" className="w-full h-full object-cover" />
+
+        {sale.videoUrl ? (
+          <img 
+            src={sale.floorPlanUrl || placeholderFloorPlan} 
+            alt="Floor Plan" 
+            className="w-full h-auto object-contain"
+          />):( <div className="w-full aspect-video bg-gray-200 flex items-center justify-center">
+          <p className="text-gray-500 font-hel tracking-tighter">Floor Plan not available</p>
+        </div>
+      )}
+
+
         </TabsContent>
         <TabsContent value="map">
           <div style={{ height: '100vh', width: '100%' }}>
