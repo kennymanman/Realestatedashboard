@@ -472,7 +472,7 @@ const priorities = [
                   Property Value Calculator
                 </h1>
 
-                <Link to='/propertyvaluecalculator'>
+                <Link to='/SalesListingSample'>
                   <button className='bg-black px-8 py-1 rounded-full mt-2  '>
                     <svg
                       xmlns='http://www.w3.org/2000/svg'

@@ -19,6 +19,7 @@ import CreateStaff from "./components/CreateStaff";
 import MediaDetails from "./components/MediaDetails";
 import BlogDetails from "./Pages/BlogDetails";
 
+
 import { AuthContextProvider } from "./context/AuthContext"
 import ProtectedRoute from "./components/ProtectedRoute"
 import Login from './Authcomponents/Login';
@@ -42,6 +43,7 @@ import Admin from './Pages/Admin';
 import CustomerView from './Pages/CustomerView';
 import Footer from "./components/Footer"
 import Trashboard from './Trashboard';
+// import SalesListingSample from './Pages/SalesListingSample';
 
 function App() {
   
@@ -68,7 +70,7 @@ function App() {
   };
 
   const { reset } = useIdleTimer({
-    timeout: 1000 * 60 * 10, // 10 minutes
+    timeout: 1000 * 60 * 15, // 15 minutes timeout
     onIdle: handleOnIdle,
     debounce: 500
   });
@@ -146,6 +148,8 @@ function App() {
         <Route path="/customer-view" element={<CustomerView />} />
         <Route path="/Admin" element={<Admin />} />
         <Route path="/trash" element={<Trashboard />} />
+        <Route path="/Footer" element={<Footer />} />
+          {/* <Route path="/SalesListingSample" element={<SalesListingSample />} />  */}
         <Route path="*" element={<PageNotFound />} />
       </Routes>
     </>

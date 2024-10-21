@@ -1,6 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import Nav from "../components/Nav"
-import shortletlisting from "../Images/shortletlisting.jpg"
 import { useLocation, useParams, useNavigate, Link } from 'react-router-dom';
 import { updateDoc, doc, deleteDoc, addDoc, collection } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytes, getStorage } from 'firebase/storage';
@@ -10,6 +8,7 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
 import { Button } from "../components/ui/button";
+import Nav from '../components/Nav';
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Switch } from "../components/ui/switch";
 import { Label } from "../components/ui/label";
@@ -41,7 +40,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { db, imageDB } from '../config/firebaseConfig';
 import Scheduler from "../components/Scheduler";
 
-
+// Fix for default marker icon
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
@@ -49,20 +48,7 @@ L.Icon.Default.mergeOptions({
   shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
 });
 
-
-
-
-
-
-
-
-export default function SalesListingInfo() {
-  const [showDropdown, setShowDropdown] = useState(false);
-  const [showImageInfo, setShowImageInfo] = useState(false);
-  // const [isAvailable, setIsAvailable] = useState(true);
-
-
-
+const SalesListingInfo = () => {
   const { salesId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
@@ -74,7 +60,7 @@ export default function SalesListingInfo() {
   const [imageOne, setImageOne] = useState(sale.imageUrls[1]);
   const [isSold, setIsSold] = useState(sale.sold || false);
   const [coordinates, setCoordinates] = useState([0, 0]);
-  const [isAvailable, setIsAvailable] = useState(!sale.sold); //Come and undo this
+  const [isAvailable, setIsAvailable] = useState(!sale.sold);
   const [image360Url, setImage360Url] = useState('');
   const [date, setDate] = useState(new Date());
   const [time, setTime] = useState("12:00");
@@ -93,10 +79,6 @@ export default function SalesListingInfo() {
   const placeholderImage = "https://via.placeholder.com/150";
   const placeholderVideo = "https://videos.pexels.com/video-files/1197802/1197802-sd_640_360_25fps.mp4";
   const placeholderFloorPlan = "https://via.placeholder.com/600x400";
-
-
-
-
 
   useEffect(() => {
     const fetchImage360Url = async () => {
@@ -296,107 +278,71 @@ export default function SalesListingInfo() {
     });
   };
 
-
-
-
-
-
-
-
-
-
-
-
   return (
-    <>
-
-    <Nav/>
-
-    <div className='grid grid-cols-2 gap-2 p-2'>
-
-
-
-      <div className='col-span-1 relative'>
-        <img src={shortletlisting} alt="" className='w-full h-full object-cover' />
-        <div 
-          className='absolute top-2 right-2 cursor-pointer'
-          onMouseEnter={() => setShowImageInfo(true)}
-          onMouseLeave={() => setShowImageInfo(false)}
-          onClick={() => setShowImageInfo(!showImageInfo)}
-        >
-          <span className='text-white bg-black bg-opacity-50 rounded-full py-1 px-3 text-sm font-hel tracking-tighter'>Tap to see Realtors Note</span>
-        </div>
-        {showImageInfo && (
-          <div className='absolute top-10 right-2 bg-white p-2 rounded shadow-lg max-w-xs'>
-            <p className='text-sm font-hel tracking-tighter'>
-            {sale.realtorsNote}
-            </p>
+    <div className=' h-fit'>
+      <Nav />
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-5xl font-bold font-hel tracking-tight">{sale.name}</CardTitle>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center text-gray-600 font-hel tracking-tight text-xl">
+              <MapPin className="mr-2" />
+              {sale.location}
+            </div>
           </div>
-        )}
-      </div>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+            <div className="flex items-center">
+              <span className="font-hel tracking-tighter text-2xl">Price: {sale.currency}{sale.price.toLocaleString()}</span>
+            </div>
+            <div className="flex items-center">
+              <Home className="mr-2" />
+              <span className="font-hel tracking-tighter text-2xl">{sale.type}</span>
+            </div>
+            <div className="flex items-center">
+              <Square className="mr-2" />
+              <span className="font-hel tracking-tighter text-xl">{sale.size} SQ ft</span>
+            </div>
+            <div className="flex items-center">
+              <Car className="mr-2" />
+              <span className='font-hel tracking-tighter text-2xl'>{sale.parking ? 'Parking Available' : 'No Parking'}</span>
+            </div>
+            <div className="flex items-center">
+              <Building className="mr-2" />
+              <span className='font-hel tracking-tighter text-2xl'>{sale.floors} Floors</span>
+            </div>
+            <div className="flex items-center">
+              <Bed className="mr-2" />
+              <span className='font-hel tracking-tighter text-2xl'>{sale.bedrooms} Bedrooms</span>
+            </div>
+            <div className="flex items-center">
+              <Bath className="mr-2" />
+              <span className='font-hel tracking-tighter text-2xl'>{sale.bathrooms} Bathrooms</span>
+            </div>
+            <div className="flex items-center">
+              {sale.serviced ? <Check className="mr-2" /> : <X className="mr-2" />}
+              <span className='font-hel tracking-tighter text-2xl'>{sale.serviced ? 'Serviced' : 'Not Serviced'}</span>
+            </div>
+          </div>
+          <p className="text-gray-700 mb-4 font-hel tracking-tighter text-xl">
+            <span className="font-bold font-hel tracking-tighter text-2xl">Realtors Note:</span> {sale.realtorsNote}
+          </p>
+          <div className="flex flex-wrap gap-4">
+            <Scheduler sale={sale} />
 
+            <Link to={`/edit-sales-listing/${sale.id}`}>
+              <Button className="bg-black tracking-tighter px-10 py-1 text-white mt-4">
+                Edit Listing
+              </Button>
+            </Link>
 
-      <div className='col-span-1'>
-
-        <p className='text-5xl tracking-tighter  font-hel'>{sale.name}</p>
-
-        <p className='text-4xl tracking-tighter  font-hel text-gray-500'>{sale.location}</p>
-
-        <p className='text-5xl tracking-tighter  font-hel pt-3 pb-10'>{sale.currency}{sale.price}</p>
-
-
-        <p className='text-gray-500 tracking-tighter font-hel text-xl '>Building Type: <span className='text-black tracking-tighter text-2xl'>{sale.type}</span></p>
-
-        <p className='text-gray-500 tracking-tighter font-hel text-xl '>Size: <span className='text-black tracking-tighter text-2xl'>{sale.size} SQ ft</span></p>
-
-        <p className='text-gray-500 tracking-tighter font-hel text-xl '>Parking: <span className='text-black tracking-tighter text-2xl'>{sale.parking ? 'Parking Available' : 'No Parking'}</span></p>
-
-        <p className='text-gray-500 tracking-tighter font-hel text-xl '>Floors: <span className='text-black tracking-tighter text-2xl'>{sale.floors} </span></p>
-
-        <p className='text-gray-500 tracking-tighter font-hel text-xl '>Bedrooms: <span className='text-black tracking-tighter text-2xl'>{sale.bedrooms}</span></p>
-
-        <p className='text-gray-500 tracking-tighter font-hel text-xl '>Bathrooms: <span className='text-black tracking-tighter text-2xl'>{sale.bathrooms}</span></p>
-
-        <p className='text-gray-500 tracking-tighter font-hel text-xl '>Servicing: <span className='text-black tracking-tighter text-2xl'>{sale.serviced ? 'Serviced' : 'Not Serviced'}</span></p>
-
-        <p className='text-gray-500 tracking-tighter font-hel text-xl '>Call: <span className='text-black tracking-tighter text-2xl'>09078976568</span></p>
-
-        <div className='flex items-center mt-4'>
-          <span className='text-gray-500 tracking-tighter font-hel text-xl mr-2'>Available:</span>
-          <button 
-            className={`relative w-14 h-7 rounded-full transition-colors duration-300 ease-in-out ${isAvailable ? 'bg-green-500' : 'bg-red-500'}`}
-            onClick={() => setIsAvailable(!isAvailable)}
-          >
-            <span 
-              className={`absolute left-1 top-1 bg-white w-5 h-5 rounded-full transition-transform duration-300 ease-in-out ${isAvailable ? 'transform translate-x-7' : ''}`}
-            ></span>
-          </button>
-        </div>
-
-        <div className='flex mt-7'>
-          
-        <Link className='w-full mr-1' to={`/edit-sales-listing/${sale.id}`}>
-          <button className='bg-black text-white w-full py-2 font-hel tracking-tighter mr-2'>Edit Listing</button>
-          </Link>
-          <div className='relative'>
-            <button 
-              className='bg-black text-white px-4 py-2 font-hel tracking-tighter'
-              onClick={() => setShowDropdown(!showDropdown)}
-            >
-              ⋮
-            </button>
-            {showDropdown && (
-              <div className='absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded shadow-lg'>
-                <button  onClick={handleCustomerViewClick} className='block w-full text-left px-4 py-2 tracking-tighter font-hel hover:bg-gray-100'>Customer View</button>
-
-
-
-
-                <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+            <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
               <AlertDialogTrigger asChild>
-                <button className='block w-full text-left px-4 py-2 tracking-tighter font-hel hover:bg-gray-100 text-red-600'>Delete Listing</button>
-                
-                </AlertDialogTrigger>
+                <Button className="bg-black tracking-tighter px-10 py-1 text-white mt-4" onClick={handleDeleteClick} variant="destructive">
+                  Delete Listing
+                </Button>
+              </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
                   <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
@@ -420,26 +366,38 @@ export default function SalesListingInfo() {
               </AlertDialogContent>
             </AlertDialog>
 
+            <Button className="bg-black tracking-tighter px-10 py-1 text-white mt-4" onClick={handleCustomerViewClick}>
+              <Eye  className="mr-2" />
+              Customer View
+            </Button>
 
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="availability-status"
+                checked={isAvailable}
+                onCheckedChange={handleAvailabilityChange}
+                className={`relative inline-flex items-center h-6 rounded-full w-11 transition-colors duration-200 ease-in-out ${isAvailable ? 'bg-green-500' : 'bg-red-500'}`}
+              >
+                <span className={`transform transition-transform duration-200 ease-in-out inline-block w-4 h-4 bg-white rounded-full ${isAvailable ? 'translate-x-6' : 'translate-x-1'}`} />
+              </Switch>
+              
+              <Label htmlFor="availability-status">
+                {isAvailable ? 'Available' : 'Unavailable'}
+              </Label>
 
-              </div>
-            )}
+              <p className='font-hel tracking-tighter text-slate-500'>Toggle this switch to set this listing to available or unavailable</p>
+            </div>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
 
-    </div>
-
-
-
-    
-    <Tabs defaultValue="gallery" className="mb-8">
+      <Tabs defaultValue="gallery" className="mb-8">
         <TabsList className="grid w-full grid-cols-5">
-          <TabsTrigger className="font-hel tracking-tighter text-xl text-gray-500" value="gallery">Full Gallery</TabsTrigger>
-          <TabsTrigger className="font-hel tracking-tighter text-xl text-gray-500" value="video">Video Tour</TabsTrigger>
-          <TabsTrigger className="font-hel tracking-tighter text-xl text-gray-500" value="360-view">360° View</TabsTrigger>
-          <TabsTrigger className="font-hel tracking-tighter text-xl text-gray-500" value="floor-plan">Floor Plan</TabsTrigger>
-          <TabsTrigger className="font-hel tracking-tighter text-xl text-gray-500" value="map">Map</TabsTrigger>
+          <TabsTrigger className="font-hel tracking-tighter text-xl font-bold" value="gallery">Gallery</TabsTrigger>
+          <TabsTrigger className="font-hel tracking-tighter text-xl font-bold" value="video">Video Tour</TabsTrigger>
+          <TabsTrigger className="font-hel tracking-tighter text-xl font-bold" value="360-view">360° View</TabsTrigger>
+          <TabsTrigger className="font-hel tracking-tighter text-xl font-bold" value="floor-plan">Floor Plan</TabsTrigger>
+          <TabsTrigger className="font-hel tracking-tighter text-xl font-bold" value="map">Map</TabsTrigger>
         </TabsList>
         <TabsContent value="gallery">
           <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
@@ -477,7 +435,13 @@ export default function SalesListingInfo() {
         </TabsContent>
       </Tabs>
 
-
-    </>
+      <div className='relative flex justify-center mt-52'>
+        <button className='border-2 border-white rounded-full px-4 text-white tracking-tighter hover:bg-white hover:text-black'>
+          To the top
+        </button>
+      </div>
+    </div>
   );
-}
+};
+
+export default SalesListingInfo;
