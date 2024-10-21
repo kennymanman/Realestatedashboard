@@ -74,7 +74,7 @@ export default function SalesListingInfo() {
   const [imageOne, setImageOne] = useState(sale.imageUrls[1]);
   const [isSold, setIsSold] = useState(sale.sold || false);
   const [coordinates, setCoordinates] = useState([0, 0]);
-  const [isAvailable, setIsAvailable] = useState(!sale.sold); //Come and undo this
+  const [isAvailable, setIsAvailable] = useState(!sale.sold);
   const [image360Url, setImage360Url] = useState('');
   const [date, setDate] = useState(new Date());
   const [time, setTime] = useState("12:00");
@@ -273,15 +273,16 @@ export default function SalesListingInfo() {
     }
   };
 
-  const handleAvailabilityChange = async (newAvailability) => {
-    setIsAvailable(newAvailability);
+  const handleAvailabilityChange = async () => {
+    const newAvailability = !isAvailable;
     const saleDoc = doc(db, 'sale', sale.id);
     try {
       await updateDoc(saleDoc, { sold: !newAvailability });
+      setIsAvailable(newAvailability);
       console.log("Availability updated successfully");
     } catch (error) {
       console.error("Error updating availability: ", error);
-      setIsAvailable(!newAvailability);
+      // State remains unchanged if there's an error
     }
   };
 
@@ -311,6 +312,12 @@ export default function SalesListingInfo() {
     <>
 
     <Nav/>
+
+    <button onClick={() => navigate(-1)}>
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-6 w-6 ml-3">
+  <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 15.75 3 12m0 0 3.75-3.75M3 12h18" />
+</svg>
+</button>
 
     <div className='grid grid-cols-2 gap-2 p-2'>
 
@@ -365,7 +372,7 @@ export default function SalesListingInfo() {
           <span className='text-gray-500 tracking-tighter font-hel text-xl mr-2'>Available:</span>
           <button 
             className={`relative w-14 h-7 rounded-full transition-colors duration-300 ease-in-out ${isAvailable ? 'bg-green-500' : 'bg-red-500'}`}
-            onClick={() => setIsAvailable(!isAvailable)}
+            onClick={handleAvailabilityChange}
           >
             <span 
               className={`absolute left-1 top-1 bg-white w-5 h-5 rounded-full transition-transform duration-300 ease-in-out ${isAvailable ? 'transform translate-x-7' : ''}`}
@@ -458,10 +465,10 @@ export default function SalesListingInfo() {
           <div ref={containerRef} style={{ width: '100%', height: '500px' }}></div>
         </TabsContent>
         <TabsContent value="floor-plan">
-          <img src={sale.floorPlanUrl || placeholderFloorPlan} alt="Floor Plan" className="w-full h-auto" />
+          <img src={sale.floorPlanUrl || placeholderFloorPlan} alt="Floor Plan" className="w-full h-full object-cover" />
         </TabsContent>
         <TabsContent value="map">
-          <div style={{ height: '400px', width: '100%' }}>
+          <div style={{ height: '100vh', width: '100%' }}>
             <MapContainer center={coordinates} zoom={13} style={{ height: '100%', width: '100%' }}>
               <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

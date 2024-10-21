@@ -16,6 +16,8 @@ import { getDownloadURL, listAll, ref } from "firebase/storage";
 
 import BeatLoader from "react-spinners/BeatLoader";
 import Footer from "../components/Footer";
+import { Button } from "../components/ui/button"
+import { Input } from "../components/ui/input"
 
 
 
@@ -81,10 +83,22 @@ export default function Sale(props) {
 
 
 
+  
+  const copyUrlToClipboard = () => {
+    navigator.clipboard.writeText(window.location.href)
+      .then(() => alert('URL copied to clipboard!'))
+      .catch(err => console.error('Failed to copy URL: ', err));
+  };
+
+
 
 
   const Sale = ({ sale, toggleComplete, deleteSale, index }) => {
     setIsPending(false);
+
+
+
+
     return (
       <>
        
@@ -176,100 +190,81 @@ export default function Sale(props) {
 
 
 
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // Add this function to filter sales based on search term
+  const filteredSales = sale.filter((item) =>
+    item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    item.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    item.type.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
+    <>
+      <Nav />
+      <div className="min-h-screen max-h-fit mb-10">
+        <div className='flex items-center space-x-2 justify-between mx-6 my-4'>
+          <div className='flex items-center space-x-2'>
+            <Link to="/Listing">
+              <button>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="w-8 h-8 stroke-black"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M6.75 15.75L3 12m0 0l3.75-3.75M3 12h18"
+                  />
+                </svg>
+              </button>
+            </Link>
 
-<>
-    <Nav />
-    <div className=" min-h-screen max-h-fit mb-10  ">
-      
-
-      {/* <div className="flex justify-between my-5 mx-2">
-        <div className="flex gap-10">
-          <h1 className="text-4xl text-white text-center tracking-tighter">
-            For Sale.
-          </h1>
-
-          <input className="bg-slate-200 rounded-full w-96" type="search" />
-        </div>
-
-        <div className="flex ">
-          <h2 className="text-3xl text-white text-center tracking-tighter">
-            Listings:
-            {sale.length < 1 ? <>0</> : <>{`${sale.length} `}</>}
-          </h2>
-        </div>
-      </div> */}
-
-      
-
-      <Link to="/Listing">
-        <button>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-8 h-8 stroke-black ml-6"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M6.75 15.75L3 12m0 0l3.75-3.75M3 12h18"
+            <Input 
+              value={window.location.href} 
+              readOnly 
+              className='w-50'
             />
-          </svg>
-        </button>
-      </Link>
+            <Button onClick={copyUrlToClipboard} variant="outline" className="bg-green-500 text-black text-sm font-hel px-8 py-2 rounded-none">
+              Copy
+            </Button>
+          </div>
 
-      {isPending && (
-        <div className="text-center m-40">
-          <BeatLoader
-            color={"#3fa158"}
-            // loading={loading}
-            // cssOverride={override}
-            size={15}
-            aria-label="Loading Spinner"
-            data-testid="loader"
+          {/* Add the search bar here */}
+          <Input 
+            type="text"
+            placeholder="Search listings..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-64"
           />
         </div>
-      )}
 
-      <div className="grid grid-cols-3 gap-4 mx-7 ">
-        {/* Create New Button */}
-        {/* <Link to="/NewSalesListing">
-          <button className="tracking-tighter text-lg  bg-green-500 px-10 rounded-full py-2 border-black border-2 place-self-center">
-            Create New
-          </button>
-        </Link> */}
+        {/* ... (loading spinner) */}
 
-<div>
-  <h1 className="font-hel text-6xl tracking-tighter">Sale.</h1>
-        <p className="text-gray-500 tracking-tighter text-lg font-hel">Created number of listings for sale:<span className="text-black font-hel tracking-tighter text-4xl"> {sale.length < 1 ? <>0</> : <>{`${sale.length} `}</>}</span> </p>
-        <Link to="/NewSalesListing">
-        <button className="bg-black w-full  py-1 tracking-tighter text-white font-hel mt-2  text-xl hover:bg-black hover:text-white">Create A New Listing</button>
-        </Link>
+        <div className="grid grid-cols-3 gap-4 mx-7 ">
+          <div>
+            <h1 className="font-hel text-6xl tracking-tighter mt-4">Sale.</h1>
+            <p className="text-gray-500 tracking-tighter text-lg font-hel">
+              Created number of listings for sale:
+              <span className="text-black font-hel tracking-tighter text-4xl">
+                {filteredSales.length}
+              </span>
+            </p>
+            {/* ... (rest of the content) */}
+          </div>
 
-        <p className="text-gray-500 tracking-tighter text-sm font-hel mt-5">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
-</div>
-
-        {sale.map((sale, index) => (
-          <Sale key={index} sale={sale} deleteSale={deleteSale} />
-        ))}
-
-        {/* <div className='h-4/6 bg-white opacity-100 p-3 grid'>
-   
-   <Link to="/NewSalesListing">
-       <button className='tracking-tighter text-base  bg-green-500 px-4 rounded-full py-1 border-black border-2 place-self-center'>Create New</button>
-       </Link>
-       </div>  */}
+          {filteredSales.map((sale, index) => (
+            <Sale key={index} sale={sale} deleteSale={deleteSale} />
+          ))}
+        </div>
       </div>
 
-      {/* <div className="grid grid-cols-4 gap-4 p-3"></div> */}
-
-   
-    </div>
-
-<Footer/>
-</>
+      <Footer/>
+    </>
   );
 }
