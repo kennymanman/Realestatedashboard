@@ -40,6 +40,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { db, imageDB } from '../config/firebaseConfig';
 import Scheduler from "../components/Scheduler";
+import Footer from '../components/Footer';
 
 
 delete L.Icon.Default.prototype._getIconUrl;
@@ -324,8 +325,8 @@ export default function SalesListingInfo() {
 
 
 
-      <div className='col-span-1 relative '>
-        <img src={sale.imageUrls[0]} alt="" className='w-full  object-cover' />
+      <div className='col-span-1 relative'>
+        <img src={sale.imageUrls[0]} alt="" className='w-full h-[550px] object-cover' />
         <div 
           className='absolute top-2 right-2 cursor-pointer'
           onMouseEnter={() => setShowImageInfo(true)}
@@ -454,13 +455,13 @@ export default function SalesListingInfo() {
         <TabsContent value="gallery">
           <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
             {(sale.imageUrls && sale.imageUrls.length > 0 ? sale.imageUrls : [placeholderImage]).map((image, index) => (
-              <img key={index} src={image || placeholderImage} alt={`Property view ${index + 1}`} className="w-full h-screen object-cover" />
+              <img key={index} src={image || placeholderImage} alt={`Property view ${index + 1}`} className="w-full h-[550px] object-cover" />
             ))}
           </div>
         </TabsContent>
         <TabsContent value="video">
           {sale.videoUrl ? (
-            <video controls className="w-full aspect-video">
+            <video controls className="w-full h-screen aspect-video">
               <source src={sale.videoUrl} type="video/mp4" />
               Your browser does not support the video tag.
             </video>
@@ -485,11 +486,12 @@ export default function SalesListingInfo() {
           <img 
             src={sale.floorPlanUrl || placeholderFloorPlan} 
             alt="Floor Plan" 
-            className="w-full h-auto object-contain"
+            className="w-full h-[700px] object-contain"
           />):( <div className="w-full aspect-video bg-gray-200 flex items-center justify-center">
           <p className="text-gray-500 font-hel tracking-tighter">Floor Plan not available</p>
         </div>
       )}
+
 
 
         </TabsContent>
@@ -510,6 +512,7 @@ export default function SalesListingInfo() {
         </TabsContent>
       </Tabs>
 
+      <Footer/>
 
     </>
   );

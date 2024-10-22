@@ -112,10 +112,35 @@ console.log(listing.image360Url, "Panorama")
     };
   }, [image360Url]);
 
+  const getListingType = () => {
+    if (!listing || !listing.listingType) return '';
+    switch (listing.listingType) {
+      case 'sale':
+        return 'For Sale';
+      case 'rent':
+        return 'For Rent';
+      case 'shortlet':
+        return 'Shortlet';
+      default:
+        return '';
+    }
+  };
+
   return (
 
     <>
     <div className='grid grid-cols-9 p-3 gap-2 h-screen w-full'>
+      {/* Display the listing type at the very top */}
+      <div className='col-span-9 mb-2'>
+        <div className='text-2xl font-bold font-hel tracking-tighter text-black'>
+          {getListingType()}
+        </div>
+      </div>
+
+
+
+        
+
       <div className='col-span-4 mb-4'>
         <div className='flex items-center space-x-2'>
           <Input 
@@ -128,25 +153,43 @@ console.log(listing.image360Url, "Panorama")
           </Button>
 
           <Button onClick={() => navigate(-1)} className="bg-black text-white tracking-tighter rounded-none font-hel w-full">Return to Previous Page</Button>
+
+
+          <div className='text-2xl font-bold font-hel tracking-tighter text-black'>
+          {getListingType()}
+        </div>
+    
         </div>
       </div>
 
       <Tabs defaultValue="gallery" className="col-span-9 grid grid-cols-9 gap-2">
         <div className='col-span-3 flex flex-col space-y-4'>
+
+        {listing && (
+          <div className={`text-lg font-hel tracking-tighter  ${listing.available ? 'text-green-500' : 'text-red-500'}`}>
+            {listing.available ? 'Currently Available' : 'Currently Unavailable'}
+          </div>
+        )}
           <section>
-            <h1 className='tracking-tighter font-hel text-gray-500'>Property Name</h1>
-            <h1 className='text-5xl tracking-tight font-hel'>{listing ? listing.name : 'Property Name Not Available'}</h1>
+            {/* <h1 className='tracking-tighter font-hel text-gray-500'>Property Name</h1> */}
+            <h1 className='text-5xl tracking-tighter font-hel'>{listing ? listing.name : 'Property Name Not Available'}</h1>
+          </section>
+
+
+          <section>
+            {/* <h1 className='tracking-tighter font-hel text-gray-500'>Location</h1> */}
+            <h1 className='text-4xl tracking-tighter font-hel text-gray-500'>{listing ? listing.location : 'Location Not Available'}</h1>
           </section>
 
           <section>
-            <h1 className='tracking-tighter font-hel text-gray-500'>Price</h1>
-            <h1 className='text-5xl tracking-tight font-hel'>{listing ? `${listing.currency}${listing.price.toLocaleString()}` : 'Price Not Available'}</h1>
+            {/* <h1 className='tracking-tighter font-hel text-gray-500'>Price</h1> */}
+            <h1 className='text-2xl tracking-tight font-hel'>{listing ? `${listing.currency}${listing.price.toLocaleString()}` : 'Price Not Available'}</h1>
           </section>
 
-          <section>
-            <h1 className='tracking-tighter font-hel text-gray-500'>Location</h1>
+          {/* <section>
+            <h1 className='tracking-tighter font-hel text-gray-500'>Location</h1> 
             <h1 className='text-4xl tracking-tight font-hel'>{listing ? listing.location : 'Location Not Available'}</h1>
-          </section>
+          </section> */}
 
           <section>
             <h1 className='tracking-tighter font-hel text-gray-500'>Realtors Note</h1>
@@ -185,7 +228,7 @@ console.log(listing.image360Url, "Panorama")
             <div>
               <h1 className='tracking-tighter font-hel text-gray-500'>Serviced</h1>
               <h1 className='text-2xl tracking-tight font-hel'>{listing ? (listing.serviced ? 'Yes' : 'No') : 'Not Available'}</h1>
-
+            </div>
               <div>
               <h1 className='tracking-tighter font-hel text-gray-500'>Call</h1>
               <h1 className='text-xl tracking-tight font-hel'>{listing ? listing.contactPhone : 'Not Available'}</h1>
@@ -198,7 +241,7 @@ console.log(listing.image360Url, "Panorama")
               <h1 className='text-xl tracking-tight font-hel'>{listing ? listing.contactEmail : 'Not Available'}</h1>
             </div>
 
-            </div>
+            
           </section>
 
           <TabsList className="grid grid-cols-1 gap-2">

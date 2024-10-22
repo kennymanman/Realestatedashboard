@@ -179,7 +179,7 @@ export default function Sale(props) {
             <Input 
               value={window.location.href} 
               readOnly 
-              className='w-50'
+              className='w-72'
             />
             <Button onClick={copyUrlToClipboard} variant="outline" className="bg-green-500 text-black text-sm font-hel px-8 py-2 rounded-none">
               Copy
@@ -192,7 +192,7 @@ export default function Sale(props) {
             placeholder="Search listings..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-64"
+            className="w-80"
           />
         </div>
 
