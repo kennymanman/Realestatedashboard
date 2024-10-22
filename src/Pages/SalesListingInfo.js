@@ -295,7 +295,8 @@ export default function SalesListingInfo() {
       state: { 
         listing: {
           ...sale,
-          isSold: isSold  // Use the local state to determine sold status
+          isSold: isSold , // Use the local state to determine sold status
+          dbOrigin: 'sale'
         } 
       }
     });

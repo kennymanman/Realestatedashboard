@@ -114,8 +114,8 @@ console.log(listing.image360Url, "Panorama")
   }, [image360Url]);
 
   const getListingType = () => {
-    if (!listing || !listing.listingType) return '';
-    switch (listing.listingType) {
+    if (!listing) return '';
+    switch(listing.dbOrigin) {
       case 'sale':
         return 'For Sale';
       case 'rent':
@@ -123,7 +123,7 @@ console.log(listing.image360Url, "Panorama")
       case 'shortlet':
         return 'Shortlet';
       default:
-        return '';
+        return 'Property Listing';
     }
   };
 
@@ -137,7 +137,8 @@ console.log(listing.image360Url, "Panorama")
     <div className='grid grid-cols-9 p-3 gap-2 h-screen w-full'>
       {/* Display the listing type at the very top */}
       <div className='col-span-9 mb-2'>
-        <div className='text-2xl font-bold font-hel tracking-tighter text-black'>
+        <div className='text-4xl font-bold text-end font-hel tracking-tighter text-black'>
+         
           {getListingType()}
         </div>
       </div>
@@ -160,9 +161,7 @@ console.log(listing.image360Url, "Panorama")
           <Button onClick={() => navigate(-1)} className="bg-black text-white tracking-tighter rounded-none font-hel w-full">Return to Previous Page</Button>
 
 
-          <div className='text-2xl font-bold font-hel tracking-tighter text-black'>
-          {getListingType()}
-        </div>
+       
     
         </div>
       </div>
