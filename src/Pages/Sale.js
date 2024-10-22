@@ -125,9 +125,9 @@ export default function Sale(props) {
 <div className="p-3 grid content-end ">
 <p className="text-slate-500 relative tracking-tighter text-lg font-hel"> {sale.location} . {sale.type}</p>
 <div className="flex justify-between ">
-  <p className="text-slate-200 relative tracking-tighter text-2xl font-hel"> {sale.name}</p>
+  <p className="text-black relative tracking-tighter text-2xl font-hel"> {sale.name}</p>
 
-  <p className="text-slate-300 relative tracking-tighter font-hel text-2xl"> ₦ {sale.price}</p>
+  <p className="text-slate-700 relative tracking-tighter font-hel text-2xl"> {sale.currency} {sale.price}</p>
 </div>
 
 </div>

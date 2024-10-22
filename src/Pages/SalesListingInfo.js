@@ -33,7 +33,8 @@ import {
   Bath, 
   Check, 
   X, 
-  Eye
+  Eye,
+  Maximize2
 } from 'lucide-react';
 
 import { v4 as uuidv4 } from 'uuid';
@@ -87,6 +88,7 @@ export default function SalesListingInfo() {
   const [showDialog, setShowDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [deleteConfirmation, setDeleteConfirmation] = useState('');
+  const [enlargedImage, setEnlargedImage] = useState(null);
 
   const viewerRef = useRef(null);
   const containerRef = useRef(null);
@@ -276,11 +278,11 @@ export default function SalesListingInfo() {
   };
 
   const handleAvailabilityChange = async () => {
-    const newAvailability = !isAvailable;
+    const newSoldStatus = !isSold;  // This is the new status we want to set
     const saleDoc = doc(db, 'sale', sale.id);
     try {
-      await updateDoc(saleDoc, { sold: !newAvailability });
-      setIsAvailable(newAvailability);
+      await updateDoc(saleDoc, { sold: newSoldStatus });
+      setIsSold(newSoldStatus);
       console.log("Availability updated successfully");
     } catch (error) {
       console.error("Error updating availability: ", error);
@@ -293,10 +295,14 @@ export default function SalesListingInfo() {
       state: { 
         listing: {
           ...sale,
-          image360Url: image360Url
+          isSold: isSold  // Use the local state to determine sold status
         } 
       }
     });
+  };
+
+  const handleEnlargeImage = (imageUrl) => {
+    setEnlargedImage(imageUrl);
   };
 
 
@@ -327,6 +333,12 @@ export default function SalesListingInfo() {
 
       <div className='col-span-1 relative'>
         <img src={sale.imageUrls[0]} alt="" className='w-full h-[550px] object-cover' />
+        <div 
+          className='absolute top-2 right-2 cursor-pointer bg-black bg-opacity-50 rounded-full p-1'
+          onClick={() => handleEnlargeImage(sale.imageUrls[0])}
+        >
+          <Maximize2 className="h-6 w-6 text-white" />
+        </div>
         <div 
           className='absolute top-2 right-2 cursor-pointer'
           onMouseEnter={() => setShowImageInfo(true)}
@@ -373,15 +385,18 @@ export default function SalesListingInfo() {
         <p className='text-gray-500 tracking-tighter font-hel text-xl '>Email: <span className='text-black tracking-tighter text-2xl'>{sale.contactEmail}</span></p>
 
         <div className='flex items-center mt-4'>
-          <span className='text-gray-500 tracking-tighter font-hel text-xl mr-2'>Available:</span>
+          <span className='text-gray-500 tracking-tighter font-hel text-xl mr-2'>Status:</span>
           <button 
-            className={`relative w-14 h-7 rounded-full transition-colors duration-300 ease-in-out ${isAvailable ? 'bg-green-500' : 'bg-red-500'}`}
+            className={`relative w-14 h-7 rounded-full transition-colors duration-300 ease-in-out ${!isSold ? 'bg-green-500' : 'bg-red-500'}`}
             onClick={handleAvailabilityChange}
           >
             <span 
-              className={`absolute left-1 top-1 bg-white w-5 h-5 rounded-full transition-transform duration-300 ease-in-out ${isAvailable ? 'transform translate-x-7' : ''}`}
+              className={`absolute left-1 top-1 bg-white w-5 h-5 rounded-full transition-transform duration-300 ease-in-out ${!isSold ? 'transform translate-x-7' : ''}`}
             ></span>
           </button>
+          <span className='ml-2 text-gray-500 tracking-tighter font-hel text-xl'>
+            {isSold ? 'Sold' : 'Available'}
+          </span>
         </div>
 
         <div className='flex mt-7'>
@@ -397,15 +412,15 @@ export default function SalesListingInfo() {
               ⋮
             </button>
             {showDropdown && (
-              <div className='absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded shadow-lg'>
-                <button  onClick={handleCustomerViewClick} className='block w-full text-left px-4 py-2 tracking-tighter font-hel hover:bg-gray-100'>Customer View</button>
+              <div className='absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded shadow-lg z-50'>
+                <button  onClick={handleCustomerViewClick} className='relative block w-full text-left px-4 py-2 tracking-tighter font-hel hover:bg-gray-100'>Customer View</button>
 
 
 
 
                 <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
               <AlertDialogTrigger asChild>
-                <button className='block w-full text-left px-4 py-2 tracking-tighter font-hel hover:bg-gray-100 text-red-600'>Delete Listing</button>
+                <button className='relative block w-full text-left px-4 py-2 tracking-tighter font-hel hover:bg-gray-100 text-red-600'>Delete Listing</button>
                 
                 </AlertDialogTrigger>
               <AlertDialogContent>
@@ -455,7 +470,15 @@ export default function SalesListingInfo() {
         <TabsContent value="gallery">
           <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
             {(sale.imageUrls && sale.imageUrls.length > 0 ? sale.imageUrls : [placeholderImage]).map((image, index) => (
-              <img key={index} src={image || placeholderImage} alt={`Property view ${index + 1}`} className="w-full h-[550px] object-cover" />
+              <div key={index} className="relative">
+                <img src={image || placeholderImage} alt={`Property view ${index + 1}`} className="w-full h-[550px] object-cover" />
+                <div 
+                  className='absolute top-2 right-2 cursor-pointer bg-black bg-opacity-50 rounded-full p-1'
+                  onClick={() => handleEnlargeImage(image)}
+                >
+                  <Maximize2 className="h-6 w-6 text-white" />
+                </div>
+              </div>
             ))}
           </div>
         </TabsContent>
@@ -496,7 +519,7 @@ export default function SalesListingInfo() {
 
         </TabsContent>
         <TabsContent value="map">
-          <div style={{ height: '100vh', width: '100%' }}>
+          <div style={{ height: '100vh', width: '100%', position: 'relative', zIndex: 10 }}>
             <MapContainer center={coordinates} zoom={13} style={{ height: '100%', width: '100%' }}>
               <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -511,6 +534,15 @@ export default function SalesListingInfo() {
           </div>
         </TabsContent>
       </Tabs>
+
+      {/* Add this modal for enlarged images */}
+      {enlargedImage && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={() => setEnlargedImage(null)}>
+          <div className="max-w-4xl max-h-4xl">
+            <img src={enlargedImage} alt="Enlarged view" className="max-w-full max-h-full object-contain" />
+          </div>
+        </div>
+      )}
 
       <Footer/>
 

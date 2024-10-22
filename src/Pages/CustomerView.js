@@ -2,7 +2,7 @@ import React, {useEffect, useState, useRef} from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs"
 import { Button } from "../components/ui/button"
 import { Input } from "../components/ui/input"
-import { Copy } from "lucide-react"
+import { Copy, Maximize2 } from "lucide-react"
 import { useLocation, useNavigate } from 'react-router-dom';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -33,6 +33,7 @@ export default function CustomerView() {
   const [image360Url, setImage360Url] = useState('');
   const viewerRef = useRef(null);
   const containerRef = useRef(null);
+  const [enlargedImage, setEnlargedImage] = useState(null);
 
   const copyUrlToClipboard = () => {
     navigator.clipboard.writeText(window.location.href)
@@ -126,6 +127,10 @@ console.log(listing.image360Url, "Panorama")
     }
   };
 
+  const handleEnlargeImage = (imageUrl) => {
+    setEnlargedImage(imageUrl);
+  };
+
   return (
 
     <>
@@ -166,8 +171,8 @@ console.log(listing.image360Url, "Panorama")
         <div className='col-span-3 flex flex-col space-y-4'>
 
         {listing && (
-          <div className={`text-lg font-hel tracking-tighter  ${listing.available ? 'text-green-500' : 'text-red-500'}`}>
-            {listing.available ? 'Currently Available' : 'Currently Unavailable'}
+          <div className={`text-lg font-hel tracking-tighter ${!listing.isSold ? 'text-green-500' : 'text-red-500'}`}>
+            {!listing.isSold ? 'Currently Available' : 'Currently Unavailable'}
           </div>
         )}
           <section>
@@ -272,21 +277,35 @@ console.log(listing.image360Url, "Panorama")
             <div className="grid grid-cols-2 gap-4">
               {listing && listing.imageUrls ? 
                 listing.imageUrls.map((image, index) => (
-                  <img 
-                    key={index} 
-                    src={image} 
-                    alt={`Gallery Image ${index + 1}`}
-                    className="w-full h-auto object-cover rounded-none"
-                  />
+                  <div key={index} className="relative">
+                    <img 
+                      src={image} 
+                      alt={`Gallery Image ${index + 1}`}
+                      className="w-full h-[400px] object-cover rounded-none"
+                    />
+                    <div 
+                      className='absolute top-2 right-2 cursor-pointer bg-black bg-opacity-50 rounded-full p-1'
+                      onClick={() => handleEnlargeImage(image)}
+                    >
+                      <Maximize2 className="h-6 w-6 text-white" />
+                    </div>
+                  </div>
                 ))
                 :
                 [1, 2, 3, 4].map((i) => (
-                  <img 
-                    key={i} 
-                    src={`/placeholder.svg?height=300&width=400&text=Gallery Image ${i}`} 
-                    alt={`Gallery Image ${i}`}
-                    className="w-full h-auto object-cover rounded-none"
-                  />
+                  <div key={i} className="relative">
+                    <img 
+                      src={`/placeholder.svg?height=300&width=400&text=Gallery Image ${i}`} 
+                      alt={`Gallery Image ${i}`}
+                      className="w-full h-auto object-cover rounded-none"
+                    />
+                    <div 
+                      className='absolute top-2 right-2 cursor-pointer bg-black bg-opacity-50 rounded-full p-1'
+                      onClick={() => handleEnlargeImage(`/placeholder.svg?height=300&width=400&text=Gallery Image ${i}`)}
+                    >
+                      <Maximize2 className="h-6 w-6 text-white" />
+                    </div>
+                  </div>
                 ))
               }
             </div>
@@ -294,7 +313,7 @@ console.log(listing.image360Url, "Panorama")
           <TabsContent value="video">
             <div className="aspect-w-16 aspect-h-9">
               {listing && listing.videoUrl ? 
-                <video controls className="w-full h-full rounded-lg">
+                <video controls className="w-full h-700px ">
                   <source src={listing.videoUrl} type="video/mp4" />
                   Your browser does not support the video tag.
                 </video>
@@ -320,16 +339,21 @@ console.log(listing.image360Url, "Panorama")
             }
           </TabsContent>
           <TabsContent value="floorplan">
-
-          {listing && listing.floorPlanUrl ? 
-          <img src={listing.floorPlanUrl} alt="Floorplan" className='w-full h-auto object-cover rounded-none' />
-          :
-          <div className="aspect-w-16 aspect-h-screen bg-gray-200  flex items-center justify-center">
-            <p className="text-2xl text-black tracking-tighter font-hel text-center">No Floorplan Available</p>
-            {/* <p className="text-lg text-gray-500">Actual 360° tour would be implemented here</p> */}
-          </div>
+            {listing && listing.floorPlanUrl ? 
+              <div className="relative">
+                <img src={listing.floorPlanUrl} alt="Floorplan" className='w-full h-auto object-cover rounded-none' />
+                <div 
+                  className='absolute top-2 right-2 cursor-pointer bg-black bg-opacity-50 rounded-full p-1'
+                  onClick={() => handleEnlargeImage(listing.floorPlanUrl)}
+                >
+                  <Maximize2 className="h-6 w-6 text-white" />
+                </div>
+              </div>
+              :
+              <div className="aspect-w-16 aspect-h-screen bg-gray-200 flex items-center justify-center">
+                <p className="text-2xl text-black tracking-tighter font-hel text-center">No Floorplan Available</p>
+              </div>
             }
-
           </TabsContent>
 
           <TabsContent value="map">
@@ -353,7 +377,7 @@ console.log(listing.image360Url, "Panorama")
                 </MapContainer> */}
 
 
-                <MapContainer center={coordinates} zoom={13} style={{ height: '100%', width: '100%' }}>
+                <MapContainer center={coordinates} zoom={13} style={{ height: '600px', width: '100%' }}>
             <TileLayer
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -378,6 +402,21 @@ console.log(listing.image360Url, "Panorama")
       </Tabs>
     </div>
 
+    {/* Add this modal for enlarged images */}
+    {enlargedImage && (
+      <div 
+        className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" 
+        onClick={() => setEnlargedImage(null)}
+      >
+        <div className="max-w-4xl max-h-4xl">
+          <img 
+            src={enlargedImage} 
+            alt="Enlarged view" 
+            className="max-w-full max-h-full object-contain"
+          />
+        </div>
+      </div>
+    )}
 
     </>
   )
