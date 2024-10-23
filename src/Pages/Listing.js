@@ -61,7 +61,7 @@ export default function Listing() {
       <div className='grid grid-cols-3 gap-5 mt-20 relative mx-2 '>
         <div className='col-span-1 h-96 '>
           <img
-            className='h-full w-full object-cover rounded-xl grayscale hover:grayscale-0'
+            className='h-full w-full object-cover  grayscale hover:grayscale-0'
             src={salelisting}
             alt=''
           />
@@ -87,7 +87,7 @@ export default function Listing() {
 
         <div className='col-span-1 h-96  '>
           <img
-            className='h-full w-full object-cover rounded-xl grayscale hover:grayscale-0'
+            className='h-full w-full object-cover  grayscale hover:grayscale-0'
             src={rentlisting}
             alt=''
           />
@@ -105,7 +105,7 @@ export default function Listing() {
 
         <div className='col-span-1 h-96 '>
           <img
-            className='h-full w-full object-cover rounded-xl  grayscale hover:grayscale-0'
+            className='h-full w-full object-cover   grayscale hover:grayscale-0'
             src={shortletlisting}
             alt=''
           />

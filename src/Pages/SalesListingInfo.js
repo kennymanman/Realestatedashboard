@@ -77,7 +77,7 @@ export default function SalesListingInfo() {
   const [isSold, setIsSold] = useState(sale.sold || false);
   const [coordinates, setCoordinates] = useState([0, 0]);
   const [isAvailable, setIsAvailable] = useState(!sale.sold);
-  const [image360Url, setImage360Url] = useState(sale.image360Url);
+  const [image360Url, setImage360Url] = useState('');
   const [date, setDate] = useState(new Date());
   const [time, setTime] = useState("12:00");
   const [amPm, setAmPm] = useState("AM");
@@ -89,6 +89,8 @@ export default function SalesListingInfo() {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [deleteConfirmation, setDeleteConfirmation] = useState('');
   const [enlargedImage, setEnlargedImage] = useState(null);
+  const [viewerInitialized, setViewerInitialized] = useState(false);
+  const [activeTab, setActiveTab] = useState('gallery');
 
   const viewerRef = useRef(null);
   const containerRef = useRef(null);
@@ -104,17 +106,20 @@ export default function SalesListingInfo() {
 
   useEffect(() => {
     const fetchImage360Url = async () => {
+      console.log("Fetching 360 image URL");
       if (sale.image360Url) {
         const storage = getStorage();
         const imageRef = ref(storage, sale.image360Url);
         try {
           const url = await getDownloadURL(imageRef);
+          console.log("Fetched 360 image URL:", url);
           setImage360Url(url);
         } catch (error) {
           console.error("Error fetching 360 image URL:", error);
           setImage360Url('https://photo-sphere-viewer-data.netlify.app/assets/sphere.jpg');
         }
       } else {
+        console.log("No 360 image URL provided, using default");
         setImage360Url('https://photo-sphere-viewer-data.netlify.app/assets/sphere.jpg');
       }
     };
@@ -123,28 +128,30 @@ export default function SalesListingInfo() {
   }, [sale.image360Url]);
 
   useEffect(() => {
-    if (image360Url && containerRef.current) {
-      if (viewerRef.current) {
-        viewerRef.current.destroy();
+    if (image360Url && containerRef.current && !viewerInitialized) {
+      console.log("Attempting to initialize viewer");
+      try {
+        viewerRef.current = new Viewer({
+          container: containerRef.current,
+          panorama: image360Url,
+          navbar: ['autorotate', 'zoom', 'fullscreen'],
+          defaultZoomLvl: 0,
+        });
+        setViewerInitialized(true);
+        console.log("Viewer initialized successfully");
+      } catch (error) {
+        console.error("Error initializing viewer:", error);
       }
-      viewerRef.current = new Viewer({
-        container: containerRef.current,
-        panorama: image360Url,
-        navbar: [
-          'autorotate',
-          'zoom',
-          'fullscreen',
-        ],
-        defaultZoomLvl: 0,
-      });
     }
 
     return () => {
       if (viewerRef.current) {
+        console.log("Cleaning up viewer");
         viewerRef.current.destroy();
+        setViewerInitialized(false);
       }
     };
-  }, [image360Url]);
+  }, [image360Url, viewerInitialized]);
 
   useEffect(() => {
     const geocodeAddress = async () => {
@@ -364,7 +371,7 @@ export default function SalesListingInfo() {
 
         <p className='text-4xl tracking-tighter  font-hel text-gray-500'>{sale.location}</p>
 
-        <p className='text-5xl tracking-tighter  font-hel pt-3 pb-10'>{sale.currency}{sale.price}</p>
+        <p className='text-4xl tracking-tighter  font-hel pt-3 pb-10'>{sale.currency}{sale.price}</p>
 
 
         <p className='text-gray-500 tracking-tighter font-hel text-xl '>Building Type: <span className='text-black tracking-tighter text-2xl'>{sale.type}</span></p>
@@ -460,7 +467,7 @@ export default function SalesListingInfo() {
 
 
     
-    <Tabs defaultValue="gallery" className="mb-8">
+    <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full mb-8 px-2">
         <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger className="font-hel tracking-tighter text-xl text-gray-500" value="gallery">Full Gallery</TabsTrigger>
           <TabsTrigger className="font-hel tracking-tighter text-xl text-gray-500" value="video">Video Tour</TabsTrigger>
@@ -496,11 +503,13 @@ export default function SalesListingInfo() {
           )}
         </TabsContent>
         <TabsContent value="360-view">
-          {image360Url ? (
-            <div ref={containerRef} style={{ width: '100%', height: '500px' }}></div>
-          ) : (
-            <div className="w-full h-[500px] bg-gray-200 flex items-center justify-center">
-              <p className="text-gray-500 font-hel tracking-tighter">360° view not available</p>
+          {activeTab === '360-view' && (
+            <div ref={containerRef} style={{ width: '100%', height: '500px' }}>
+              {!image360Url && (
+                <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                  <p className="text-gray-500 font-hel tracking-tighter">Loading 360° view...</p>
+                </div>
+              )}
             </div>
           )}
         </TabsContent>

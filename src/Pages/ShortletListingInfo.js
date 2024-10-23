@@ -50,22 +50,22 @@ L.Icon.Default.mergeOptions({
   shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
 });
 
-export default function RentListingInfo() {
+export default function ShortletListingInfo() {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showImageInfo, setShowImageInfo] = useState(false);
 
-  const { rentId } = useParams();
+  const { shortletId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
-  const rent = location.state.rent;
+  const shortlet = location.state.shortlet;
 
-  const [rentName, setRentName] = useState(rent.name);
-  const [rentLocation, setRentLocation] = useState(rent.location);
-  const [firstImage, setFirstImage] = useState(rent.imageUrls[0]);
-  const [imageOne, setImageOne] = useState(rent.imageUrls[1]);
-  const [isRented, setIsRented] = useState(rent.rented || false);
+  const [shortletName, setShortletName] = useState(shortlet.name);
+  const [shortletLocation, setShortletLocation] = useState(shortlet.location);
+  const [firstImage, setFirstImage] = useState(shortlet.imageUrls[0]);
+  const [imageOne, setImageOne] = useState(shortlet.imageUrls[1]);
+  const [isRented, setIsRented] = useState(shortlet.rented || false);
   const [coordinates, setCoordinates] = useState([0, 0]);
-  const [isAvailable, setIsAvailable] = useState(!rent.rented);
+  const [isAvailable, setIsAvailable] = useState(!shortlet.rented);
   const [image360Url, setImage360Url] = useState('');
   const [date, setDate] = useState(new Date());
   const [time, setTime] = useState("12:00");
@@ -92,9 +92,9 @@ export default function RentListingInfo() {
   useEffect(() => {
     const fetchImage360Url = async () => {
       console.log("Fetching 360 image URL");
-      if (rent.image360Url) {
+      if (shortlet.image360Url) {
         const storage = getStorage();
-        const imageRef = ref(storage, rent.image360Url);
+        const imageRef = ref(storage, shortlet.image360Url);
         try {
           const url = await getDownloadURL(imageRef);
           console.log("Fetched 360 image URL:", url);
@@ -110,7 +110,7 @@ export default function RentListingInfo() {
     };
 
     fetchImage360Url();
-  }, [rent.image360Url]);
+  }, [shortlet.image360Url]);
 
   useEffect(() => {
     if (image360Url && containerRef.current && !viewerInitialized) {
@@ -143,7 +143,7 @@ export default function RentListingInfo() {
       try {
         const response = await axios.get(`https://nominatim.openstreetmap.org/search`, {
           params: {
-            q: rent.location,
+            q: shortlet.location,
             format: 'json',
             limit: 1,
           },
@@ -160,7 +160,7 @@ export default function RentListingInfo() {
     };
 
     geocodeAddress();
-  }, [rent.location]);
+  }, [shortlet.location]);
 
   const handleDateSelect = (selectedDate) => {
     setDate(selectedDate);
@@ -179,8 +179,8 @@ export default function RentListingInfo() {
     const inspectionData = {
       date: date.toISOString(),
       time: `${time} ${amPm}`,
-      rentName: rent.name,
-      rentLocation: rent.location,
+      shortletName: shortlet.name,
+      shortletLocation: shortlet.location,
     };
     
     try {
@@ -201,8 +201,8 @@ export default function RentListingInfo() {
     e.preventDefault();
     const inspectionData = {
       date: date.toISOString(),
-      rentName: rent.name,
-      rentLocation: rent.location,
+      shortletName: shortlet.name,
+      shortletLocation: shortlet.location,
       ...formData
     };
     
@@ -216,13 +216,13 @@ export default function RentListingInfo() {
     }
   };
 
-  const editRent = async (event) => {
+  const editShortlet = async (event) => {
     event.preventDefault();
 
     let imageUrls = [];
 
     if (firstImage !== null) {
-      const firstImageRef = ref(imageDB, `forrent/${uuidv4()}`);
+      const firstImageRef = ref(imageDB, `forshortlet/${uuidv4()}`);
       const value = await uploadBytes(firstImageRef, firstImage);
       const firstImageUrl = await getDownloadURL(value.ref);
       if (firstImageUrl) {
@@ -231,7 +231,7 @@ export default function RentListingInfo() {
     }
 
     if (imageOne !== null) {
-      const imageOneRef = ref(imageDB, `forrent/${uuidv4()}`);
+      const imageOneRef = ref(imageDB, `forshortlet/${uuidv4()}`);
       const value = await uploadBytes(imageOneRef, imageOne);
       const imageOneUrl = await getDownloadURL(value.ref);
       if (imageOneUrl) {
@@ -239,14 +239,14 @@ export default function RentListingInfo() {
       }
     }
 
-    const rentDoc = doc(db, 'rent', rent.id);
+    const shortletDoc = doc(db, 'shortlet', shortlet.id);
     const newData = {
-      name: rentName,
-      location: rentLocation,
+      name: shortletName,
+      location: shortletLocation,
       imageUrls: imageUrls,
       rented: isRented,
     };
-    return updateDoc(rentDoc, newData);
+    return updateDoc(shortletDoc, newData);
   };
 
   const handleDeleteClick = () => {
@@ -256,10 +256,10 @@ export default function RentListingInfo() {
   const handleDeleteConfirm = async () => {
     if (deleteConfirmation.toLowerCase() === 'delete') {
       try {
-        await deleteDoc(doc(db, 'rent', rent.id));
+        await deleteDoc(doc(db, 'shortlet', shortlet.id));
         console.log("Listing deleted successfully");
         setShowDeleteDialog(false);
-        navigate('/Rent');
+        navigate('/Shortlet');
       } catch (error) {
         console.error("Error deleting listing: ", error);
         alert("An error occurred while deleting the listing. Please try again.");
@@ -271,9 +271,9 @@ export default function RentListingInfo() {
 
   const handleAvailabilityChange = async () => {
     const newRentedStatus = !isRented;
-    const rentDoc = doc(db, 'rent', rent.id);
+    const shortletDoc = doc(db, 'shortlet', shortlet.id);
     try {
-      await updateDoc(rentDoc, { rented: newRentedStatus });
+      await updateDoc(shortletDoc, { rented: newRentedStatus });
       setIsRented(newRentedStatus);
       console.log("Availability updated successfully");
     } catch (error) {
@@ -285,9 +285,9 @@ export default function RentListingInfo() {
     navigate('/customer-view', { 
       state: { 
         listing: {
-          ...rent,
+          ...shortlet,
           isRented: isRented,
-          dbOrigin: 'rent'
+          dbOrigin: 'shortlet'
         } 
       } 
     });
@@ -310,10 +310,10 @@ export default function RentListingInfo() {
     <div className='grid grid-cols-2 gap-2 p-2 '>
 
       <div className='col-span-1 relative'>
-        <img src={rent.imageUrls[0]} alt="" className='w-full h-[550px] object-cover' />
+        <img src={shortlet.imageUrls[0]} alt="" className='w-full h-[550px] object-cover' />
         <div 
           className='absolute top-2 right-2 cursor-pointer bg-black bg-opacity-50 rounded-full p-1'
-          onClick={() => handleEnlargeImage(rent.imageUrls[0])}
+          onClick={() => handleEnlargeImage(shortlet.imageUrls[0])}
         >
           <Maximize2 className="h-6 w-6 text-white" />
         </div>
@@ -328,7 +328,7 @@ export default function RentListingInfo() {
         {showImageInfo && (
           <div className='absolute top-10 right-2 bg-white p-2 rounded shadow-lg max-w-xs'>
             <p className='text-sm font-hel tracking-tighter'>
-            {rent.realtorsNote}
+            {shortlet.realtorsNote}
             </p>
           </div>
         )}
@@ -336,30 +336,30 @@ export default function RentListingInfo() {
 
       <div className='col-span-1'>
 
-        <p className='text-5xl tracking-tighter  font-hel'>{rent.name}</p>
+        <p className='text-5xl tracking-tighter  font-hel'>{shortlet.name}</p>
 
-        <p className='text-4xl tracking-tighter  font-hel text-gray-500'>{rent.location}</p>
+        <p className='text-4xl tracking-tighter  font-hel text-gray-500'>{shortlet.location}</p>
 
-        <p className='text-4xl tracking-tighter  font-hel pt-3 pb-10'>{rent.currency}{rent.price}</p>
+        <p className='text-4xl tracking-tighter  font-hel pt-3 pb-10'>{shortlet.currency}{shortlet.price}</p>
 
 
-        <p className='text-gray-500 tracking-tighter font-hel text-xl '>Building Type: <span className='text-black tracking-tighter text-2xl'>{rent.type}</span></p>
+        <p className='text-gray-500 tracking-tighter font-hel text-xl '>Building Type: <span className='text-black tracking-tighter text-2xl'>{shortlet.type}</span></p>
 
-        <p className='text-gray-500 tracking-tighter font-hel text-xl '>Size: <span className='text-black tracking-tighter text-2xl'>{rent.size} SQ ft</span></p>
+        <p className='text-gray-500 tracking-tighter font-hel text-xl '>Size: <span className='text-black tracking-tighter text-2xl'>{shortlet.size} SQ ft</span></p>
 
-        <p className='text-gray-500 tracking-tighter font-hel text-xl '>Parking: <span className='text-black tracking-tighter text-2xl'>{rent.parking ? 'Parking Available' : 'No Parking'}</span></p>
+        <p className='text-gray-500 tracking-tighter font-hel text-xl '>Parking: <span className='text-black tracking-tighter text-2xl'>{shortlet.parking ? 'Parking Available' : 'No Parking'}</span></p>
 
-        <p className='text-gray-500 tracking-tighter font-hel text-xl '>Floors: <span className='text-black tracking-tighter text-2xl'>{rent.floors} </span></p>
+        <p className='text-gray-500 tracking-tighter font-hel text-xl '>Floors: <span className='text-black tracking-tighter text-2xl'>{shortlet.floors} </span></p>
 
-        <p className='text-gray-500 tracking-tighter font-hel text-xl '>Bedrooms: <span className='text-black tracking-tighter text-2xl'>{rent.bedrooms}</span></p>
+        <p className='text-gray-500 tracking-tighter font-hel text-xl '>Bedrooms: <span className='text-black tracking-tighter text-2xl'>{shortlet.bedrooms}</span></p>
 
-        <p className='text-gray-500 tracking-tighter font-hel text-xl '>Bathrooms: <span className='text-black tracking-tighter text-2xl'>{rent.bathrooms}</span></p>
+        <p className='text-gray-500 tracking-tighter font-hel text-xl '>Bathrooms: <span className='text-black tracking-tighter text-2xl'>{shortlet.bathrooms}</span></p>
 
-        <p className='text-gray-500 tracking-tighter font-hel text-xl '>Servicing: <span className='text-black tracking-tighter text-2xl'>{rent.serviced ? 'Serviced' : 'Not Serviced'}</span></p>
+        <p className='text-gray-500 tracking-tighter font-hel text-xl '>Servicing: <span className='text-black tracking-tighter text-2xl'>{shortlet.serviced ? 'Serviced' : 'Not Serviced'}</span></p>
 
-        <p className='text-gray-500 tracking-tighter font-hel text-xl '>Call: <span className='text-black tracking-tighter text-2xl'>{rent.contactPhone}</span></p>
+        <p className='text-gray-500 tracking-tighter font-hel text-xl '>Call: <span className='text-black tracking-tighter text-2xl'>{shortlet.contactPhone}</span></p>
 
-        <p className='text-gray-500 tracking-tighter font-hel text-xl '>Email: <span className='text-black tracking-tighter text-2xl'>{rent.contactEmail}</span></p>
+        <p className='text-gray-500 tracking-tighter font-hel text-xl '>Email: <span className='text-black tracking-tighter text-2xl'>{shortlet.contactEmail}</span></p>
 
         <div className='flex items-center mt-4'>
           <span className='text-gray-500 tracking-tighter font-hel text-xl mr-2'>Status:</span>
@@ -378,7 +378,7 @@ export default function RentListingInfo() {
 
         <div className='flex mt-7'>
           
-        <Link className='w-full mr-1' to={`/edit-rent-listing/${rent.id}`}>
+        <Link className='w-full mr-1' to={`/edit-shortlet-listing/${shortlet.id}`}>
           <button className='bg-black text-white w-full py-2 font-hel tracking-tighter mr-2'>Edit Listing</button>
           </Link>
           <div className='relative'>
@@ -437,7 +437,7 @@ export default function RentListingInfo() {
       </TabsList>
       <TabsContent value="gallery">
         <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
-          {(rent.imageUrls && rent.imageUrls.length > 0 ? rent.imageUrls : [placeholderImage]).map((image, index) => (
+          {(shortlet.imageUrls && shortlet.imageUrls.length > 0 ? shortlet.imageUrls : [placeholderImage]).map((image, index) => (
             <div key={index} className="relative">
               <img src={image || placeholderImage} alt={`Property view ${index + 1}`} className="w-full h-[550px] object-cover" />
               <div 
@@ -451,9 +451,9 @@ export default function RentListingInfo() {
         </div>
       </TabsContent>
       <TabsContent value="video">
-        {rent.videoUrl ? (
+        {shortlet.videoUrl ? (
           <video controls className="w-full h-screen aspect-video">
-            <source src={rent.videoUrl} type="video/mp4" />
+            <source src={shortlet.videoUrl} type="video/mp4" />
             Your browser does not support the video tag.
           </video>
         ) : (
@@ -474,9 +474,9 @@ export default function RentListingInfo() {
         )}
       </TabsContent>
       <TabsContent value="floor-plan">
-      {rent.floorPlanUrl ? (
+      {shortlet.floorPlanUrl ? (
         <img 
-          src={rent.floorPlanUrl || placeholderFloorPlan} 
+          src={shortlet.floorPlanUrl || placeholderFloorPlan} 
           alt="Floor Plan" 
           className="w-full h-[700px] object-contain"
         />
@@ -495,7 +495,7 @@ export default function RentListingInfo() {
             />
             <Marker position={coordinates}>
               <Popup>
-                {rent.name}<br/>{rent.location}
+                {shortlet.name}<br/>{shortlet.location}
               </Popup>
             </Marker>
           </MapContainer>

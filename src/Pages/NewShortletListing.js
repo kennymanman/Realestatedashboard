@@ -1,36 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import Nav from '../components/Nav';
+import { Link, useNavigate } from 'react-router-dom';
+import { collection, addDoc, query, onSnapshot } from 'firebase/firestore';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, imageDB } from '../config/firebaseConfig';
-import {
-  query,
-  collection,
-  onSnapshot,
-  updateDoc,
-  doc,
-  addDoc,
-  deleteDoc,
-} from 'firebase/firestore';
-import { Link } from 'react-router-dom';
-import { v4 as uuidv4 } from 'uuid';
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
-import Success from '../components/Success';
+import { v4 } from 'uuid';
+import Nav from '../components/Nav';
 import Footer from '../components/Footer';
+import Success from '../components/Success';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
+import { toast } from 'sonner';
 
-export default function NewSalesListing(props) {
-  const [sale, setSale] = useState([]);
-  const [saleName, setSaleName] = useState('');
-  const [saleLocation, setSaleLocation] = useState('');
-  const [salePrice, setSalePrice] = useState('');
-  const [saleType, setSaleType] = useState('');
-
-  const [firstImage, setFirstImage] = useState('');
-  const [firstImageUrl, setFirstImageUrl] = useState('');
-
-  const [imageOne, setImageOne] = useState('');
-  const [imageOneUrl, setImageOneUrl] = useState('');
-
-  const [saleSize, setSaleSize] = useState('');
+export default function NewShortletListing(props) {
+  const navigate = useNavigate();
+  const [shortlet, setShortlet] = useState([]);
+  const [shortletName, setShortletName] = useState('');
+  const [shortletLocation, setShortletLocation] = useState('');
+  const [shortletCurrency, setShortletCurrency] = useState('₦');
+  const [shortletPrice, setShortletPrice] = useState('');
+  const [shortletType, setShortletType] = useState('');
+  const [shortletSize, setShortletSize] = useState('');
   const [parking, setParking] = useState('');
   const [availability, setAvailability] = useState('');
   const [floor, setFloor] = useState('');
@@ -38,170 +26,143 @@ export default function NewSalesListing(props) {
   const [bathrooms, setBathrooms] = useState('');
   const [serviced, setServiced] = useState('');
   const [realtorsNote, setRealtorsNote] = useState('');
-  
+  const [firstImage, setFirstImage] = useState(null);
+  const [imageOne, setImageOne] = useState(null);
   const [imageTwo, setImageTwo] = useState(null);
   const [imageThree, setImageThree] = useState(null);
   const [imageFour, setImageFour] = useState(null);
   const [imageFive, setImageFive] = useState(null);
   const [imageSix, setImageSix] = useState(null);
-  
   const [video, setVideo] = useState(null);
   const [floorPlan, setFloorPlan] = useState(null);
   const [image360, setImage360] = useState(null);
-
-  const [saleCurrency, setSaleCurrency] = useState('₦'); // Default to Naira
-
-  const [isSuccessOpen, setIsSuccessOpen] = useState(false);
-
   const [contactPhone, setContactPhone] = useState('');
   const [contactEmail, setContactEmail] = useState('');
+  const [isSuccessOpen, setIsSuccessOpen] = useState(false);
 
-  const createSaleListing = async (e) => {
+  const createShortletListing = async (e) => {
     e.preventDefault();
+    
+    const missingFields = [];
+
+    if (!shortletName) missingFields.push('Shortlet Name');
+    if (!shortletLocation) missingFields.push('Location');
+    if (!shortletPrice) missingFields.push('Price');
+    if (!shortletType) missingFields.push('Type');
+    if (!shortletSize) missingFields.push('Size');
+    if (!parking) missingFields.push('Parking');
+    if (!availability) missingFields.push('Availability');
+    if (!floor) missingFields.push('Floor');
+    if (!bedrooms) missingFields.push('Bedrooms');
+    if (!bathrooms) missingFields.push('Bathrooms');
+    if (!serviced) missingFields.push('Serviced');
+    if (!firstImage) missingFields.push('First Image');
+
+    if (missingFields.length > 0) {
+      toast.error('Please fill in the following required fields:', {
+        description: missingFields.join(', '),
+        duration: 5000,
+      });
+      return;
+    }
 
     try {
-      let imageUrls = [];
-      const imagesToUpload = [firstImage, imageOne, imageTwo, imageThree, imageFour, imageFive, imageSix];
+      const imageUrls = await Promise.all([
+        uploadImage(firstImage),
+        uploadImage(imageOne),
+        uploadImage(imageTwo),
+        uploadImage(imageThree),
+        uploadImage(imageFour),
+        uploadImage(imageFive),
+        uploadImage(imageSix),
+      ]);
 
-      for (let image of imagesToUpload) {
-        if (image) {
-          const imageRef = ref(imageDB, `forsale/${uuidv4()}`);
-          const value = await uploadBytes(imageRef, image);
-          const url = await getDownloadURL(value.ref);
-          imageUrls.push(url);
-        }
-      }
-
-      let videoUrl = '';
+      let videoUrl = null;
       if (video) {
-        const videoRef = ref(imageDB, `forsale/videos/${uuidv4()}`);
-        const value = await uploadBytes(videoRef, video);
-        videoUrl = await getDownloadURL(value.ref);
+        videoUrl = await uploadVideo(video);
       }
 
-      let floorPlanUrl = '';
+      let floorPlanUrl = null;
       if (floorPlan) {
-        const floorPlanRef = ref(imageDB, `forsale/floorplans/${uuidv4()}`);
-        const value = await uploadBytes(floorPlanRef, floorPlan);
-        floorPlanUrl = await getDownloadURL(value.ref);
+        floorPlanUrl = await uploadImage(floorPlan);
       }
 
-      let image360Url = '';
+      let image360Url = null;
       if (image360) {
-        const image360Ref = ref(imageDB, `forsale/360images/${uuidv4()}`);
-        const value = await uploadBytes(image360Ref, image360);
-        image360Url = await getDownloadURL(value.ref);
+        image360Url = await uploadImage(image360);
       }
 
-      await addDoc(collection(db, 'sale'), {
-        id: uuidv4(),
-        name: saleName,
-        location: saleLocation,
-        price: salePrice,
-        currency: saleCurrency,
-        type: saleType,
-        size: saleSize,
-        parking: parking,
-        availability: availability,
-        floor: floor,
-        bedrooms: bedrooms,
-        bathrooms: bathrooms,
-        serviced: serviced,
-        realtorsNote: realtorsNote,
-        imageUrls: imageUrls,
-        videoUrl: videoUrl,
-        floorPlanUrl: floorPlanUrl,
-        image360Url: image360Url,
-        contactPhone: contactPhone,
-        contactEmail: contactEmail,
-        createdAt: new Date(),
+      await addDoc(collection(db, 'shortlet'), {
+        name: shortletName,
+        location: shortletLocation,
+        currency: shortletCurrency,
+        price: shortletPrice,
+        type: shortletType,
+        size: shortletSize,
+        parking: parking === 'yes',
+        availability: availability === 'yes',
+        floors: floor,
+        bedrooms,
+        bathrooms,
+        serviced: serviced === 'yes',
+        realtorsNote,
+        imageUrls,
+        videoUrl,
+        floorPlanUrl,
+        image360Url,
+        contactPhone,
+        contactEmail,
       });
 
-      // Show success message
       setIsSuccessOpen(true);
-
-      // Reset form fields
-      setSaleName('');
-      setSaleLocation('');
-      setSalePrice('');
-      setSaleCurrency('₦');
-      setSaleType('');
-      setSaleSize('');
-      setParking('');
-      setAvailability('');
-      setFloor('');
-      setBedrooms('');
-      setBathrooms('');
-      setServiced('');
-      setRealtorsNote('');
-      setFirstImage(null);
-      setImageOne(null);
-      setImageTwo(null);
-      setImageThree(null);
-      setImageFour(null);
-      setImageFive(null);
-      setImageSix(null);
-      setVideo(null);
-      setFloorPlan(null);
-      setImage360(null);
-
-      setContactPhone('');
-      setContactEmail('');
-
+      toast.success('Listing created successfully!');
+      setTimeout(() => {
+        setIsSuccessOpen(false);
+        navigate('/Shortlet');
+      }, 2000);
     } catch (error) {
-      console.error("Error creating new listing: ", error);
-      alert("An error occurred while creating the listing. Please try again.");
-    }
-  };
-
-  const handleSubmitImages = () => {
-    if (firstImage !== null) {
-      const firstImageRef = ref(imageDB, `files/${uuidv4()}`);
-      uploadBytes(firstImageRef, firstImage).then((value) => {
-        console.log(value);
-        getDownloadURL(value.ref).then((url) => {
-          setFirstImageUrl((data) => [...data, url]);
-        });
+      toast.error('An error occurred while creating the listing', {
+        description: error.message,
+        duration: 5000,
       });
     }
   };
 
-  // Read todo from firebase
+  const uploadImage = async (image) => {
+    if (!image) return null;
+    const imageRef = ref(imageDB, `forshortlet/${image.name + v4()}`);
+    await uploadBytes(imageRef, image);
+    const url = await getDownloadURL(imageRef);
+    return url;
+  };
+
+  const uploadVideo = async (video) => {
+    if (!video) return null;
+    const videoRef = ref(imageDB, `forshortlet/${video.name + v4()}`);
+    await uploadBytes(videoRef, video);
+    const url = await getDownloadURL(videoRef);
+    return url;
+  };
+
   useEffect(() => {
-    const q = query(collection(db, 'sale'));
+    const q = query(collection(db, 'shortlet'));
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      let saleArr = [];
+      let shortletArr = [];
       querySnapshot.forEach((doc) => {
-        saleArr.push({ ...doc.data(), id: doc.id });
+        shortletArr.push({ ...doc.data(), id: doc.id });
       });
-      setSale(saleArr);
+      setShortlet(shortletArr);
     });
     return () => unsubscribe();
   }, []);
 
-  const Sale = ({ sale, toggleComplete, deleteSale }) => {
-    return (
-      <li>
-        <div>
-          <p className='text-white '>{sale.name}</p>
-        </div>
-        <button className='bg-red-400 px-4' onClick={() => deleteSale(sale.id)}>
-          Delete
-        </button>
-      </li>
-    );
-  };
-
   return (
-
     <>
     <Nav/>
     <div className=' h-fit mb-10'>
-      
-
       <div className='grid grid-cols-2 p-2 '>
         <div className='col-span-1'>
-          <Link to='/Sale'>
+          <Link to='/Shortlet'>
             <button>
               <svg
                 xmlns='http://www.w3.org/2000/svg'
@@ -221,7 +182,7 @@ export default function NewSalesListing(props) {
           </Link>
 
           <h1 className='text-7xl text-black tracking-tighter mt-8 font-hel'>
-            Create a new listing for sale.
+            Create a new listing for shortlet.
           </h1>
           <p className='text-gray-500 tracking-tighter w-3/4 mt-5 font-hel'>
             Lorem Ipsum is simply dummy text of the printing and typesetting
@@ -229,23 +190,21 @@ export default function NewSalesListing(props) {
             text ever since the 1500s, when an unknown printer took a galley of
             type and scrambled it to make a type specimen book.
           </p>
-
-         
         </div>
 
         <div className='col-span-1'>
-          <form onSubmit={createSaleListing}>
+          <form onSubmit={createShortletListing}>
             <div className='my-5'>
               <h1 className='text-black font-hel text-xl tracking-tighter'>
                 Listing Name*
               </h1>
               <input
-                className='bg-transparent border-b-2 border-slate-400 text-black w-96 text-xl tracking-tighter mt-3 '
+                className='bg-transparent border-b-2 border-slate-400 text-black w-96 text-xl tracking-tighter mt-3'
                 placeholder='Type property name'
-                value={saleName}
+                value={shortletName}
                 required
                 type='text'
-                onChange={(e) => setSaleName(e.target.value)}
+                onChange={(e) => setShortletName(e.target.value)}
               />
             </div>
 
@@ -257,14 +216,14 @@ export default function NewSalesListing(props) {
                 className='bg-transparent border-b-2 border-slate-400 text-black w-96 text-xl tracking-tighter mt-3'
                 placeholder='Type location'
                 required
-                value={saleLocation}
-                onChange={(e) => setSaleLocation(e.target.value)}
+                value={shortletLocation}
+                onChange={(e) => setShortletLocation(e.target.value)}
               />
             </div>
 
             <div className='my-5'>
               <h1 className='text-black font-hel text-xl tracking-tighter'>Currency*</h1>
-              <Select onValueChange={setSaleCurrency} required defaultValue="₦">
+              <Select onValueChange={setShortletCurrency} required defaultValue="₦">
                 <SelectTrigger className="w-96 bg-white text-black">
                   <SelectValue placeholder="Select currency" />
                 </SelectTrigger>
@@ -283,14 +242,14 @@ export default function NewSalesListing(props) {
                 Listing Price*
               </h1>
               <div className="flex items-center">
-                <span className="text-white mr-2">{saleCurrency}</span>
+                <span className="text-white mr-2">{shortletCurrency}</span>
                 <input
                   className='bg-transparent border-b-2 border-slate-400 text-black w-96 text-xl tracking-tighter mt-3'
-                  placeholder='Type sale price'
+                  placeholder='Type shortlet price'
                   type='number'
                   required
-                  value={salePrice}
-                  onChange={(e) => setSalePrice(e.target.value)}
+                  value={shortletPrice}
+                  onChange={(e) => setShortletPrice(e.target.value)}
                 />
               </div>
             </div>
@@ -302,8 +261,8 @@ export default function NewSalesListing(props) {
               <input
                 className='bg-transparent border-b-2 border-slate-400 text-black w-96 text-xl tracking-tighter mt-3'
                 placeholder='Studio Apartment/Duplex'
-                value={saleType}
-                onChange={(e) => setSaleType(e.target.value)}
+                value={shortletType}
+                onChange={(e) => setShortletType(e.target.value)}
               />
             </div>
 
@@ -315,8 +274,8 @@ export default function NewSalesListing(props) {
                 className='bg-transparent border-b-2 border-slate-400 text-black w-96 text-xl tracking-tighter mt-3'
                 placeholder='Type listing size'
                 type='number'
-                value={saleSize}
-                onChange={(e) => setSaleSize(e.target.value)}
+                value={shortletSize}
+                onChange={(e) => setShortletSize(e.target.value)}
               />
             </div>
 
@@ -528,6 +487,7 @@ export default function NewSalesListing(props) {
               <input
                 className='bg-transparent border-b-2 border-slate-400 text-black w-96 text-xl tracking-tighter mt-3'
                 placeholder='Enter contact phone number'
+                required
                 type='tel'
                 value={contactPhone}
                 onChange={(e) => setContactPhone(e.target.value)}
@@ -543,6 +503,7 @@ export default function NewSalesListing(props) {
                 placeholder='Enter contact email'
                 type='email'
                 value={contactEmail}
+                required
                 onChange={(e) => setContactEmail(e.target.value)}
               />
             </div>
@@ -555,7 +516,6 @@ export default function NewSalesListing(props) {
       </div>
       <Success isOpen={isSuccessOpen} onClose={() => setIsSuccessOpen(false)} />
     </div>
-
     <Footer/>
     </>
   );

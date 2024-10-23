@@ -5,7 +5,6 @@ import {
   query,
   collection,
   onSnapshot,
-  updateDoc,
   doc,
   addDoc,
   deleteDoc,
@@ -15,6 +14,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import Success from '../components/Success';
+import Footer from '../components/Footer';
 
 export default function NewRentListing(props) {
   const [rent, setRent] = useState([]);
@@ -51,6 +51,9 @@ export default function NewRentListing(props) {
   const [rentCurrency, setRentCurrency] = useState('₦'); // Default to Naira
 
   const [isSuccessOpen, setIsSuccessOpen] = useState(false);
+
+  const [contactPhone, setContactPhone] = useState('');
+  const [contactEmail, setContactEmail] = useState('');
 
   const createRentListing = async (e) => {
     e.preventDefault();
@@ -108,17 +111,15 @@ export default function NewRentListing(props) {
         videoUrl: videoUrl,
         floorPlanUrl: floorPlanUrl,
         image360Url: image360Url,
-        createdAt: new Date(),
+        contactPhone: contactPhone,
+        contactEmail: contactEmail,
       });
 
-      // Show success message
       setIsSuccessOpen(true);
-
       // Reset form fields
       setRentName('');
       setRentLocation('');
       setRentPrice('');
-      setRentCurrency('₦');
       setRentType('');
       setRentSize('');
       setParking('');
@@ -138,26 +139,13 @@ export default function NewRentListing(props) {
       setVideo(null);
       setFloorPlan(null);
       setImage360(null);
-
+      setContactPhone('');
+      setContactEmail('');
     } catch (error) {
-      console.error("Error creating new listing for Rent: ", error);
-      alert("An error occurred while creating the listing. Please try again.");
+      console.error("Error adding document: ", error);
     }
   };
 
-  const handleSubmitImages = () => {
-    if (firstImage !== null) {
-      const firstImageRef = ref(imageDB, `files/${uuidv4()}`);
-      uploadBytes(firstImageRef, firstImage).then((value) => {
-        console.log(value);
-        getDownloadURL(value.ref).then((url) => {
-          setFirstImageUrl((data) => [...data, url]);
-        });
-      });
-    }
-  };
-
-  // Read todo from firebase
   useEffect(() => {
     const q = query(collection(db, 'rent'));
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
@@ -170,23 +158,10 @@ export default function NewRentListing(props) {
     return () => unsubscribe();
   }, []);
 
-  const Rent = ({ rent, toggleComplete, deleteRent }) => {
-    return (
-      <li>
-        <div>
-          <p className='text-white '>{rent.name}</p>
-        </div>
-        <button className='bg-red-400 px-4' onClick={() => deleteRent(rent.id)}>
-          Delete
-        </button>
-      </li>
-    );
-  };
-
   return (
-    <div className='bg-black h-fit'>
-      <Nav />
-
+    <>
+    <Nav/>
+    <div className=' h-fit mb-10'>
       <div className='grid grid-cols-2 p-2 '>
         <div className='col-span-1'>
           <Link to='/Rent'>
@@ -197,7 +172,7 @@ export default function NewRentListing(props) {
                 viewBox='0 0 24 24'
                 strokeWidth={1.5}
                 stroke='currentColor'
-                className='w-8 h-8 stroke-white m-2'
+                className='w-8 h-8 stroke-black m-2'
               >
                 <path
                   strokeLinecap='round'
@@ -208,59 +183,49 @@ export default function NewRentListing(props) {
             </button>
           </Link>
 
-          <h1 className='text-6xl text-white tracking-tighter mt-8'>
-            New Rent listing details
+          <h1 className='text-7xl text-black tracking-tighter mt-8 font-hel'>
+            Create a new listing for rent.
           </h1>
-          <p className='text-white tracking-tighter w-3/4 mt-5'>
+          <p className='text-gray-500 tracking-tighter w-3/4 mt-5 font-hel'>
             Lorem Ipsum is simply dummy text of the printing and typesetting
             industry. Lorem Ipsum has been the industry&apos;s standard dummy
             text ever since the 1500s, when an unknown printer took a galley of
             type and scrambled it to make a type specimen book.
           </p>
-
-          {/* <ol>
-            {rent.map((rent, index) => (
-              <Rent
-                key={index}
-                rent={rent}
-
-                // deleteSale={deleteSale}
-              />
-            ))}
-          </ol> */}
         </div>
 
         <div className='col-span-1'>
           <form onSubmit={createRentListing}>
             <div className='my-5'>
-              <h1 className='text-white text-xl tracking-tighter'>
+              <h1 className='text-black font-hel text-xl tracking-tighter'>
                 Listing Name*
               </h1>
               <input
-                className='bg-transparent border-b-2 border-slate-400 text-white w-96 text-xl tracking-tighter mt-3 '
+                className='bg-transparent border-b-2 border-slate-400 text-black w-96 text-xl tracking-tighter mt-3'
                 placeholder='Type property name'
                 value={rentName}
-                type='text'
                 required
+                type='text'
                 onChange={(e) => setRentName(e.target.value)}
               />
             </div>
 
             <div className='my-5'>
-              <h1 className='text-white text-xl tracking-tighter'>
+              <h1 className='text-black font-hel text-xl tracking-tighter'>
                 Listing Location*
               </h1>
               <input
-                className='bg-transparent border-b-2 border-slate-400 text-white w-96 text-xl tracking-tighter mt-3'
+                className='bg-transparent border-b-2 border-slate-400 text-black w-96 text-xl tracking-tighter mt-3'
                 placeholder='Type location'
+                required
                 value={rentLocation}
                 onChange={(e) => setRentLocation(e.target.value)}
               />
             </div>
 
             <div className='my-5'>
-              <h1 className='text-white text-xl tracking-tighter'>Currency*</h1>
-              <Select onValueChange={setRentCurrency} defaultValue="₦">
+              <h1 className='text-black font-hel text-xl tracking-tighter'>Currency*</h1>
+              <Select onValueChange={setRentCurrency} required defaultValue="₦">
                 <SelectTrigger className="w-96 bg-white text-black">
                   <SelectValue placeholder="Select currency" />
                 </SelectTrigger>
@@ -275,15 +240,16 @@ export default function NewRentListing(props) {
             </div>
 
             <div className='my-5'>
-              <h1 className='text-white text-xl tracking-tighter'>
+              <h1 className='text-black font-hel text-xl tracking-tighter'>
                 Listing Price*
               </h1>
               <div className="flex items-center">
                 <span className="text-white mr-2">{rentCurrency}</span>
                 <input
-                  className='bg-transparent border-b-2 border-slate-400 text-white w-96 text-xl tracking-tighter mt-3'
-                  placeholder='Type sale price'
+                  className='bg-transparent border-b-2 border-slate-400 text-black w-96 text-xl tracking-tighter mt-3'
+                  placeholder='Type rent price'
                   type='number'
+                  required
                   value={rentPrice}
                   onChange={(e) => setRentPrice(e.target.value)}
                 />
@@ -291,11 +257,11 @@ export default function NewRentListing(props) {
             </div>
 
             <div className='my-5'>
-              <h1 className='text-white text-xl tracking-tighter'>
+              <h1 className='text-black font-hel text-xl tracking-tighter'>
                 Listing Type*
               </h1>
               <input
-                className='bg-transparent border-b-2 border-slate-400 text-white w-96 text-xl tracking-tighter mt-3'
+                className='bg-transparent border-b-2 border-slate-400 text-black w-96 text-xl tracking-tighter mt-3'
                 placeholder='Studio Apartment/Duplex'
                 value={rentType}
                 onChange={(e) => setRentType(e.target.value)}
@@ -303,11 +269,11 @@ export default function NewRentListing(props) {
             </div>
 
             <div className='my-5'>
-              <h1 className='text-white text-xl tracking-tighter'>
+              <h1 className='text-black font-hel text-xl tracking-tighter'>
                 Listing Size*
               </h1>
               <input
-                className='bg-transparent border-b-2 border-slate-400 text-white w-96 text-xl tracking-tighter mt-3'
+                className='bg-transparent border-b-2 border-slate-400 text-black w-96 text-xl tracking-tighter mt-3'
                 placeholder='Type listing size'
                 type='number'
                 value={rentSize}
@@ -316,7 +282,7 @@ export default function NewRentListing(props) {
             </div>
 
             <div className='my-5'>
-              <h1 className='text-white text-xl tracking-tighter'>Parking*</h1>
+              <h1 className='text-black font-hel text-xl tracking-tighter'>Parking*</h1>
               <Select onValueChange={setParking}>
                 <SelectTrigger className="w-96 bg-white text-black">
                   <SelectValue placeholder="Select parking availability" />
@@ -329,7 +295,7 @@ export default function NewRentListing(props) {
             </div>
 
             <div className='my-5'>
-              <h1 className='text-white text-xl tracking-tighter'>
+              <h1 className='text-black font-hel text-xl tracking-tighter'>
                 Availability*
               </h1>
               <Select onValueChange={setAvailability}>
@@ -344,7 +310,7 @@ export default function NewRentListing(props) {
             </div>
 
             <div className='my-5'>
-              <h1 className='text-white text-xl tracking-tighter'>Floor*</h1>
+              <h1 className='text-black font-hel text-xl tracking-tighter'>Floor*</h1>
               <Select onValueChange={setFloor}>
                 <SelectTrigger className="w-96 bg-white text-black">
                   <SelectValue placeholder="Select floor" />
@@ -359,9 +325,9 @@ export default function NewRentListing(props) {
             </div>
 
             <div className='my-5'>
-              <h1 className='text-white text-xl tracking-tighter'>Bedrooms*</h1>
+              <h1 className='text-black font-hel text-xl tracking-tighter'>Bedrooms*</h1>
               <input
-                className='bg-transparent border-b-2 border-slate-400 text-white w-96 text-xl tracking-tighter mt-3'
+                className='bg-transparent border-b-2 border-slate-400 text-black w-96 text-xl tracking-tighter mt-3'
                 placeholder='Number of bedrooms'
                 type='number'
                 value={bedrooms}
@@ -370,11 +336,11 @@ export default function NewRentListing(props) {
             </div>
 
             <div className='my-5'>
-              <h1 className='text-white text-xl tracking-tighter'>
+              <h1 className='text-black font-hel text-xl tracking-tighter'>
                 Bathrooms*
               </h1>
               <input
-                className='bg-transparent border-b-2 border-slate-400 text-white w-96 text-xl tracking-tighter mt-3'
+                className='bg-transparent border-b-2 border-slate-400 text-black w-96 text-xl tracking-tighter mt-3'
                 placeholder='Number of bathrooms'
                 type='number'
                 value={bathrooms}
@@ -383,7 +349,7 @@ export default function NewRentListing(props) {
             </div>
 
             <div className='my-5'>
-              <h1 className='text-white text-xl tracking-tighter'>Serviced*</h1>
+              <h1 className='text-black font-hel text-xl tracking-tighter'>Serviced*</h1>
               <Select onValueChange={setServiced}>
                 <SelectTrigger className="w-96 bg-white text-black">
                   <SelectValue placeholder="Is it serviced?" />
@@ -396,11 +362,11 @@ export default function NewRentListing(props) {
             </div>
 
             <div className='my-5'>
-              <h1 className='text-white text-xl tracking-tighter'>
+              <h1 className='text-black font-hel text-xl tracking-tighter'>
                 Realtor&apos;s Note
               </h1>
               <textarea
-                className='bg-transparent border-b-2 border-slate-400 text-white w-96 text-xl tracking-tighter mt-3'
+                className='bg-transparent border-b-2 border-slate-400 text-black w-96 text-xl tracking-tighter mt-3'
                 placeholder='Quick note '
                 value={realtorsNote}
                 onChange={(e) => setRealtorsNote(e.target.value)}
@@ -410,112 +376,139 @@ export default function NewRentListing(props) {
             <hr />
 
             <div className='my-5'>
-              <h1 className='text-white text-xl tracking-tighter'>
+              <h1 className='text-black font-hel text-xl tracking-tighter'>
                 First Impression Image
               </h1>
               <input
                 type='file'
                 onChange={(e) => setFirstImage(e.target.files[0])}
-                className='bg-transparent border-b-2 border-slate-400 text-white w-96 text-xl tracking-tighter mt-3'
+                className='bg-transparent border-b-2 border-slate-400 text-black w-96 text-xl tracking-tighter mt-3'
               />
             </div>
 
             <div className='my-5'>
-              <h1 className='text-white text-xl tracking-tighter'>Image 1</h1>
+              <h1 className='text-black font-hel text-xl tracking-tighter'>Image 1</h1>
               <input
                 type='file'
                 onChange={(e) => setImageOne(e.target.files[0])}
-                className='bg-transparent border-b-2 border-slate-400 text-white w-96 text-xl tracking-tighter mt-3'
+                className='bg-transparent border-b-2 border-slate-400 text-black w-96 text-xl tracking-tighter mt-3'
               />
             </div>
 
             <div className='my-5'>
-              <h1 className='text-white text-xl tracking-tighter'>Image 2</h1>
+              <h1 className='text-black font-hel text-xl tracking-tighter'>Image 2</h1>
               <input
                 type='file'
                 onChange={(e) => setImageTwo(e.target.files[0])}
-                className='bg-transparent border-b-2 border-slate-400 text-white w-96 text-xl tracking-tighter mt-3'
+                className='bg-transparent border-b-2 border-slate-400 text-black w-96 text-xl tracking-tighter mt-3'
               />
             </div>
 
             <div className='my-5'>
-              <h1 className='text-white text-xl tracking-tighter'>Image 3</h1>
+              <h1 className='text-black font-hel text-xl tracking-tighter'>Image 3</h1>
               <input
                 type='file'
                 onChange={(e) => setImageThree(e.target.files[0])}
-                className='bg-transparent border-b-2 border-slate-400 text-white w-96 text-xl tracking-tighter mt-3'
+                className='bg-transparent border-b-2 border-slate-400 text-black w-96 text-xl tracking-tighter mt-3'
               />
             </div>
 
             <div className='my-5'>
-              <h1 className='text-white text-xl tracking-tighter'>Image 4</h1>
+              <h1 className='text-black font-hel text-xl tracking-tighter'>Image 4</h1>
               <input
                 type='file'
                 onChange={(e) => setImageFour(e.target.files[0])}
-                className='bg-transparent border-b-2 border-slate-400 text-white w-96 text-xl tracking-tighter mt-3'
+                className='bg-transparent border-b-2 border-slate-400 text-black w-96 text-xl tracking-tighter mt-3'
               />
             </div>
 
             <div className='my-5'>
-              <h1 className='text-white text-xl tracking-tighter'>Image 5</h1>
+              <h1 className='text-black font-hel text-xl tracking-tighter'>Image 5</h1>
               <input
                 type='file'
                 onChange={(e) => setImageFive(e.target.files[0])}
-                className='bg-transparent border-b-2 border-slate-400 text-white w-96 text-xl tracking-tighter mt-3'
+                className='bg-transparent border-b-2 border-slate-400 text-black w-96 text-xl tracking-tighter mt-3'
               />
             </div>
 
             <div className='my-5'>
-              <h1 className='text-white text-xl tracking-tighter'>Image 6</h1>
+              <h1 className='text-black font-hel text-xl tracking-tighter'>Image 6</h1>
               <input
                 type='file'
                 onChange={(e) => setImageSix(e.target.files[0])}
-                className='bg-transparent border-b-2 border-slate-400 text-white w-96 text-xl tracking-tighter mt-3'
+                className='bg-transparent border-b-2 border-slate-400 text-black w-96 text-xl tracking-tighter mt-3'
               />
             </div>
 
             <hr />
 
             <div className='my-5'>
-              <h1 className='text-white text-xl tracking-tighter'>Video</h1>
-              <p className='text-white tracking-tighter text-md my-4'>
+              <h1 className='text-black font-hel text-xl tracking-tighter'>Video</h1>
+              <p className='text-black font-hel tracking-tighter text-md my-4'>
                 Upload a video tour of the property.
               </p>
               <input
                 type='file'
                 accept="video/*"
                 onChange={(e) => setVideo(e.target.files[0])}
-                className='bg-transparent border-b-2 border-slate-400 text-white w-96 text-xl tracking-tighter mt-3'
+                className='bg-transparent border-b-2 border-slate-400 text-black w-96 text-xl tracking-tighter mt-3'
               />
+              <p className="text-sm text-gray-500">Maximum file size: 100MB</p>
             </div>
 
             <div className='my-5'>
-              <h1 className='text-white text-xl tracking-tighter'>Floorplan</h1>
-              <p className='text-white tracking-tighter text-md my-4'>
+              <h1 className='text-black font-hel text-xl tracking-tighter'>Floorplan</h1>
+              <p className='text-black font-hel tracking-tighter text-md my-4'>
                 Upload the floorplan image.
               </p>
               <input
                 type='file'
                 accept="image/*"
                 onChange={(e) => setFloorPlan(e.target.files[0])}
-                className='bg-transparent border-b-2 border-slate-400 text-white w-96 text-xl tracking-tighter mt-3'
+                className='bg-transparent border-b-2 border-slate-400 text-black w-96 text-xl tracking-tighter mt-3'
               />
             </div>
 
             <div className='my-5'>
-              <h1 className='text-white text-xl tracking-tighter'>360 Images & Videos</h1>
-              <p className='text-white tracking-tighter text-md my-4'>
-                Upload 360-degree images or videos.
+              <h1 className='text-black font-hel text-xl tracking-tighter'>360 Images & Videos</h1>
+              <p className='text-black font-heltracking-tighter text-md my-4'>
+                Upload 360-degree images .
               </p>
               <input
                 type='file'
                 accept="image/*,video/*"
                 onChange={(e) => setImage360(e.target.files[0])}
-                className='bg-transparent border-b-2 border-slate-400 text-white w-96 text-xl tracking-tighter mt-3'
+                className='bg-transparent border-b-2 border-slate-400 text-black w-96 text-xl tracking-tighter mt-3'
               />
             </div>
 
-            <button className='bg-white tracking-tighter rounded-full px-12 py-2 mt-16 hover:bg-green-500'>
+            <div className='my-5'>
+              <h1 className='text-black font-hel text-xl tracking-tighter'>
+                Contact Phone Number
+              </h1>
+              <input
+                className='bg-transparent border-b-2 border-slate-400 text-black w-96 text-xl tracking-tighter mt-3'
+                placeholder='Enter contact phone number'
+                type='tel'
+                value={contactPhone}
+                onChange={(e) => setContactPhone(e.target.value)}
+              />
+            </div>
+
+            <div className='my-5'>
+              <h1 className='text-black font-hel text-xl tracking-tighter'>
+                Contact Email
+              </h1>
+              <input
+                className='bg-transparent border-b-2 border-slate-400 text-black w-96 text-xl tracking-tighter mt-3'
+                placeholder='Enter contact email'
+                type='email'
+                value={contactEmail}
+                onChange={(e) => setContactEmail(e.target.value)}
+              />
+            </div>
+
+            <button className='bg-black font-hel tracking-tighter text-white w-full px-12 py-2 mt-16 hover:bg-green-500'>
               Submit
             </button>
           </form>
@@ -523,5 +516,7 @@ export default function NewRentListing(props) {
       </div>
       <Success isOpen={isSuccessOpen} onClose={() => setIsSuccessOpen(false)} />
     </div>
+    <Footer/>
+    </>
   );
 }

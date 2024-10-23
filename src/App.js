@@ -43,6 +43,10 @@ import Admin from './Pages/Admin';
 import CustomerView from './Pages/CustomerView';
 import Footer from "./components/Footer"
 import Trashboard from './Trashboard';
+import EditRentInfo from './Pages/EditRentInfo';
+import NewShortletListing from './Pages/NewShortletListing';
+import ShortletListingInfo from './Pages/ShortletListingInfo';
+import EditShortletInfo from './Pages/EditShortletInfo';
 // import SalesListingSample from './Pages/SalesListingSample';
 
 function App() {
@@ -143,12 +147,16 @@ function App() {
         <Route path="/TaskManager" element={<TaskManager />} />
         <Route path="/SalesListingInfo/:salesId" element={<SalesListingInfo />} />
         <Route path="/edit-sales-listing/:salesId" element={<EditSalesInfo />} />
+        <Route path="/edit-rent-listing/:rentId" element={<EditRentInfo />} />
         <Route path="/RentListingInfo/:rentId" element={<RentListingInfo />} />
+        <Route path="/ShortletListingInfo/:shortletId" element={<ShortletListingInfo/>} />
+        <Route path="/edit-shortlet-listing/:shortletId" element={<EditShortletInfo />} />
         <Route path="/schedules" element={<Schedules />} />
         <Route path="/customer-view" element={<CustomerView />} />
         <Route path="/Admin" element={<Admin />} />
         <Route path="/trash" element={<Trashboard />} />
         <Route path="/Footer" element={<Footer />} />
+        <Route path="/NewShortletListing" element={<NewShortletListing />} />
           {/* <Route path="/SalesListingSample" element={<SalesListingSample />} />  */}
         <Route path="*" element={<PageNotFound />} />
       </Routes>

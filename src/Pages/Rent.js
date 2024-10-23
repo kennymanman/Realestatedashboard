@@ -15,6 +15,9 @@ import { imageDB } from "../config/firebaseConfig";
 import { getDownloadURL, listAll, ref } from "firebase/storage";
 
 import BeatLoader from "react-spinners/BeatLoader";
+import Footer from "../components/Footer";
+import { Button } from "../components/ui/button"
+import { Input } from "../components/ui/input"
 
 export default function Rent(props) {
   const navigate = useNavigate();
@@ -76,144 +79,133 @@ export default function Rent(props) {
     });
   }, []);
 
-  const Rent = ({ rent, toggleComplete, deleteRent, index }) => {
-    setIsPending(false);
+  const copyUrlToClipboard = () => {
+    navigator.clipboard.writeText(window.location.href)
+      .then(() => alert('URL copied to clipboard!'))
+      .catch(err => console.error('Failed to copy URL: ', err));
+  };
+
+  const RentItem = ({ rent, deleteRent }) => {
     return (
-      <>
-        {/* <div className="h-4/6">
+      <div className="h-5/6">
+        <div className="h-96 relative grid">
           <img
-            className="object-fit h-full w-full"
-            src={sale.imageUrls[0]}
-            alt=""
-          />
-          <h1 className="tracking-tighter text-white text-xl mt-3">
-            {sale.id}
-          </h1>
-          <h1 className="tracking-tighter text-white text-2xl mt-3">
-            {sale.name}
-          </h1>
-          <hr className="border-white my-1" />
-          <h1 className="tracking-tighter text-white text-xl ">
-            ${sale.price}
-          </h1>
-          <hr className="border-white my-1" />
-          <h1 className="tracking-tighter text-white text-xl ">
-            {sale.location}
-          </h1>
-          <hr className="border-white my-1" />
-          <h1 className="tracking-tighter text-white text-xl ">
-            Type: {sale.type}
-          </h1>
-
-          <div className="text-end">
-       
-
-            <button
-              onClick={() => {
-                navigate("/SalesListingInfo/5i0buXSUr6JlDY01UmcR", {
-                  state: { sale },
-                });
-              }}
-              className="bg-green-500 rounded-full px-3  tracking-tighter"
-            >
-              More info
-            </button>
-          </div>
-        </div>  */}
-
-
-<div className="h-5/6">
-<div className="h-96 relative grid">
-
-  <img
-            className="object-fit h-full w-full rounded-lg absolute brightness-75 hover:brightness-90"
+            className="object-cover h-full w-full  absolute "
             src={rent.imageUrls[0]}
             alt=""
           /> 
-
-<div className="p-3 text-end">
-  <button   onClick={() => {
-                navigate("/RentListingInfo/5i0buXSUr6JlDY01UmcR", {
-                  state: { rent },
-                });
-              }} 
-              className="relative bg-white tracking-tighter px-4 rounded-full hover:bg-orange-500">Details</button>
-</div>
-
-
-
-
-<div className="p-3 grid content-end ">
-<p className="text-slate-300 relative tracking-tighter text-lg"> {rent.location} . {rent.type}</p>
-<div className="flex justify-between ">
-  <p className="text-white relative tracking-tighter text-xl"> {rent.name}</p>
-
-  <p className="text-white relative tracking-tighter text-xl"> ₦ {rent.price}</p>
-</div>
-
-</div>
-
-
-</div>
-</div>
-      </>
+          <div className="p-3 text-end">
+            <button onClick={() => {
+              navigate("/RentListingInfo/5i0buXSUr6JlDY01UmcR", {
+                state: { rent },
+              });
+            }}  className='bg-white rounded-full p-2 ml-48 relative'>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-6 w-6 stroke-black">
+                <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 19.5 15-15m0 0H8.25m11.25 0v11.25" />
+              </svg>
+            </button>
+          </div>
+          <div className="p-3 grid content-end ">
+            <p className="text-slate-500 relative tracking-tighter text-lg font-hel"> {rent.location} . {rent.type}</p>
+            <div className="flex justify-between ">
+              <p className="text-black relative tracking-tighter text-2xl font-hel"> {rent.name}</p>
+              <p className="text-slate-700 relative tracking-tighter font-hel text-2xl"> {rent.currency} {rent.price}</p>
+            </div>
+          </div>
+        </div>
+      </div>
     );
   };
 
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // Add this function to filter rents based on search term
+  const filteredRents = rent.filter((item) =>
+    item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    item.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    item.type.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const [isLoading, setIsLoading] = useState(true);
+
   return (
-    <div className="bg-black min-h-screen max-h-fit  ">
+    <>
       <Nav />
+      <div className="min-h-screen max-h-fit mb-10">
+        <div className='flex items-center space-x-2 justify-between mx-6 my-4'>
+          <div className='flex items-center space-x-2'>
+            <Link to="/Listing">
+              <button>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="w-8 h-8 stroke-black"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M6.75 15.75L3 12m0 0l3.75-3.75M3 12h18"
+                  />
+                </svg>
+              </button>
+            </Link>
 
-      <Link to="/Listing">
-        <button>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-8 h-8 stroke-white m-2"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M6.75 15.75L3 12m0 0l3.75-3.75M3 12h18"
+            <Input 
+              value={window.location.href} 
+              readOnly 
+              className='w-72'
             />
-          </svg>
-        </button>
-      </Link>
+            <Button onClick={copyUrlToClipboard} variant="outline" className="bg-green-500 text-black text-sm font-hel px-8 py-2 rounded-none">
+              Copy
+            </Button>
+          </div>
 
-      {/* {isPending && (
-        <div className="text-center m-40">
-          <BeatLoader
-            color={"#3fa158"}
-            size={15}
-            aria-label="Loading Spinner"
-            data-testid="loader"
+          {/* Add the search bar here */}
+          <Input 
+            type="text"
+            placeholder="Search listings..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-80"
           />
         </div>
-      )} */}
 
-      <div className="grid grid-cols-3 gap-4 mx-7 ">
-        <div>
-          <p className="text-slate-300 tracking-tighter text-lg">Created. number of listings for rent: {rent.length < 1 ? <>0</> : <>{`${rent.length} `}</>} </p>
-          <Link to="/NewRentListing">
-            <button className="bg-white px-5 tracking-tighter rounded-full mt-6 hover:bg-green-600">Create a new rent listing</button>
-          </Link>
-        </div>
-
-        {rent.length > 0 ? (
-          rent.map((rent, index) => (
-            <Rent key={index} rent={rent} deleteSale={deleteRent} />
-          ))
-        ) : (
-          <div className="tracking-tighter col-span-3 text-center text-white text-xl mt-10 ">
-          Here seems a bit empty!
+        {/* {isLoading ? (
+          <div className="flex justify-center items-center h-64">
+            <BeatLoader color="#000000" loading={isLoading} size={15} />
           </div>
-        )}
+        ) : ( */}
+          <div className="grid grid-cols-3 gap-4 mx-7 ">
+            <div>
+              <h1 className="font-hel text-6xl tracking-tighter mt-4">Rent.</h1>
+              <p className="text-gray-500 tracking-tighter text-lg font-hel">
+                Created number of listings for rent: 
+                <span className="text-black font-hel tracking-tighter text-4xl ml-2">
+                  {filteredRents.length}
+                </span>
+              </p>
+
+              <Link to="/NewRentListing">
+                <button className="bg-black w-full font-hel text-white tracking-tighter mt-6 py-2">Create a new listing</button>
+              </Link>
+             
+              <p className="tracking-tighter text-gray-500 text-sm font-hel mt-3">Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+              Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>
+            </div>
+
+            
+
+            {filteredRents.map((rent, index) => (
+              <RentItem key={index} rent={rent} deleteRent={deleteRent} />
+            ))}
+          </div>
+        {/* )} */}
       </div>
 
-      <div className="grid grid-cols-4 gap-4 p-3"></div>
-    </div>
+      <Footer/>
+    </>
   );
 }

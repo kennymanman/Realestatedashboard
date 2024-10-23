@@ -170,8 +170,9 @@ console.log(listing.image360Url, "Panorama")
         <div className='col-span-3 flex flex-col space-y-4'>
 
         {listing && (
-          <div className={`text-lg font-hel tracking-tighter ${!listing.isSold ? 'text-green-500' : 'text-red-500'}`}>
-            {!listing.isSold ? 'Currently Available' : 'Currently Unavailable'}
+          <div className={`text-lg font-hel tracking-tighter ${!listing.isSold && !listing.isRented ? 'text-green-500' : 'text-red-500'}`}>
+            {!listing.isSold && !listing.isRented ? 'Currently Available' : 
+             listing.dbOrigin === 'sale' ? 'Sold' : 'Rented'}
           </div>
         )}
           <section>

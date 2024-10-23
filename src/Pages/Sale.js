@@ -196,11 +196,11 @@ export default function Sale(props) {
           />
         </div>
 
-        {isLoading ? (
+        {/* {isLoading ? (
           <div className="flex justify-center items-center h-64">
             <BeatLoader color="#000000" loading={isLoading} size={15} />
           </div>
-        ) : (
+        ) : ( */}
           <div className="grid grid-cols-3 gap-4 mx-7 ">
             <div>
               <h1 className="font-hel text-6xl tracking-tighter mt-4">Sale.</h1>
@@ -223,7 +223,7 @@ export default function Sale(props) {
               <SaleItem key={index} sale={sale} deleteSale={deleteSale} />
             ))}
           </div>
-        )}
+        {/* )} */}
       </div>
 
       <Footer/>
