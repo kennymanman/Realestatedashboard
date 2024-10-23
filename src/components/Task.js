@@ -21,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select"
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export function Task({ setTasks, user }) {
   const [taskName, setTaskName] = useState("")
@@ -28,6 +29,7 @@ export function Task({ setTasks, user }) {
   const [taskPriority, setTaskPriority] = useState("medium")
   const [taskLink, setTaskLink] = useState("")
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const navigate = useNavigate();
 
   const handleCreateTask = async (e) => {
     e.preventDefault()
@@ -73,7 +75,7 @@ export function Task({ setTasks, user }) {
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" onClick={() => setIsDialogOpen(true)}>Add Task</Button>
+        <Button variant="outline  " className="bg-black text-white px-8 font-hel " onClick={() => setIsDialogOpen(true)}>Add Task</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>

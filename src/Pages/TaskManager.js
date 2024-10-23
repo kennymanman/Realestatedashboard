@@ -13,9 +13,18 @@ import {
   ArrowUpIcon,
 } from "@radix-ui/react-icons"
 
+import { useLocation, useNavigate } from 'react-router-dom';
+import Nav from "../components/Nav";
+import Footer from "../components/Footer";
+
+
+
+
+
 export default function TaskManager() {
 	const [tasks, setTasks] = useState([])
 	const [user, setUser] = useState(null)
+	const navigate = useNavigate();
 
 	useEffect(() => {
 			// Set up auth state listener
@@ -111,14 +120,35 @@ export default function TaskManager() {
 
 	return (
 		<>
-			<div className="h-full flex-1 flex-col space-y-8 p-8 md:flex">
+
+		<Nav/>
+
+		<button onClick={() => navigate(-1)}>
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-6 w-6 ml-5">
+  <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 15.75 3 12m0 0 3.75-3.75M3 12h18" />
+</svg>
+</button>
+
+
+
+			<div className="h-screen flex-1 flex-col space-y-8 p-8 md:flex">
+
+	
 				<div className="flex items-center justify-between space-y-2">
-					<div>
-						<h2 className="text-6xl font-bold tracking-tighter">Tasks</h2>
-						<p className="text-muted-foreground">
-							Here&apos;s a list of your tasks for your organization
-						</p>
-					</div>
+					
+						
+
+
+
+
+
+<div>
+        <h1 className="text-6xl font-hel tracking-tighter" >Tasks</h1>
+		<p className="font-hel tracking-tighter text-gray-500">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+</div>
+
+
+					
 					<div className="flex items-center space-x-2">
 						<Task setTasks={setTasks} user={user} />
 					</div>
@@ -133,6 +163,8 @@ export default function TaskManager() {
 					
 				/>
 			</div>
+
+			<Footer/>
 		</>
 	)
 }
