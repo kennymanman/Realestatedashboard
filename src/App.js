@@ -117,10 +117,10 @@ function App() {
         <Route path="/Signup" element={<Signup />} />
         <Route path="/ForgotPassword" element={<ForgotPassword />} />
         <Route
-          path="/Dashboard"
+          path="/dashboard"
           element={
             <ProtectedRoute>
-              <Dashboard />
+              <Trashboard />
             </ProtectedRoute>
           }
         />
@@ -154,7 +154,7 @@ function App() {
         <Route path="/schedules" element={<Schedules />} />
         <Route path="/customer-view" element={<CustomerView />} />
         <Route path="/Admin" element={<Admin />} />
-        <Route path="/trash" element={<Trashboard />} />
+        {/* <Route path="/dashboard" element={<Trashboard />} /> */}
         <Route path="/Footer" element={<Footer />} />
         <Route path="/NewShortletListing" element={<NewShortletListing />} />
           {/* <Route path="/SalesListingSample" element={<SalesListingSample />} />  */}

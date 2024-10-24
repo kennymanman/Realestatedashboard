@@ -38,7 +38,7 @@ export default function Nav() {
         <div className="flex justify-between">
           <Link to="/Dashboard">
             <img
-              className="w-12 h-12"
+              className="w-12 h-12 rounded-full "
               src={orgLogo || Augustflow4}
               alt="Organization Logo"
             />
