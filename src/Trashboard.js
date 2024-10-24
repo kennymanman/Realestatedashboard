@@ -22,6 +22,7 @@ import {
   } from "@radix-ui/react-icons"
 import AlertDialog from './components/AlertDialog'; // We'll create this component
 import { UserAuth } from './context/AuthContext';
+import { format } from 'date-fns';
 
 
 
@@ -32,6 +33,9 @@ export default function Trashboard() {
 
     const [time, setTime] = useState(new Date());
     const [orgName, setOrgName] = useState('');
+    const [orgCountry, setOrgCountry] = useState('');
+    const [orgAddress, setOrgAddress] = useState('');
+    const [weatherTemp, setWeatherTemp] = useState(12);
   
     const [properties, setProperties] = useState([]);
     const [filteredProperties, setFilteredProperties] = useState([]);
@@ -46,6 +50,7 @@ export default function Trashboard() {
     const [showAdminAlert, setShowAdminAlert] = useState(false);
     const { user } = UserAuth();
     const [isAdmin, setIsAdmin] = useState(false);
+    const [userJobTitle, setUserJobTitle] = useState('');
   
     const statuses = [
       {
@@ -163,9 +168,59 @@ export default function Trashboard() {
       };
   
       checkAdminStatus();
+  
+      // Fetch organization details
+      const fetchOrgDetails = async () => {
+        const db = getFirestore();
+        const orgDoc = await getDoc(doc(db, "organization", "info"));
+        if (orgDoc.exists()) {
+          const data = orgDoc.data();
+          setOrgName(data.name);
+          setOrgCountry(data.country || 'Set Country');
+          setOrgAddress(data.address || 'No Organization Address');
+          
+          // Fetch weather data if country is set
+          if (data.country) {
+            fetchWeatherData(data.country);
+          }
+        }
+      };
+  
+      fetchOrgDetails();
+  
+      // Fetch weather data
+      const fetchWeatherData = async (country) => {
+        try {
+          const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${country}&units=metric&appid=YOUR_API_KEY`);
+          const data = await response.json();
+          setWeatherTemp(Math.round(data.main.temp));
+        } catch (error) {
+          console.error("Error fetching weather data:", error);
+        }
+      };
+  
+      // Fetch user's job title
+      const fetchUserJobTitle = async () => {
+        if (user && user.uid) {
+          try {
+            const userDoc = await getDoc(doc(db, 'users', user.uid));
+            if (userDoc.exists()) {
+              setUserJobTitle(userDoc.data().jobTitle || 'Job Title Not Set');
+            }
+          } catch (error) {
+            console.error("Error fetching user's job title:", error);
+            setUserJobTitle('Error Fetching Job Title');
+          }
+        }
+      };
+  
+      fetchUserJobTitle();
     }, [user, db]);
   
-    const c = dayjs();
+    const c = new Date();
+    const isAM = c.getHours() < 12;
+    const bgColor = isAM ? 'bg-blue-400' : 'bg-black';
+    const blurColor = isAM ? 'bg-yellow-300' : 'bg-white';
   
   
   
@@ -252,7 +307,7 @@ export default function Trashboard() {
 <Nav/>
 
 {/* Main Container */}
-      <div className='grid grid-cols-2 p-2 h-fit gap-1 '>
+      <div className='grid grid-cols-2 p-2 h-fit gap-1 bg-slate-200 '>
 
 
 
@@ -261,47 +316,41 @@ export default function Trashboard() {
          
             <div className='row-span-1 grid grid-cols-6 gap-2 h-60'>
                 {/* Box with date, time */}
-                <div className='bg-black col-span-2 rounded-lg p-2 '>
+                <div className={`${bgColor} col-span-2 rounded-lg p-2`}>
 
-                    <div className='flex justify-between'><span className='text-white fon-hel text-5xl tracking-tighter'>12°</span> <span className='text-white fon-hel text-3xl tracking-tighter'>Lagos</span></div>
+                    <div className='flex justify-between'>
+                        <span className='text-white fon-hel text-5xl tracking-tighter'>{weatherTemp}°</span>
+                        <span className='text-white fon-hel text-3xl tracking-tighter'>{orgCountry}</span>
+                    </div>
                     
                     <div className='grid justify-items-center'>
-                    <div className='rounded-full bg-white w-20 h-20 blur-md '></div>
+                    <div className={`${blurColor} rounded-full bg-white w-20 h-20 blur-md `}></div>
                    </div>
 
-                    <div className='justify-center mt-10'><div><p className='tracking-tight text-base font-hel text-gray-400'>Today</p><span className='text-white tracking-tighter font-hel text-lg'>{c.format('DD MMMM, YYYY')}{' '} </span></div></div>
+                    <div className='justify-center mt-10'><div><p className='tracking-tight text-base font-hel text-gray-500'>Today</p><span className='text-white tracking-tighter font-hel text-lg'>{format(c, 'dd MMMM, yyyy')}{' '} </span></div></div>
                     
 
                 </div>
 
 
                 <div className='bg-black col-span-2 rounded-lg p-2'>
+                    <div className='flex '>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className=" h-8 w-8 stroke-white">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="m16.49 12 3.75-3.751m0 0-3.75-3.75m3.75 3.75H3.74V19.5" />
+                        </svg>
 
+                        <Link to="/Profile">
+                            <button className='bg-white rounded-full p-2 ml-48'>
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-6 w-6 stroke-black">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 19.5 15-15m0 0H8.25m11.25 0v11.25" />
+                                </svg>
+                            </button>
+                        </Link>
+                    </div>
 
-        <div className='flex '>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className=" h-8 w-8 stroke-white">
-                <path strokeLinecap="round" strokeLinejoin="round" d="m16.49 12 3.75-3.751m0 0-3.75-3.75m3.75 3.75H3.74V19.5" />
-               </svg>
-
-
-               <Link to="/Profile">
-                    <button className='bg-white rounded-full p-2 ml-48'>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-6 w-6 stroke-black">
-                     <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 19.5 15-15m0 0H8.25m11.25 0v11.25" />
-                      </svg>
-
-                    </button>
-                    </Link>
-
-
-        </div>
-
-               <p className='text-white tracking-tighter font-hel text-2xl mt-3 '> {orgName}</p>
-               <p className='text-gray-400 tracking-tighter font-hel text-base mt-2 '>92, Lanre Awolokun Gbagada phase 2, Lagos</p>
-
-               <p className='text-lime-300 tracking-tighter font-hel text-2xl mt-6 '>Job role</p>
-
-
+                    <p className='text-white tracking-tighter font-hel text-2xl mt-3 '> {orgName}</p>
+                    <p className='text-gray-400 tracking-tighter font-hel text-base mt-2 '>{orgAddress}</p>
+                    <p className='text-lime-300 tracking-tighter font-hel text-2xl mt-6 '>{userJobTitle}</p>
                 </div>
 
 
@@ -342,30 +391,34 @@ export default function Trashboard() {
 </div>
 
 <div className='overflow-y-auto max-h-[calc(100%-4rem)]'>
-              {tasks.map((task) => (
-                <div key={task.id} className='flex items-center justify-between border-b border-gray-200 py-2'>
-                  <div className='flex items-center space-x-4'>
-                    <Checkbox 
-                      id={`task-${task.id}`} 
-                      checked={task.completed}
-                      onCheckedChange={(checked) => handleTaskCompletion(task.id, checked)}
-                    />
-                    <div>
-                      <h3 className='font-hel text-xl tracking-tighter'>{task.name}</h3>
-                      <div className='flex space-x-2 text-sm text-gray-500'>
-                        <span className='flex items-center'>
-                          {getStatusIcon(task.status)}
-                          <span className="ml-1">{task.status}</span>
-                        </span>
-                        <span className='flex items-center'>
-                          {getPriorityIcon(task.priority)}
-                          <span className="ml-1">{task.priority}</span>
-                        </span>
+              {tasks.length > 0 ? (
+                tasks.map((task) => (
+                  <div key={task.id} className='flex items-center justify-between border-b border-gray-200 py-2'>
+                    <div className='flex items-center space-x-4'>
+                      <Checkbox 
+                        id={`task-${task.id}`} 
+                        checked={task.completed}
+                        onCheckedChange={(checked) => handleTaskCompletion(task.id, checked)}
+                      />
+                      <div>
+                        <h3 className='font-hel text-xl tracking-tighter'>{task.name}</h3>
+                        <div className='flex space-x-2 text-sm text-gray-500'>
+                          <span className='flex items-center'>
+                            {getStatusIcon(task.status)}
+                            <span className="ml-1">{task.status}</span>
+                          </span>
+                          <span className='flex items-center'>
+                            {getPriorityIcon(task.priority)}
+                            <span className="ml-1">{task.priority}</span>
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))
+              ) : (
+                <p className='text-gray-500 text-center mt-4 font-hel tracking-tighter'>No tasks created yet</p>
+              )}
             </div>
 
 
@@ -447,7 +500,9 @@ export default function Trashboard() {
     
     <div className='col-span-2 grid grid-rows-2 gap-2 '>
         <div className='bg-black row-span-1 rounded-lg p-2 grid content-center'>
-        <h2 className='font-hel tracking-tighter text-5xl   text-lime-300  text-center '>10:00<span className='text-gray-400'>PM</span></h2> 
+        <h2 className='font-hel tracking-tighter text-5xl text-lime-300 text-center '>
+          {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+        </h2> 
         </div>
 
         <div className='bg-blue-700 row-span-1 rounded-lg p-2'>
@@ -584,3 +639,6 @@ function getStatusIcon(status) {
         return <ArrowRightIcon className="text-gray-500" />;
     }
   }
+
+
+

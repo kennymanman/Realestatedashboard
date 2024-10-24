@@ -102,7 +102,7 @@ const Schedules = () => {
 
 
 
-        <h1 className="text-6xl font-hel tracking-tighter text-end mb-5" >Scheduled Inspections</h1>
+        <h1 className="text-6xl font-hel tracking-tighter  mb-5" >Scheduled Inspections</h1>
         <div className="flex gap-4 mb-4">
           <Input
             type="text"

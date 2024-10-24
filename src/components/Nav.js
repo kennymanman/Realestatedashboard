@@ -34,7 +34,7 @@ export default function Nav() {
 
   return (
     <div>
-      <div className="flex justify-between px-2 py-3">
+      <div className="flex justify-between px-2 py-2">
         <div className="flex justify-between">
           <Link to="/Dashboard">
             <img
@@ -55,7 +55,7 @@ export default function Nav() {
               Logged as
             </h1>
             {user ? (
-            <h1 className="tracking-tighter text-2xl  font-hel mt-1 text-black">
+            <h1 className="tracking-tighter text-xl  font-hel mt-2 text-black">
               {user.displayName}
             </h1>
               ) : (
@@ -78,7 +78,7 @@ export default function Nav() {
               viewBox="0 0 24 24"
               strokeWidth={1.5}
               stroke="currentColor"
-              className="w-8 h-8 fill-red-600 "
+              className="w-8 h-8 stroke-white fill-red-600 "
             >
               <path
                 strokeLinecap="round"

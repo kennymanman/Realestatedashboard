@@ -11,6 +11,7 @@ import { Separator } from "../components/ui/separator";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../components/ui/card";
 import { Label } from "../components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export default function Profile() {
   const { user } = UserAuth() || {};
@@ -27,6 +28,8 @@ export default function Profile() {
   const [profilePicture, setProfilePicture] = useState(null);
   const db = getFirestore();
   const storage = getStorage();
+  const navigate = useNavigate();
+
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -114,13 +117,29 @@ export default function Profile() {
   }
 
   return (
-    <div className="bg-background min-h-screen bg-black">
+    <div className="bg-background min-h-screen ">
       <Nav />
       <div className="container mx-auto px-4 py-8 bg-white">
         <div className="space-y-6">
           <div>
-            <h3 className="text-lg font-medium">Profile</h3>
-            <p className="text-sm text-muted-foreground">
+
+                
+
+          
+      <button onClick={() => navigate(-1)}>
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-6 w-6 ml-1">
+  <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 15.75 3 12m0 0 3.75-3.75M3 12h18" />
+</svg>
+</button>
+
+
+
+
+
+
+
+            <h3 className="text-6xl font-medium font-hel tracking-tight">My Profile</h3>
+            <p className="text-sm text-muted-foreground font-hel  mt-2">
               Manage your account settings and set e-mail preferences.
             </p>
           </div>
