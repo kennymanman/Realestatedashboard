@@ -16,6 +16,7 @@ import { updateProfile } from "firebase/auth";
 import { Label } from "../components/ui/label";
 import { getFirestore, doc, setDoc } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { serverTimestamp } from "firebase/firestore";
 
 const Signup = () => {
   const [fullName, setFullName] = useState("");
@@ -57,6 +58,7 @@ const Signup = () => {
         jobTitle: jobTitle, // Add job title to the user document
         role: role,
         profilePicture: profilePictureURL,
+        lastSeen: serverTimestamp(),
       });
 
       navigate("/Dashboard");
@@ -65,7 +67,7 @@ const Signup = () => {
         toast.error(
           <div>
             Email account already exists. 
-            <Link to="/signin" className="underline ml-1">Return to SignIn</Link> or 
+            <Link to="/Login" className="underline ml-1">Return to SignIn</Link> or 
             <Link to="/forgot-password" className="underline ml-1">Forgot Password</Link>
           </div>
         );

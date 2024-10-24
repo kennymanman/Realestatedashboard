@@ -54,9 +54,13 @@ export default function Nav() {
             <h1 className="tracking-tighter text-lg text-gray-500 mt-2">
               Logged as
             </h1>
+            {user ? (
             <h1 className="tracking-tighter text-2xl  font-hel mt-1 text-black">
               {user.displayName}
             </h1>
+              ) : (
+                <Link to="/login">Login</Link>
+              )}
           </div>
 
           <Link to="/Help">

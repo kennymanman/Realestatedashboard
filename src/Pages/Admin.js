@@ -17,15 +17,18 @@ import {
 import { toast } from "sonner";
 import { Card, CardHeader, CardTitle, CardContent } from "../components/ui/card";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../components/ui/tooltip";
-import Nav from "../components/Nav";
-import Footer from "../components/Footer";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../components/ui/dropdown-menu";
-import { MoreHorizontal } from "lucide-react"; // Import an icon for the dropdown trigger
+import { MoreHorizontal } from "lucide-react";
+import { format, formatDistanceToNow } from 'date-fns';
+import Nav from '../components/Nav';
+import Footer from '../components/Footer';
+import { auth } from "../config/firebaseConfig";
+import { getAuth } from "firebase/auth";
 
 export default function Admin() {
   const [users, setUsers] = useState([]);
@@ -39,6 +42,7 @@ export default function Admin() {
   const navigate = useNavigate();
   const db = getFirestore();
   const storage = getStorage();
+  const authInstance = getAuth();
 
   useEffect(() => {
     const checkAdminAndFetchData = async () => {
@@ -85,7 +89,14 @@ export default function Admin() {
   const fetchUsers = async () => {
     const usersCollection = collection(db, "users");
     const userSnapshot = await getDocs(usersCollection);
-    const userList = userSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const userList = userSnapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        ...data,
+        lastSeen: data.lastSeen ? data.lastSeen : null
+      };
+    });
     setUsers(userList);
   };
 
@@ -138,18 +149,18 @@ export default function Admin() {
     }
   };
 
-  const handleToggleUserStatus = async (userId, currentStatus) => {
-    const newStatus = !currentStatus;
-    await updateDoc(doc(db, "users", userId), { isActive: newStatus });
-    fetchUsers();
-    toast.success(`User account ${newStatus ? 'enabled' : 'disabled'} successfully`);
-  };
-
   const filteredUsers = users.filter(user =>
     Object.values(user).some(value => 
       value?.toString().toLowerCase().includes(searchTerm.toLowerCase())
     )
   );
+
+  const formatLastSeen = (lastSeen) => {
+    if (!lastSeen) return 'Never';
+    // Check if lastSeen is a Firestore Timestamp
+    const date = lastSeen.toDate ? lastSeen.toDate() : new Date(lastSeen);
+    return `${formatDistanceToNow(date, { addSuffix: true })} (${format(date, 'PPpp')})`;
+  };
 
   return (
     <TooltipProvider>
@@ -240,7 +251,7 @@ export default function Admin() {
               placeholder="Search users..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="mb-4"
+              className="mb-4 w-96"
             />
             <Table>
               <TableCaption>A list of all users</TableCaption>
@@ -251,7 +262,7 @@ export default function Admin() {
                   <TableHead>Role</TableHead>
                   <TableHead>Email</TableHead>
                   <TableHead>Phone Number</TableHead>
-                  <TableHead>Status</TableHead>
+                  <TableHead>Last Seen</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -270,7 +281,7 @@ export default function Admin() {
                     <TableCell>{user.role}</TableCell>
                     <TableCell>{user.email}</TableCell>
                     <TableCell>{user.phoneNumber}</TableCell>
-                    <TableCell>{user.isActive ? 'Active' : 'Disabled'}</TableCell>
+                    <TableCell>{formatLastSeen(user.lastSeen)}</TableCell>
                     <TableCell>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -280,11 +291,6 @@ export default function Admin() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className="bg-white" align="end">
-                          <DropdownMenuItem
-                            onClick={() => handleToggleUserStatus(user.id, user.isActive)}
-                          >
-                            {user.isActive ? 'Disable' : 'Enable'} Account
-                          </DropdownMenuItem>
                           <DropdownMenuItem
                             onClick={() => handleDeleteUser(user.id)}
                           >

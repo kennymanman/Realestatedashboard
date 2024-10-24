@@ -15,6 +15,7 @@ import { Label } from "../components/ui/label";
 import backgroundImage from "../Images/Aione.jpg";
 import { Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
+import { getFirestore, doc, updateDoc, serverTimestamp } from "firebase/firestore";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -22,11 +23,20 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const { signIn } = UserAuth();
+  const db = getFirestore();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await signIn(email, password);
+      const userCredential = await signIn(email, password);
+      const user = userCredential.user;
+
+      // Update lastSeen timestamp
+      const userDocRef = doc(db, "users", user.uid);
+      await updateDoc(userDocRef, {
+        lastSeen: serverTimestamp()
+      });
+
       navigate("/Dashboard");
     } catch (error) {
       if (error.code === 'auth/user-not-found') {
