@@ -8,7 +8,7 @@ import { Button } from "../components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import Nav from "../components/Nav"
 import Footer from "../components/Footer"
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -32,6 +32,7 @@ const Schedules = () => {
       isDone: doc.data().isDone || false,
       createdAt: doc.data().createdAt ? doc.data().createdAt.toDate() : new Date()
     }));
+    console.log("Fetched inspections:", inspectionsData); // Add this line for debugging
     setInspections(inspectionsData);
   };
 
@@ -92,15 +93,11 @@ const Schedules = () => {
     <>
       <Nav/>
       <div className="container mx-auto p-4 h-screen ">
-
-<button onClick={() => navigate(-1)}>
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-6 w-6">
-  <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 15.75 3 12m0 0 3.75-3.75M3 12h18" />
-</svg>
-</button>
-
-
-
+        <button onClick={() => navigate(-1)}>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-6 w-6">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 15.75 3 12m0 0 3.75-3.75M3 12h18" />
+          </svg>
+        </button>
 
         <h1 className="text-6xl font-hel tracking-tighter text-bold  mb-5" >Scheduled Inspections</h1>
         <div className="flex gap-4 mb-4">
@@ -127,7 +124,6 @@ const Schedules = () => {
           <TableHeader>
             <TableRow>
               <TableHead className="font-hel tracking-tight text-base text-gray-500">Done</TableHead>
-              <TableHead className="font-hel tracking-tight text-base text-gray-500">Image</TableHead>
               <TableHead className="font-hel tracking-tight text-base text-gray-500">Date</TableHead>
               <TableHead className="font-hel tracking-tight text-base text-gray-500">Time</TableHead>
               <TableHead className="font-hel tracking-tight text-base text-gray-500">Client Name</TableHead>
@@ -138,7 +134,7 @@ const Schedules = () => {
               <TableHead className="font-hel tracking-tight text-base text-gray-500">Actions</TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody>
+          <TableBody className="overflow-y-auto">
             {filteredInspections.length > 0 ? (
               filteredInspections.map((inspection) => (
                 <TableRow 
@@ -150,16 +146,6 @@ const Schedules = () => {
                       checked={inspection.isDone}
                       onCheckedChange={() => handleCheckboxChange(inspection.id, inspection.isDone)}
                     />
-                  </TableCell>
-                  <TableCell>
-                    {inspection.sale && inspection.sale.firstImage && (
-                      <img
-                        src={inspection.sale.firstImage}
-                        alt={`Image of ${inspection.saleName}`}
-                        style={{ width: '50px', height: '50px', objectFit: 'cover' }}
-                        className="rounded"
-                      />
-                    )}
                   </TableCell>
                   <TableCell className="font-hel text-lg tracking-tight">{formatDate(inspection.date)}</TableCell>
                   <TableCell className="font-hel text-lg tracking-tight">{inspection.time}</TableCell>
@@ -181,7 +167,7 @@ const Schedules = () => {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={10} className="text-center py-10">
+                <TableCell colSpan={9} className="text-center py-10">
                   <p className="text-xl font-hel tracking-tighter text-gray-500">No Scheduled Inspection history yet</p>
                 </TableCell>
               </TableRow>

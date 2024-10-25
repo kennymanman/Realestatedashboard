@@ -141,25 +141,31 @@ const Maps = () => {
             </DropdownMenuContent>
           </DropdownMenu>
           <div className="h-[calc(100vh-200px)] overflow-y-auto">
-            {filteredProperties.map(property => (
-              <div key={property.id} className="mb-4 p-4 bg-gray-50 rounded-lg flex ">
-                <img src={property.imageUrls[0]} alt={property.name} className="w-20 h-20 rounded-lg object-cover mr-4" />
-                <div>
-                  <h3 className="font-hel tracking-tighter text-xl truncate ...">{property.name}</h3>
-                  <p className='font-hel tracking-tighter text-base text-gray-500 truncate ...'>{property.location}</p>
-                  <p className='font-hel tracking-tighter text-base truncate ...'>{property.type.charAt(0).toUpperCase() + property.type.slice(1)}</p>
-                  <p className='font-hel tracking-tighter text-xl truncate ... '>{property.currency}{property.price}</p>
-                  {property.inspectionDate && (
-                    <p>Inspection scheduled for: {format(new Date(property.inspectionDate), 'PPP')} at {format(new Date(property.inspectionDate), 'p')}</p>
-                  )}
+            {filteredProperties.length > 0 ? (
+              filteredProperties.map(property => (
+                <div key={property.id} className="mb-4 p-4 bg-gray-50 rounded-lg flex ">
+                  <img src={property.imageUrls[0]} alt={property.name} className="w-20 h-20 rounded-lg object-cover mr-4" />
+                  <div>
+                    <h3 className="font-hel tracking-tighter text-xl truncate ...">{property.name}</h3>
+                    <p className='font-hel tracking-tighter text-base text-gray-500 truncate ...'>{property.location}</p>
+                    <p className='font-hel tracking-tighter text-base truncate ...'>{property.type.charAt(0).toUpperCase() + property.type.slice(1)}</p>
+                    <p className='font-hel tracking-tighter text-xl truncate ... '>{property.currency}{property.price}</p>
+                    {property.inspectionDate && (
+                      <p>Inspection scheduled for: {format(new Date(property.inspectionDate), 'PPP')} at {format(new Date(property.inspectionDate), 'p')}</p>
+                    )}
+                  </div>
+                  <Button onClick={() => handleCustomerViewClick(property)} className="ml-4 bg-black text-white rounded-full">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-4 w-4  stroke-white">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 19.5 15-15m0 0H8.25m11.25 0v11.25" />
+                    </svg>
+                  </Button>
                 </div>
-                <Button onClick={() => handleCustomerViewClick(property)} className="ml-4 bg-black text-white rounded-full">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-4 w-4  stroke-white">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 19.5 15-15m0 0H8.25m11.25 0v11.25" />
-                  </svg>
-                </Button>
-              </div>
-            ))}
+              ))
+            ) : (
+              <p className="text-gray-500 font-hel tracking-tight text-center mt-4">
+                Create listings to view on map
+              </p>
+            )}
           </div>
         </div>
         <div className="w-2/3">
@@ -168,33 +174,41 @@ const Maps = () => {
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             />
-            {filteredProperties.map(property => {
-              if (property.latitude && property.longitude) {
-                return (
-                  <Marker key={property.id} position={[property.latitude, property.longitude]}>
-                    <Tooltip>
-                      <div>
-                        <h3 className="font-bold">{property.name}</h3>
-                        <p>{property.location}</p>
-                        <p>{property.currency}{property.price}</p>
-                      </div>
-                    </Tooltip>
-                    <Popup>
-                      <div>
-                        <h3 className="font-bold">{property.name}</h3>
-                        <p>{property.location}</p>
-                        <p>{property.type.charAt(0).toUpperCase() + property.type.slice(1)}</p>
-                        <p>{property.currency}{property.price}</p>
-                        <Button onClick={() => handleCustomerViewClick(property)} className="mt-2 bg-black text-white rounded-none">
-                          View Details
-                        </Button>
-                      </div>
-                    </Popup>
-                  </Marker>
-                );
-              }
-              return null;
-            })}
+            {filteredProperties.length > 0 ? (
+              filteredProperties.map(property => {
+                if (property.latitude && property.longitude) {
+                  return (
+                    <Marker key={property.id} position={[property.latitude, property.longitude]}>
+                      <Tooltip>
+                        <div>
+                          <h3 className="font-bold">{property.name}</h3>
+                          <p>{property.location}</p>
+                          <p>{property.currency}{property.price}</p>
+                        </div>
+                      </Tooltip>
+                      <Popup>
+                        <div>
+                          <h3 className="font-bold">{property.name}</h3>
+                          <p>{property.location}</p>
+                          <p>{property.type.charAt(0).toUpperCase() + property.type.slice(1)}</p>
+                          <p>{property.currency}{property.price}</p>
+                          <Button onClick={() => handleCustomerViewClick(property)} className="mt-2 bg-black text-white rounded-none">
+                            View Details
+                          </Button>
+                        </div>
+                      </Popup>
+                    </Marker>
+                  );
+                }
+                return null;
+              })
+            ) : (
+              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[1000] bg-white p-4 rounded shadow">
+                <p className="text-gray-500 font-hel tracking-tight">
+                  Create listings to view on map
+                </p>
+              </div>
+            )}
           </MapContainer>
         </div>
       </div>

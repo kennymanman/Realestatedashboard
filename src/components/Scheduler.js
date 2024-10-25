@@ -60,13 +60,15 @@ export default function Scheduler({ sale }) {
   }
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent default form submission
+    e.preventDefault();
     const inspectionData = {
       date: date.toISOString(),
       time: `${time} ${amPm}`,
       saleName: sale.name,
       saleLocation: sale.location,
+      saleImage: sale.images && sale.images.length > 0 ? sale.images[0] : null,
       ...formData,
+      createdAt: new Date() // Add this line to include a timestamp
     }
 
     console.log("Submitting inspection data:", inspectionData)

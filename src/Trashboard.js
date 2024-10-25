@@ -466,7 +466,7 @@ export default function Trashboard() {
 
 
     <div className='bg-yellow-300 col-span-4 rounded-lg p-2'>
-        <div className='flex justify-between'> <h2 className='font-hel tracking-tighter text-4xl leading-9  text-black   '>Property<br/> Listing</h2>
+        <div className='flex justify-between'> <h2 className='font-hel tracking-tighter text-4xl leading-9  text-black    '>Property<br/> Listing</h2>
         <Link to="/Listing">
     <button className='bg-white rounded-full p-2 ml-48'>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-6 w-6 stroke-black">
@@ -475,6 +475,12 @@ export default function Trashboard() {
 
                     </button>
     </Link>
+
+
+
+    <div>
+        <p className=''>4</p>
+    </div>
         
         
         </div>
