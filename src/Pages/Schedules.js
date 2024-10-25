@@ -91,7 +91,7 @@ const Schedules = () => {
   return (
     <>
       <Nav/>
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto p-4 h-screen ">
 
 <button onClick={() => navigate(-1)}>
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-6 w-6">
@@ -122,7 +122,7 @@ const Schedules = () => {
             </SelectContent>
           </Select>
         </div>
-        <Table className="min-h-screen">
+        <Table className="h-fit">
           <TableCaption>A list of all scheduled property inspections.</TableCaption>
           <TableHeader>
             <TableRow>

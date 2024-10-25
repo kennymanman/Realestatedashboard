@@ -12,6 +12,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Label } from "../components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
 import { useLocation, useNavigate } from 'react-router-dom';
+import Footer from "../components/Footer";
 
 export default function Profile() {
   const { user } = UserAuth() || {};
@@ -181,7 +182,18 @@ export default function Profile() {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="email">Email</Label>
-                    <Input id="email" name="email" type="email" value={formData.email} onChange={handleInputChange} placeholder="Email" />
+                    <Input 
+                      id="email" 
+                      name="email" 
+                      type="email" 
+                      value={formData.email} 
+                      readOnly 
+                      disabled 
+                      className="bg-gray-100"
+                    />
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Email uded in creating account cannot be changed.
+                    </p>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="phoneNumber">Phone Number</Label>
@@ -230,6 +242,8 @@ export default function Profile() {
           </Card>
         </div>
       </div>
+
+      <Footer/>
     </div>
   );
 }

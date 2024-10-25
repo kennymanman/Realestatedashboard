@@ -165,7 +165,15 @@ export default function Admin() {
   return (
     <TooltipProvider>
       <Nav/>
-      <div className="min-h-screen bg-white text-black p-8">
+      <div className="min-h-screen bg-white text-black p-4">
+
+      <button onClick={() => navigate(-1)}>
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-6 w-6">
+  <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 15.75 3 12m0 0 3.75-3.75M3 12h18" />
+</svg>
+</button>
+
+
         <h1 className="text-6xl tracking-tighter mb-8 font-hel">Admin Dashboard</h1>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">

@@ -52,7 +52,7 @@ export default function Nav() {
         <div className="flex gap-7">
           <div className="flex gap-2">
             <h1 className="tracking-tighter text-lg text-gray-500 mt-2">
-              Logged as
+              Welcome
             </h1>
             {user ? (
             <h1 className="tracking-tighter text-xl  font-hel mt-2 text-black">
