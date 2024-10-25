@@ -108,7 +108,7 @@ export default function Scheduler({ sale }) {
                 <SelectTrigger className="w-[80px]">
                   <SelectValue placeholder={time.split(':')[0]} />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-white">
                   {hours.map((hour) => (
                     <SelectItem key={hour} value={hour}>
                       {hour}
@@ -121,7 +121,7 @@ export default function Scheduler({ sale }) {
                 <SelectTrigger className="w-[80px]">
                   <SelectValue placeholder={time.split(':')[1]} />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-white">
                   {minutes.map((minute) => (
                     <SelectItem key={minute} value={minute}>
                       {minute}
@@ -133,7 +133,7 @@ export default function Scheduler({ sale }) {
                 <SelectTrigger className="w-[80px]">
                   <SelectValue placeholder={amPm} />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-white">
                   <SelectItem value="AM">AM</SelectItem>
                   <SelectItem value="PM">PM</SelectItem>
                 </SelectContent>
@@ -160,11 +160,11 @@ export default function Scheduler({ sale }) {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="name">Name</Label>
-              <Input id="name" name="name" value={formData.name} onChange={handleInputChange} />
+              <Input required id="name" name="name" value={formData.name} onChange={handleInputChange} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="phone">Phone</Label>
-              <Input id="phone" name="phone" value={formData.phone} onChange={handleInputChange} />
+              <Input required id="phone" name="phone" value={formData.phone} onChange={handleInputChange} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
