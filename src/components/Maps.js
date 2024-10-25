@@ -15,6 +15,7 @@ import { format } from 'date-fns';
 import 'leaflet/dist/leaflet.css';
 import Nav from './Nav';
 import { useLocation, useNavigate } from 'react-router-dom';
+import ClientFooter from './ClientFooter';
 
 const Maps = () => {
   const [properties, setProperties] = useState([]);
@@ -96,9 +97,9 @@ const Maps = () => {
   };
 
   return (
-    <div className=''>
+    <div className='flex flex-col min-h-screen'>
       <Nav/>
-      <div className="flex h-screen bg-gray-100">
+      <div className="flex flex-grow bg-gray-100">
         <div className="w-1/3 p-4 bg-white shadow-lg overflow-scroll">
           <div className='flex items-center space-x-2 mb-4'>
             <button className='bg-black text-white font-hel tracking-tighter px-6 text-sm py-2' onClick={() => navigate(-1)}>
@@ -212,6 +213,10 @@ const Maps = () => {
           </MapContainer>
         </div>
       </div>
+      <ClientFooter 
+        organizationName="Your Organization Name"
+        organizationAddress="123 Main St, City, State, ZIP"
+      />
     </div>
   );
 };

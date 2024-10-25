@@ -13,6 +13,7 @@ import Scheduler from '../components/Scheduler';
 import axios from 'axios';
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import Footer from "../components/Footer"
+import ClientFooter from '../components/ClientFooter';
 
 
 
@@ -421,3 +422,4 @@ console.log(listing.image360Url, "Panorama")
     </>
   )
 }
+

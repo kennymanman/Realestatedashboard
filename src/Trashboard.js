@@ -51,6 +51,7 @@ export default function Trashboard() {
     const { user } = UserAuth();
     const [isAdmin, setIsAdmin] = useState(false);
     const [userJobTitle, setUserJobTitle] = useState('');
+    const [totalListings, setTotalListings] = useState(0);
   
     const statuses = [
       {
@@ -215,6 +216,25 @@ export default function Trashboard() {
       };
   
       fetchUserJobTitle();
+  
+      const fetchListingsCount = async () => {
+        try {
+          const saleSnapshot = await getDocs(collection(db, 'sale'));
+          const rentSnapshot = await getDocs(collection(db, 'rent'));
+          const shortletSnapshot = await getDocs(collection(db, 'shortlet'));
+
+          const saleCount = saleSnapshot.size;
+          const rentCount = rentSnapshot.size;
+          const shortletCount = shortletSnapshot.size;
+
+          const total = saleCount + rentCount + shortletCount;
+          setTotalListings(total);
+        } catch (error) {
+          console.error('Error fetching listings count:', error);
+        }
+      };
+
+      fetchListingsCount();
     }, [user, db]);
   
     const c = new Date();
@@ -465,7 +485,7 @@ export default function Trashboard() {
 
 
 
-    <div className='bg-yellow-300 col-span-4 rounded-lg p-2'>
+    <div className='bg-yellow-300 col-span-4 rounded-lg p-2 grid'>
         <div className='flex justify-between'> <h2 className='font-hel tracking-tighter text-4xl leading-9  text-black    '>Property<br/> Listing</h2>
         <Link to="/Listing">
     <button className='bg-white rounded-full p-2 ml-48'>
@@ -477,13 +497,18 @@ export default function Trashboard() {
     </Link>
 
 
+        </div>
 
-    <div>
-        <p className=''>4</p>
+        <div className=' place-self-end'>
+            <div>
+        <p className='font-hel tracking-tighter text-8xl text-bold'>{totalListings}</p>
+        <p className='font-hel tracking-tighter text-lg'>Total Listings</p>
+         </div>
     </div>
         
-        
-        </div>
+
+
+
     </div>
 </div>
 
@@ -645,6 +670,7 @@ function getStatusIcon(status) {
         return <ArrowRightIcon className="text-gray-500" />;
     }
   }
+
 
 
 
